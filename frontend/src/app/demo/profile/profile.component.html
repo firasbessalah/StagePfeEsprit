@@ -1,0 +1,111 @@
+<div class="row">
+  <div class="col-xl-4 col-md-6">
+    <app-card cardTitle="Profile Photo">
+      @if (user()) {
+        @let u = user()!;
+        <div class="text-center">
+          <img
+            class="rounded-circle img-thumbnail mb-3"
+            style="width: 150px; height: 150px; object-fit: cover"
+            [src]="u.photoProfil || 'assets/images/user/avatar-1.jpg'"
+            alt="Profile"
+          />
+          <h5 class="mb-1">{{ u.prenom }} {{ u.nom }}</h5>
+          <p class="mb-3"><span class="badge bg-primary">{{ u.role }}</span></p>
+          
+          <div class="text-start">
+            <label class="form-label">Change Profile Photo</label>
+            <input type="file" accept="image/*" class="form-control form-control-sm" (change)="onProfilePhotoSelected($event)" />
+          </div>
+        </div>
+      }
+    </app-card>
+  </div>
+  
+  <div class="col-xl-8 col-md-6">
+    <app-card cardTitle="Edit Profile Information">
+      @if (successMessage()) {
+        <div class="alert alert-success">{{ successMessage() }}</div>
+      }
+      @if (profileMessage()) {
+        <div class="alert alert-danger">{{ profileMessage() }}</div>
+      }
+
+      <form [formGroup]="profileForm" (ngSubmit)="onSaveProfile()">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">First Name (Prénom)</label>
+            <input type="text" class="form-control" formControlName="prenom" />
+            @if (profileForm.get('prenom')?.invalid && profileForm.get('prenom')?.touched) {
+              <small class="text-danger">First name is required</small>
+            }
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Last Name (Nom)</label>
+            <input type="text" class="form-control" formControlName="nom" />
+            @if (profileForm.get('nom')?.invalid && profileForm.get('nom')?.touched) {
+              <small class="text-danger">Last name is required</small>
+            }
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" formControlName="email" />
+            <small class="text-muted">Email cannot be changed.</small>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Phone Number</label>
+            <input type="text" class="form-control" formControlName="telephone" />
+          </div>
+        </div>
+        
+        <div class="text-end">
+          <button type="submit" class="btn btn-primary" [disabled]="profileForm.invalid">Save Changes</button>
+        </div>
+      </form>
+    </app-card>
+
+    <app-card cardTitle="Change Password" class="mt-3 d-block">
+      @if (passwordSuccessMessage()) {
+        <div class="alert alert-success">{{ passwordSuccessMessage() }}</div>
+      }
+      @if (passwordMessage()) {
+        <div class="alert alert-danger">{{ passwordMessage() }}</div>
+      }
+
+      <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()">
+        <div class="row">
+          <div class="col-md-12 mb-3">
+            <label class="form-label">Current Password</label>
+            <input type="password" class="form-control" formControlName="currentPassword" />
+            @if (passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched) {
+              <small class="text-danger">Current password is required</small>
+            }
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label class="form-label">New Password</label>
+            <input type="password" class="form-control" formControlName="newPassword" />
+            @if (passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched) {
+              <small class="text-danger">New password must be at least 6 characters</small>
+            }
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Confirm New Password</label>
+            <input type="password" class="form-control" formControlName="confirmPassword" />
+            @if (passwordForm.hasError('mismatch') && passwordForm.get('confirmPassword')?.touched) {
+              <small class="text-danger">Passwords do not match</small>
+            }
+          </div>
+        </div>
+        
+        <div class="text-end">
+          <button type="submit" class="btn btn-warning" [disabled]="passwordForm.invalid">Change Password</button>
+        </div>
+      </form>
+    </app-card>
+  </div>
+</div>

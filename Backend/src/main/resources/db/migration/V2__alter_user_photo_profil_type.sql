@@ -1,0 +1,1 @@
+ALTER TABLE users ALTER COLUMN photo_profil TYPE TEXT;

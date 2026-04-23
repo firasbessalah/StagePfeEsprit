@@ -1,0 +1,167 @@
+<div class="pc-container">
+  <div class="pc-content">
+    <div class="page-header">
+      <div class="page-block">
+        <div class="row align-items-center">
+          <div class="col-md-12">
+            <div class="page-header-title">
+              <h5 class="m-b-10">User management</h5>
+            </div>
+            <ul class="breadcrumb">
+              <li class="breadcrumb-item"><a [routerLink]="['/dashboard']">Dashboard</a></li>
+              <li class="breadcrumb-item">Users</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    @if (error()) {
+      <div class="alert alert-danger" role="alert">{{ error() }}</div>
+    }
+
+    <div class="row">
+      <div class="col-12">
+        <app-card cardTitle="Users">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <button type="button" class="btn btn-primary" (click)="openAdd(addTpl)">Add user</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm" (click)="reload()" [disabled]="loading()">Refresh</button>
+          </div>
+
+          @if (loading()) {
+            <p class="text-muted mb-0">Loading…</p>
+          } @else {
+            <div class="table-responsive">
+              <table class="table table-hover mb-0">
+                <thead>
+                  <tr>
+                    <th>Photo</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Phone</th>
+                    <th class="text-end">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (u of users(); track u.id) {
+                    <tr>
+                      <td>
+                        <img
+                          class="rounded-circle"
+                          style="width: 40px; height: 40px; object-fit: cover"
+                          [src]="u.photoProfil || 'assets/images/user/avatar-1.jpg'"
+                          alt=""
+                        />
+                      </td>
+                      <td>{{ u.prenom }} {{ u.nom }}</td>
+                      <td>{{ u.email }}</td>
+                      <td>{{ u.role }}</td>
+                      <td>{{ u.telephone || '—' }}</td>
+                      <td class="text-end">
+                        <button type="button" class="btn btn-sm btn-outline-primary me-1" (click)="openEdit(u, editTpl)">Edit</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteUser(u)">Delete</button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </app-card>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #addTpl let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Add user</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <div class="row g-2">
+      <div class="col-md-6">
+        <label class="form-label">Prenom</label>
+        <input class="form-control" [(ngModel)]="addModel.prenom" name="addPrenom" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Nom</label>
+        <input class="form-control" [(ngModel)]="addModel.nom" name="addNom" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Email</label>
+        <input class="form-control" type="email" [(ngModel)]="addModel.email" name="addEmail" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Password</label>
+        <input class="form-control" type="password" [(ngModel)]="addModel.password" name="addPassword" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Role</label>
+        <select class="form-select" [(ngModel)]="addModel.role" name="addRole">
+          @for (r of roles; track r) {
+            <option [ngValue]="r">{{ r }}</option>
+          }
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Telephone</label>
+        <input class="form-control" [(ngModel)]="addModel.telephone" name="addTel" />
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="submitAdd()">Create</button>
+  </div>
+</ng-template>
+
+<ng-template #editTpl let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Edit user</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  </div>
+  @if (editModel) {
+    @let m = editModel;
+    <div class="modal-body">
+      <div class="row g-2">
+        <div class="col-12 text-center mb-3">
+          <img
+            class="rounded-circle img-thumbnail"
+            style="width: 96px; height: 96px; object-fit: cover"
+            [src]="m.photoProfil || 'assets/images/user/avatar-1.jpg'"
+            alt=""
+          />
+          <div class="mt-2">
+            <input type="file" accept="image/*" class="form-control form-control-sm" (change)="onEditPhotoSelected($event)" />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Prenom</label>
+          <input class="form-control" [(ngModel)]="m.prenom" name="edPrenom" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Nom</label>
+          <input class="form-control" [(ngModel)]="m.nom" name="edNom" />
+        </div>
+        <div class="col-12">
+          <label class="form-label">Email (read-only)</label>
+          <input class="form-control" [ngModel]="m.email" name="edEmail" disabled />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Telephone</label>
+          <input class="form-control" [(ngModel)]="m.telephone" name="edTel" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Role (read-only)</label>
+          <input class="form-control" [ngModel]="m.role" name="edRole" disabled />
+        </div>
+      </div>
+    </div>
+  }
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="submitEdit()">Save</button>
+  </div>
+</ng-template>
