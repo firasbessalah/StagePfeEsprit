@@ -6,25 +6,48 @@ import com.example.pfeporject.config.JwtService;
 import com.example.pfeporject.dto.AuthRequest;
 import com.example.pfeporject.dto.AuthResponse;
 import com.example.pfeporject.dto.UserDTO;
+import com.example.pfeporject.dto.VerifyEmailRequest;
 import com.example.pfeporject.entity.User;
+import com.example.pfeporject.entity.VerificationToken;
+import com.example.pfeporject.exception.AccountNotVerifiedException;
+import com.example.pfeporject.exception.DuplicateEmailException;
+import com.example.pfeporject.exception.InvalidTokenException;
 import com.example.pfeporject.repository.UserRepository;
+import com.example.pfeporject.repository.VerificationTokenRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClient;
+
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private static final RestClient GOOGLE_REST = RestClient.create("https://oauth2.googleapis.com");
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final VerificationTokenRepository verificationTokenRepository;
+    private final EmailService emailService;
+
+    @Value("${google.client-id:}")
+    private String googleClientId;
+
     // ─── REGISTER ───────────────────────────────────────────
+    @Transactional
     public UserDTO register(User user) {
 
         // 1. Vérifier si l'email existe déjà
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new RuntimeException("Email déjà utilisé !");
+        if (checkEmailExists(user.getEmail())) {
+            throw new DuplicateEmailException("Email déjà utilisé !");
         }
 
         // 2. Encoder le mot de passe avant de sauvegarder
@@ -35,11 +58,57 @@ public class UserService {
             user.setRole(User.Role.LOCATAIRE);
         }
 
-        // 4. Sauvegarder dans la base de données
+        // 4. Account is NOT active until email is verified
+        user.setEnabled(false);
+
+        // 5. Sauvegarder dans la base de données
         User saved = userRepository.save(user);
 
-        // 5. Retourner le DTO (sans le password)
+        // 6. Generate 6-digit code (expires in 15 minutes)
+        String code = generateVerificationCode();
+        VerificationToken verificationToken = VerificationToken.builder()
+                .token(code)
+                .user(saved)
+                .expiryDate(LocalDateTime.now().plusMinutes(15))
+                .build();
+        verificationTokenRepository.save(verificationToken);
+
+        // 7. Send verification email
+        emailService.sendVerificationEmail(saved.getEmail(), code);
+
+        // 8. Retourner le DTO (sans le password)
         return toDTO(saved);
+    }
+
+    public boolean checkEmailExists(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    // ─── VERIFY EMAIL ───────────────────────────────────────
+    @Transactional
+    public void verifyEmail(VerifyEmailRequest request) {
+        String email = request.getEmail().trim();
+        String code = request.getCode().trim();
+
+        VerificationToken verificationToken = verificationTokenRepository
+                .findByUserEmailIgnoreCaseAndToken(email, code)
+                .orElseThrow(() -> new InvalidTokenException("Email ou code de vérification incorrect."));
+
+        if (verificationToken.isExpired()) {
+            verificationTokenRepository.delete(verificationToken);
+            throw new InvalidTokenException("Le code a expiré. Veuillez vous réinscrire pour en recevoir un nouveau.");
+        }
+
+        User user = verificationToken.getUser();
+        user.setEnabled(true);
+        userRepository.save(user);
+
+        verificationTokenRepository.delete(verificationToken);
+    }
+
+    private static String generateVerificationCode() {
+        int n = 100_000 + SECURE_RANDOM.nextInt(900_000);
+        return String.valueOf(n);
     }
 
     // ─── LOGIN ──────────────────────────────────────────────
@@ -55,11 +124,87 @@ public class UserService {
             throw new RuntimeException("Mot de passe incorrect !");
         }
 
-        // 3. Générer le token JWT
+        // 3. Check if account is verified
+        if (!user.getEnabled()) {
+            throw new AccountNotVerifiedException("Votre compte n'est pas encore vérifié. Veuillez vérifier votre email.");
+        }
+
+        // 4. Générer le token JWT
         String token = jwtService.generateToken(user.getEmail());
 
-        // 4. Retourner token + user
+        // 5. Retourner token + user
         return new AuthResponse(token, toDTO(user));
+    }
+
+    @Transactional
+    public AuthResponse loginWithGoogle(String credential, String requestedRole) {
+        if (googleClientId == null || googleClientId.isBlank()) {
+            throw new RuntimeException("Google login n'est pas configuré sur le serveur.");
+        }
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> tokenInfo = GOOGLE_REST.get()
+                .uri(uriBuilder -> uriBuilder.path("/tokeninfo").queryParam("id_token", credential).build())
+                .retrieve()
+                .body(Map.class);
+
+        if (tokenInfo == null) {
+            throw new RuntimeException("Réponse Google invalide.");
+        }
+
+        String audience = String.valueOf(tokenInfo.getOrDefault("aud", ""));
+        if (!googleClientId.equals(audience)) {
+            throw new RuntimeException("Google token audience invalide.");
+        }
+
+        String email = String.valueOf(tokenInfo.getOrDefault("email", "")).trim();
+        if (email.isEmpty()) {
+            throw new RuntimeException("Email Google introuvable.");
+        }
+
+        String verified = String.valueOf(tokenInfo.getOrDefault("email_verified", "false"));
+        if (!"true".equalsIgnoreCase(verified)) {
+            throw new RuntimeException("Le compte Google doit avoir un email vérifié.");
+        }
+
+        String givenName = String.valueOf(tokenInfo.getOrDefault("given_name", "")).trim();
+        String familyName = String.valueOf(tokenInfo.getOrDefault("family_name", "")).trim();
+        String fullName = String.valueOf(tokenInfo.getOrDefault("name", "")).trim();
+
+        User user = userRepository.findByEmailIgnoreCase(email).orElseGet(() -> {
+            User.Role role = resolveGoogleRole(requestedRole);
+            User created = new User();
+            created.setEmail(email);
+            created.setNom(!familyName.isBlank() ? familyName : (!fullName.isBlank() ? fullName : "Google"));
+            created.setPrenom(!givenName.isBlank() ? givenName : "User");
+            created.setPassword(passwordEncoder.encode("google-auth-" + java.util.UUID.randomUUID()));
+            created.setRole(role);
+            created.setEnabled(true);
+            return userRepository.save(created);
+        });
+
+        if (!user.getEnabled()) {
+            user.setEnabled(true);
+            userRepository.save(user);
+        }
+
+        String token = jwtService.generateToken(user.getEmail());
+        return new AuthResponse(token, toDTO(user));
+    }
+
+    private User.Role resolveGoogleRole(String requestedRole) {
+        if (requestedRole == null || requestedRole.isBlank()) {
+            return User.Role.LOCATAIRE;
+        }
+        try {
+            User.Role role = User.Role.valueOf(requestedRole.trim().toUpperCase());
+            if (role == User.Role.ADMIN) {
+                throw new RuntimeException("Le rôle ADMIN n'est pas autorisé pour Google signup.");
+            }
+            return role;
+        } catch (IllegalArgumentException ex) {
+            throw new RuntimeException("Rôle invalide pour Google signup.");
+        }
     }
 
     // ─── GET USER BY ID ─────────────────────────────────────

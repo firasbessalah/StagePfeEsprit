@@ -26,6 +26,29 @@ const routes: Routes = [
       {
         path: 'register',
         loadComponent: () => import('./demo/pages/authentication/auth-signup/auth-signup.component').then((c) => c.AuthSignupComponent)
+      },
+      {
+        path: 'verify-email',
+        loadComponent: () => import('./demo/pages/authentication/verify-email/verify-email.component').then((c) => c.VerifyEmailComponent)
+      },
+      {
+        path: 'forgot-password',
+        loadComponent: () =>
+          import('./demo/pages/authentication/forgot-password/forgot-password.component').then((c) => c.ForgotPasswordComponent)
+      },
+      {
+        path: 'reset-password/new',
+        loadComponent: () =>
+          import('./demo/pages/authentication/reset-password-new/reset-password-new.component').then(
+            (c) => c.ResetPasswordNewComponent
+          )
+      },
+      {
+        path: 'reset-password',
+        loadComponent: () =>
+          import('./demo/pages/authentication/reset-password-verify/reset-password-verify.component').then(
+            (c) => c.ResetPasswordVerifyComponent
+          )
       }
     ]
   },

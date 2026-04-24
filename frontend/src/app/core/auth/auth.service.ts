@@ -37,8 +37,38 @@ export class AuthService {
     );
   }
 
-  register(payload: RegisterRequest): Observable<UserDTO> {
-    return this.http.post<UserDTO>(`${environment.apiBaseUrl}/api/auth/register`, payload);
+  loginWithGoogle(credential: string, role: 'LOCATAIRE' | 'BAILLEUR'): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${environment.apiBaseUrl}/api/auth/google`, { credential, role }).pipe(
+      tap((res) => {
+        this.setAuth(res.token, res.user);
+      })
+    );
+  }
+
+  register(payload: RegisterRequest): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${environment.apiBaseUrl}/api/auth/register`, payload);
+  }
+
+  checkEmail(email: string): Observable<{ exists: boolean }> {
+    return this.http.get<{ exists: boolean }>(`${environment.apiBaseUrl}/api/auth/check-email`, {
+      params: { email }
+    });
+  }
+
+  verifyEmail(payload: { email: string; code: string }): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${environment.apiBaseUrl}/api/auth/verify`, payload);
+  }
+
+  forgotPassword(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${environment.apiBaseUrl}/api/auth/forgot-password`, { email });
+  }
+
+  verifyResetCode(payload: { email: string; code: string }): Observable<{ resetToken: string }> {
+    return this.http.post<{ resetToken: string }>(`${environment.apiBaseUrl}/api/auth/reset-password/verify-code`, payload);
+  }
+
+  confirmResetPassword(payload: { resetToken: string; newPassword: string }): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${environment.apiBaseUrl}/api/auth/reset-password/confirm`, payload);
   }
 
   logout(): void {

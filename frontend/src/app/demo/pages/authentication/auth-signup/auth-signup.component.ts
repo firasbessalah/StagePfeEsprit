@@ -6,6 +6,7 @@ import { email, Field, form, minLength, required } from '@angular/forms/signals'
 
 // project import
 import { SharedModule } from 'src/app/theme/shared/shared.module';
+import { PendingSignupService } from 'src/app/core/auth/pending-signup.service';
 import { AuthService } from 'src/app/core/auth/auth.service';
 
 @Component({
@@ -16,12 +17,15 @@ import { AuthService } from 'src/app/core/auth/auth.service';
 })
 export class AuthSignupComponent {
   private cd = inject(ChangeDetectorRef);
-  private auth = inject(AuthService);
   private router = inject(Router);
+  private pendingSignup = inject(PendingSignupService);
+  private auth = inject(AuthService);
 
   submitted = signal(false);
   error = signal('');
+  loading = signal(false);
   showPassword = signal(false);
+  selectedRole = signal<'LOCATAIRE' | 'BAILLEUR'>('LOCATAIRE');
 
   registerModel = signal<{ email: string; password: string; nom: string; prenom: string }>({
     email: '',
@@ -54,27 +58,33 @@ export class AuthSignupComponent {
     }
 
     const model = this.registerModel();
-    this.auth
-      .register({
-        nom: model.nom,
-        prenom: model.prenom,
-        email: model.email,
-        password: model.password
-      })
-      .subscribe({
-        next: () => {
-          this.router.navigateByUrl('/login');
-        },
-        error: (err) => {
-          const message =
-            (typeof err?.error === 'string' && err.error) ||
-            err?.error?.message ||
-            err?.message ||
-            'Register failed';
-          this.error.set(String(message));
-          this.cd.detectChanges();
+    this.loading.set(true);
+    this.auth.checkEmail(model.email).subscribe({
+      next: (res) => {
+        this.loading.set(false);
+        if (res.exists) {
+          this.error.set('Cet email est déjà utilisé.');
+        } else {
+          const payload = {
+            nom: model.nom,
+            prenom: model.prenom,
+            email: model.email,
+            password: model.password,
+            role: this.selectedRole()
+          };
+          this.pendingSignup.stashForVerify(payload);
+          this.router.navigate(['/verify-email'], { queryParams: { email: model.email } });
         }
-      });
+      },
+      error: (err) => {
+        this.loading.set(false);
+        this.error.set('Une erreur est survenue lors de la vérification de l\'email.');
+      }
+    });
+  }
+
+  selectRole(role: 'LOCATAIRE' | 'BAILLEUR') {
+    this.selectedRole.set(role);
   }
 
   togglePasswordVisibility() {

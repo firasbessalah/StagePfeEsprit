@@ -4,14 +4,22 @@ package com.example.pfeporject.controller;
 
 import com.example.pfeporject.dto.AuthRequest;
 import com.example.pfeporject.dto.AuthResponse;
+import com.example.pfeporject.dto.ForgotPasswordRequest;
+import com.example.pfeporject.dto.GoogleLoginRequest;
+import com.example.pfeporject.dto.ResetPasswordConfirmRequest;
+import com.example.pfeporject.dto.ResetPasswordVerifyRequest;
 import com.example.pfeporject.dto.UserDTO;
+import com.example.pfeporject.dto.VerifyEmailRequest;
 import com.example.pfeporject.entity.User;
+import com.example.pfeporject.service.PasswordResetService;
 import com.example.pfeporject.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -20,13 +28,30 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final PasswordResetService passwordResetService;
 
     // ─── REGISTER ────────────────────────────────────────────
     // POST http://localhost:8080/api/auth/register
     @PostMapping("/register")
-    public ResponseEntity<UserDTO> register(@Valid @RequestBody User user) {
-        UserDTO saved = userService.register(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+    public ResponseEntity<Map<String, String>> register(@Valid @RequestBody User user) {
+        userService.register(user);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("message", "Inscription réussie ! Un code de vérification a été envoyé à votre email."));
+    }
+
+    // GET http://localhost:8080/api/auth/check-email?email=...
+    @GetMapping("/check-email")
+    public ResponseEntity<Map<String, Boolean>> checkEmail(@RequestParam String email) {
+        boolean exists = userService.checkEmailExists(email);
+        return ResponseEntity.ok(Map.of("exists", exists));
+    }
+
+    // ─── VERIFY EMAIL ────────────────────────────────────────
+    // POST http://localhost:8080/api/auth/verify  { "email": "...", "code": "123456" }
+    @PostMapping("/verify")
+    public ResponseEntity<Map<String, String>> verifyEmail(@Valid @RequestBody VerifyEmailRequest request) {
+        userService.verifyEmail(request);
+        return ResponseEntity.ok(Map.of("message", "Votre email a été vérifié avec succès ! Vous pouvez maintenant vous connecter."));
     }
 
     // ─── LOGIN ───────────────────────────────────────────────
@@ -34,6 +59,33 @@ public class UserController {
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
         AuthResponse response = userService.login(request);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/google")
+    public ResponseEntity<AuthResponse> googleLogin(@Valid @RequestBody GoogleLoginRequest request) {
+        AuthResponse response = userService.loginWithGoogle(request.getCredential(), request.getRole());
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Map<String, String>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        passwordResetService.requestReset(request.getEmail());
+        return ResponseEntity.ok(Map.of(
+                "message",
+                "Si cette adresse est associée à un compte, un code de réinitialisation vient d'y être envoyé."
+        ));
+    }
+
+    @PostMapping("/reset-password/verify-code")
+    public ResponseEntity<Map<String, String>> verifyResetCode(@Valid @RequestBody ResetPasswordVerifyRequest request) {
+        String resetToken = passwordResetService.verifyCode(request);
+        return ResponseEntity.ok(Map.of("resetToken", resetToken));
+    }
+
+    @PostMapping("/reset-password/confirm")
+    public ResponseEntity<Map<String, String>> confirmResetPassword(@Valid @RequestBody ResetPasswordConfirmRequest request) {
+        passwordResetService.confirmNewPassword(request);
+        return ResponseEntity.ok(Map.of("message", "Votre mot de passe a été modifié. Vous pouvez vous connecter."));
     }
     // ─── GET USER PAR ID ─────────────────────────────────────
     // GET http://localhost:8080/api/auth/users/1

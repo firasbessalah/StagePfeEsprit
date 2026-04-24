@@ -13,6 +13,7 @@ export interface UserDTO {
 export interface AuthRequest {
   email: string;
   password: string;
+  captchaToken?: string;
 }
 
 export interface AuthResponse {

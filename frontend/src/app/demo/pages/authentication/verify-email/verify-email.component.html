@@ -1,0 +1,100 @@
+<div class="auth-wrapper">
+  <div class="auth-content">
+    <div class="auth-bg">
+      <span class="r"></span>
+      <span class="r s"></span>
+      <span class="r s"></span>
+      <span class="r"></span>
+    </div>
+    <div class="card">
+      <div class="card-body text-center">
+        @if (registerSetupLoading()) {
+          <div class="mb-4">
+            <i class="feather icon-loader auth-icon spin-icon"></i>
+          </div>
+          <h3 class="mb-3">Presque terminé…</h3>
+          <p class="text-muted mb-2">Création de votre compte et envoi du code à <strong>{{ email }}</strong>.</p>
+          <p class="text-muted small mb-0">Cela peut prendre quelques secondes (envoi de l’email).</p>
+        }
+
+        @if (!registerSetupLoading() && registerSetupError()) {
+          <div class="mb-4">
+            <i class="feather icon-x-circle auth-icon text-danger"></i>
+          </div>
+          <h3 class="mb-3 text-danger">Inscription impossible</h3>
+          <p class="text-muted text-start mb-4">{{ registerSetupError() }}</p>
+          <a [routerLink]="['/register']" class="btn btn-primary shadow-2">Retour à l’inscription</a>
+        }
+
+        @if (!registerSetupLoading() && !registerSetupError() && !success()) {
+          <div class="mb-4">
+            <i class="feather icon-mail auth-icon"></i>
+          </div>
+          <h3 class="mb-2">Vérifier votre email</h3>
+          <p class="text-muted mb-4">
+            Saisissez l’adresse email utilisée à l’inscription et le code à 6 chiffres reçu par email.
+          </p>
+
+          <div class="text-start mb-3">
+            <label class="form-label" for="verify-email">Email</label>
+            <input
+              id="verify-email"
+              type="email"
+              class="form-control"
+              name="email"
+              [(ngModel)]="email"
+              autocomplete="email"
+              [disabled]="verifyLoading()"
+              placeholder="vous@exemple.com"
+            />
+          </div>
+          <div class="text-start mb-4">
+            <label class="form-label" for="verify-code">Code de vérification</label>
+            <input
+              id="verify-code"
+              type="text"
+              class="form-control text-center fs-4 letter-spacing-code"
+              name="code"
+              [(ngModel)]="code"
+              inputmode="numeric"
+              maxlength="6"
+              pattern="[0-9]*"
+              autocomplete="one-time-code"
+              [disabled]="verifyLoading()"
+              placeholder="000000"
+            />
+          </div>
+
+          @if (message() && !verifyLoading()) {
+            <div class="alert alert-danger text-start mb-3" role="alert">
+              {{ message() }}
+            </div>
+          }
+
+          <button type="button" class="btn btn-primary shadow-2 mb-3 w-100" [disabled]="verifyLoading()" (click)="submit()">
+            @if (verifyLoading()) {
+              <span>Vérification...</span>
+            } @else {
+              <span>Vérifier</span>
+            }
+          </button>
+
+          <p class="mb-0 text-muted">
+            <a [routerLink]="['/login']">Retour à la connexion</a>
+            &nbsp;·&nbsp;
+            <a [routerLink]="['/register']">S'inscrire</a>
+          </p>
+        }
+
+        @if (success()) {
+          <div class="mb-4">
+            <i class="feather icon-check-circle auth-icon text-success"></i>
+          </div>
+          <h3 class="mb-4 text-success">Email vérifié !</h3>
+          <p class="text-muted mb-4">{{ message() }}</p>
+          <a [routerLink]="['/login']" class="btn btn-primary shadow-2">Se connecter</a>
+        }
+      </div>
+    </div>
+  </div>
+</div>

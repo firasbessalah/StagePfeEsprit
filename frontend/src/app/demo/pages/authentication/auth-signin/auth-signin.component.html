@@ -13,6 +13,12 @@
             <i class="feather icon-unlock auth-icon"></i>
           </div>
           <h3 class="mb-4">Login</h3>
+
+          @if (resetSuccess()) {
+            <div class="alert alert-success text-start mb-3" role="alert">
+              Votre mot de passe a été réinitialisé. Vous pouvez vous connecter avec le nouveau mot de passe.
+            </div>
+          }
           <div class="input-group mb-3">
             <input
               type="email"
@@ -74,10 +80,50 @@
               <label for="checkbox-fill-a1" class="cr">Save Details</label>
             </div>
           </div>
-          <button type="submit" class="btn btn-primary mb-4">Login</button>
+          <div class="mb-3 text-start recaptcha-container">
+            <div id="recaptcha-container"></div>
+            @if (captchaInvalid()) {
+              <div class="invalid-feedback d-block">Please verify you're not a robot.</div>
+            }
+          </div>
+          <button type="submit" class="btn btn-primary mb-4" [disabled]="submitting()">
+            @if (submitting()) {
+              Logging in...
+            } @else {
+              Login
+            }
+          </button>
+
+          @if (googleEnabled) {
+            <div class="text-muted mb-3 mt-1">or login with Google</div>
+            <div class="mb-2">
+              <label class="d-block text-muted mb-2">Google account type</label>
+              <div class="role-selector d-flex justify-content-center gap-2 mb-3">
+                <button
+                  type="button"
+                  class="role-btn"
+                  [class.active]="selectedGoogleRole() === 'LOCATAIRE'"
+                  (click)="selectGoogleRole('LOCATAIRE')"
+                >
+                  Locataire
+                </button>
+                <button
+                  type="button"
+                  class="role-btn"
+                  [class.active]="selectedGoogleRole() === 'BAILLEUR'"
+                  (click)="selectGoogleRole('BAILLEUR')"
+                >
+                  Bailleur
+                </button>
+              </div>
+            </div>
+            <div class="mb-4 d-flex justify-content-center">
+              <div id="google-signin-container"></div>
+            </div>
+          }
           <p class="mb-2 text-muted">
-            Forgot password?
-            <a [routerLink]="['#']">Reset</a>
+            Mot de passe oublié ?
+            <a [routerLink]="['/forgot-password']">Réinitialiser</a>
           </p>
         </form>
         <p class="mb-0 text-muted">

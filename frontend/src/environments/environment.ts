@@ -8,7 +8,9 @@ export const environment = {
   appVersion: packageInfo.version,
   production: false,
   /** Empty in dev so `ng serve` + `proxy.conf.json` forwards `/api` → backend (no browser CORS). */
-  apiBaseUrl: 'http://localhost:8080'
+  apiBaseUrl: '',
+  recaptchaSiteKey: '6Lf7r-EqAAAAAO4wc5S9o3ZhF5ronTLKiptJZFKp',
+  googleClientId: '157705461336-rfp316ppj82jf6d6aonila5bbfm0sivj.apps.googleusercontent.com'
 };
 /*
  * For easier debugging in development mode, you can import the following file

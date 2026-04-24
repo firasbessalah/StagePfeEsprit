@@ -1,0 +1,29 @@
+:host {
+  display: block;
+}
+
+.letter-spacing-code {
+  letter-spacing: 0.35em;
+  font-variant-numeric: tabular-nums;
+}
+
+.text-success {
+  color: #2ca961 !important;
+}
+
+.text-danger {
+  color: #dc3545 !important;
+}
+
+.spin-icon {
+  animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

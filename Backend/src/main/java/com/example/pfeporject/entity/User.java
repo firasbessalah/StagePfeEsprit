@@ -3,6 +3,7 @@ package com.example.pfeporject.entity;
 
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -41,6 +42,11 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Column(nullable = false)
+    @Builder.Default
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Boolean enabled = true;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Annonce> annonces;
