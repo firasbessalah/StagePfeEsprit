@@ -1,0 +1,250 @@
+<div class="booking-layout">
+  <!-- Header -->
+  <header class="booking-header">
+    <div class="container header-container">
+      <div class="logo">
+        <a routerLink="/">BookingPFE</a>
+      </div>
+      <div class="header-actions d-flex align-items-center">
+        <!-- Language Switcher -->
+        <div class="dropdown me-3" ngbDropdown>
+          <button class="btn btn-primary dropdown-toggle d-flex align-items-center shadow-sm" ngbDropdownToggle style="border-radius: 50px; font-size: 0.82rem; font-weight: 600; padding: 6px 16px; background-color: #006ce4; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 10px rgba(0,0,0,0.12);">
+            <i class="feather icon-globe me-2" style="font-size: 0.95rem;"></i>
+            <span>{{ activeLangName() }}</span>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')" style="width: 100%; border: none; background: transparent;">
+              <span>English</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'en'"></i>
+            </button>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')" style="width: 100%; border: none; background: transparent;">
+              <span>Français</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'fr'"></i>
+            </button>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')" style="width: 100%; border: none; background: transparent;">
+              <span>العربية</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'ar'"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Authenticated -->
+        <ng-container *ngIf="isAuthenticated()">
+          <button class="btn btn-outline-light me-2" (click)="onAddAnnonce()" *ngIf="user()?.role !== 'LOCATAIRE'">{{ 'LIST_PROPERTY' | translate }}</button>
+          <div class="user-dropdown dropdown" ngbDropdown>
+            <button class="btn btn-transparent dropdown-toggle text-dark d-flex align-items-center" ngbDropdownToggle style="border: none; background: transparent; padding: 0;">
+              <img [src]="user()?.photoProfil || 'assets/images/user/avatar-1.jpg'" alt="User Avatar" class="rounded-circle me-2" width="40" height="40" style="object-fit: cover; border: 2px solid #febb02;">
+              <div class="text-start me-2">
+                <div class="fw-bold" style="line-height: 1.2;">{{ user()?.nom }} {{ user()?.prenom }}</div>
+                <div class="small text-muted" style="font-size: 0.75rem; color: #febb02 !important; font-weight: 600;">Level 1 Member</div>
+              </div>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu style="min-width: 250px;">
+              <!-- Admin Links -->
+              <a class="dropdown-item py-2" routerLink="/dashboard" *ngIf="user()?.role === 'ADMIN'">
+                <i class="feather icon-monitor me-3 fs-5 align-middle"></i> Admin Dashboard
+              </a>
+              
+              <!-- Regular User Links -->
+              <a class="dropdown-item py-2" routerLink="/my-profile">
+                <i class="feather icon-user me-3 fs-5 align-middle"></i> {{ 'MY_ACCOUNT' | translate }}
+              </a>
+              <a class="dropdown-item py-2" routerLink="/reservations" *ngIf="user()?.role !== 'ADMIN'">
+                <i class="feather icon-briefcase me-3 fs-5 align-middle"></i> {{ 'RESERVATIONS' | translate }}
+              </a>
+              <a class="dropdown-item py-2" routerLink="/messages" *ngIf="user()?.role !== 'ADMIN'">
+                <i class="feather icon-message-circle me-3 fs-5 align-middle"></i> {{ 'MESSAGES' | translate }}
+              </a>
+
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item py-2 text-danger" (click)="logout()" style="cursor: pointer;">
+                <i class="feather icon-log-out me-3 fs-5 align-middle"></i> {{ 'LOGOUT' | translate }}
+              </a>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </header>
+
+  <!-- Subheader Breadcrumb -->
+  <div class="bg-gray py-2">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a routerLink="/">{{ 'HOME' | translate }}</a></li>
+          <li class="breadcrumb-item active" aria-current="page">{{ 'MY_ACCOUNT' | translate }}</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="booking-main pb-5">
+    <div class="container pt-4">
+      <h2 class="mb-4 fw-bold text-dark">Personal details</h2>
+      <p class="text-muted mb-4">Update your information and find out how it's used.</p>
+      
+      <div class="row">
+        <div class="col-xl-4 col-md-6 mb-4">
+          <div class="card shadow-sm border-0">
+            <div class="card-body">
+              <h5 class="card-title fw-bold mb-3">Profile Photo</h5>
+              @if (user()) {
+                @let u = user()!;
+                <div class="text-center">
+                  <img
+                    class="rounded-circle img-thumbnail mb-3"
+                    style="width: 150px; height: 150px; object-fit: cover"
+                    [src]="u.photoProfil || 'assets/images/user/avatar-1.jpg'"
+                    alt="Profile"
+                  />
+                  <h5 class="mb-1">{{ u.prenom }} {{ u.nom }}</h5>
+                  <p class="mb-3"><span class="badge bg-primary">{{ u.role }}</span></p>
+                  
+                  <div class="text-start">
+                    <label class="form-label text-muted small">Change Profile Photo</label>
+                    <input type="file" accept="image/*" class="form-control form-control-sm" (change)="onProfilePhotoSelected($event)" />
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-xl-8 col-md-6">
+          <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body">
+              <h5 class="card-title fw-bold mb-3">Edit Profile Information</h5>
+              @if (successMessage()) {
+                <div class="alert alert-success">{{ successMessage() }}</div>
+              }
+              @if (profileMessage()) {
+                <div class="alert alert-danger">{{ profileMessage() }}</div>
+              }
+
+              <form [formGroup]="profileForm" (ngSubmit)="onSaveProfile()">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label text-muted small">First Name</label>
+                    <input type="text" class="form-control" formControlName="prenom" />
+                    @if (profileForm.get('prenom')?.invalid && profileForm.get('prenom')?.touched) {
+                      <small class="text-danger">First name is required</small>
+                    }
+                  </div>
+                  
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label text-muted small">Last Name</label>
+                    <input type="text" class="form-control" formControlName="nom" />
+                    @if (profileForm.get('nom')?.invalid && profileForm.get('nom')?.touched) {
+                      <small class="text-danger">Last name is required</small>
+                    }
+                  </div>
+                  
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label text-muted small">Email address</label>
+                    <input type="email" class="form-control" formControlName="email" />
+                    <small class="text-muted" style="font-size: 0.8rem;">This is the email address you use to sign in. It can't be changed.</small>
+                  </div>
+                  
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label text-muted small">Phone Number</label>
+                    <input type="text" class="form-control" formControlName="telephone" />
+                  </div>
+                </div>
+                
+                <div class="text-end mt-2">
+                  <button type="submit" class="btn btn-primary" [disabled]="profileForm.invalid">{{ 'SAVE' | translate }}</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body">
+              <h5 class="card-title fw-bold mb-3">Security & password</h5>
+              @if (passwordSuccessMessage()) {
+                <div class="alert alert-success">{{ passwordSuccessMessage() }}</div>
+              }
+              @if (passwordMessage()) {
+                <div class="alert alert-danger">{{ passwordMessage() }}</div>
+              }
+
+              <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()">
+                <div class="row">
+                  <div class="col-md-12 mb-3">
+                    <label class="form-label text-muted small">Current Password</label>
+                    <input type="password" class="form-control" formControlName="currentPassword" />
+                    @if (passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched) {
+                      <small class="text-danger">Current password is required</small>
+                    }
+                  </div>
+                  
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label text-muted small">New Password</label>
+                    <input type="password" class="form-control" formControlName="newPassword" />
+                    @if (passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched) {
+                      <small class="text-danger">New password must be at least 6 characters</small>
+                    }
+                  </div>
+                  
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label text-muted small">Confirm New Password</label>
+                    <input type="password" class="form-control" formControlName="confirmPassword" />
+                    @if (passwordForm.hasError('mismatch') && passwordForm.get('confirmPassword')?.touched) {
+                      <small class="text-danger">Passwords do not match</small>
+                    }
+                  </div>
+                </div>
+                
+                <div class="text-end mt-2">
+                  <button type="submit" class="btn btn-outline-primary" [disabled]="passwordForm.invalid">Update password</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="booking-footer">
+    <div class="container py-5">
+      <div class="row g-4">
+        <div class="col-md-3">
+          <h5 class="text-white mb-3">BookingPFE</h5>
+          <p class="text-white-50 small">Your trusted platform for finding the best stays and apartments in Tunisia.</p>
+        </div>
+        <div class="col-md-3">
+          <h6 class="text-white mb-3">Quick Links</h6>
+          <ul class="list-unstyled">
+            <li><a routerLink="/" class="text-white-50 text-decoration-none">Home</a></li>
+            <li><a href="javascript:void(0)" (click)="onAddAnnonce()" class="text-white-50 text-decoration-none">List your property</a></li>
+            <li><a href="javascript:void(0)" class="text-white-50 text-decoration-none">About Us</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3">
+          <h6 class="text-white mb-3">Support</h6>
+          <ul class="list-unstyled">
+            <li><a href="javascript:void(0)" class="text-white-50 text-decoration-none">Help Center</a></li>
+            <li><a href="javascript:void(0)" class="text-white-50 text-decoration-none">Terms of Service</a></li>
+            <li><a href="javascript:void(0)" class="text-white-50 text-decoration-none">Privacy Policy</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3">
+          <h6 class="text-white mb-3">Contact</h6>
+          <ul class="list-unstyled">
+            <li class="text-white-50 mb-2"><i class="feather icon-mail me-2"></i> support@bookingpfe.com</li>
+            <li class="text-white-50 mb-2"><i class="feather icon-phone me-2"></i> +216 71 123 456</li>
+            <li class="text-white-50"><i class="feather icon-map-pin me-2"></i> Tunis, Tunisia</li>
+          </ul>
+        </div>
+      </div>
+      <hr class="border-secondary my-4">
+      <div class="text-center text-white-50 small">
+        &copy; 2026 BookingPFE. All rights reserved.
+      </div>
+    </div>
+  </footer>
+</div>

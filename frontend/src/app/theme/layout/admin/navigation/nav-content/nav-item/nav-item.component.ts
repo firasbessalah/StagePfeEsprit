@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 import { NavigationItem } from '../../navigation';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { AuthService } from 'src/app/core/auth/auth.service';
+import { TranslationService } from 'src/app/core/services/translation.service';
 
 @Component({
   selector: 'app-nav-item',
@@ -18,12 +19,26 @@ export class NavItemComponent {
   item = input<NavigationItem>();
 
   private auth = inject(AuthService);
+  private translationService = inject(TranslationService);
 
   visible = computed(() => {
     const it = this.item();
     const roles = it?.roles;
     if (!roles?.length) return true;
     return this.auth.hasRole(roles);
+  });
+
+  getTranslatedTitle = computed(() => {
+    const it = this.item();
+    if (!it) return '';
+    const id = it.id;
+    if (id === 'dashboard') return this.translationService.translate('DASHBOARD');
+    if (id === 'home') return this.translationService.translate('HOME');
+    if (id === 'user-management') return this.translationService.translate('USER_MANAGE');
+    if (id === 'annonce-management') return this.translationService.translate('ANNONCE_MANAGE');
+    if (id === 'reservation-management') return this.translationService.translate('RESERVATIONS');
+    if (id === 'messages') return this.translationService.translate('MESSAGES');
+    return it.title || '';
   });
 
   // public method

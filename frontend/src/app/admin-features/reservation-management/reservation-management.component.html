@@ -1,0 +1,71 @@
+<div class="row">
+  <div class="col-sm-12">
+    <app-card cardTitle="Reservations Management" blockClass="table-border-style">
+      
+      <div *ngIf="loading()" class="text-center my-4">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      
+      <div *ngIf="error()" class="alert alert-danger">
+        {{ error() }}
+      </div>
+
+      <div class="table-responsive" *ngIf="!loading() && !error()">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Property</th>
+              <th>Applicant</th>
+              <th>Dates</th>
+              <th>Message</th>
+              <th>Total Price</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let res of reservations()">
+              <td><span class="fw-bold">{{ res.annonceTitre }}</span></td>
+              <td>{{ res.userPrenom }} {{ res.userNom }}</td>
+              <td>
+                <div class="small">In: {{ res.dateDebut | date:'shortDate' }}</div>
+                <div class="small">Out: {{ res.dateFin | date:'shortDate' }}</div>
+              </td>
+              <td style="max-width: 200px;" class="text-truncate" [title]="res.message || 'No message'">
+                {{ res.message || '-' }}
+              </td>
+              <td>{{ res.prixTotal }} TND</td>
+              <td>
+                <span class="badge" 
+                      [ngClass]="{
+                        'bg-warning text-dark': res.statut === 'EN_ATTENTE',
+                        'bg-success': res.statut === 'CONFIRMEE',
+                        'bg-danger': res.statut === 'ANNULEE',
+                        'bg-secondary': res.statut === 'TERMINEE'
+                      }">
+                  {{ res.statut }}
+                </span>
+              </td>
+              <td>
+                <div class="btn-group btn-group-sm" *ngIf="res.statut === 'EN_ATTENTE'">
+                  <button type="button" class="btn btn-success" (click)="acceptReservation(res.id!)" title="Accept">
+                    <i class="feather icon-check"></i>
+                  </button>
+                  <button type="button" class="btn btn-danger" (click)="refuseReservation(res.id!)" title="Refuse">
+                    <i class="feather icon-x"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="reservations().length === 0">
+              <td colspan="7" class="text-center py-4 text-muted">No reservations found.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+    </app-card>
+  </div>
+</div>

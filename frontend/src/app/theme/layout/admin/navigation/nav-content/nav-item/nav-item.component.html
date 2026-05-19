@@ -6,12 +6,12 @@
         <span class="pcoded-micon"><i class="feather" [ngClass]="item().icon"></i></span>
       }
       @if (item().icon) {
-        <span class="pcoded-mtext">{{ item().title }}</span>
+        <span class="pcoded-mtext">{{ getTranslatedTitle() }}</span>
       } @else {
-        {{ item().title }}
+        {{ getTranslatedTitle() }}
       }
       <ng-template #directTitle>
-        {{ item().title }}
+        {{ getTranslatedTitle() }}
       </ng-template>
     </a>
   </li>
@@ -23,12 +23,12 @@
         <span class="pcoded-micon"><i class="feather" [ngClass]="item().icon"></i></span>
       }
       @if (item().icon) {
-        <span class="pcoded-mtext">{{ item().title }}</span>
+        <span class="pcoded-mtext">{{ getTranslatedTitle() }}</span>
       } @else {
-        {{ item().title }}
+        {{ getTranslatedTitle() }}
       }
       <ng-template #directTitle>
-        {{ item().title }}
+        {{ getTranslatedTitle() }}
       </ng-template>
     </a>
   </li>

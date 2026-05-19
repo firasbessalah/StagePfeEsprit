@@ -48,6 +48,14 @@ public class AnnonceService {
                 .toList();
     }
 
+    // ─── TOUTES LES ANNONCES (ADMIN) ─────────────────────────
+    public List<AnnonceDTO> getAllAnnoncesAdmin() {
+        return annonceRepository.findAll()
+                .stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
     // ─── ANNONCES D'UN USER ───────────────────────────────────
     public List<AnnonceDTO> getAnnoncesByUser(Long userId) {
         return annonceRepository.findByUserId(userId)
@@ -101,6 +109,14 @@ public class AnnonceService {
         Annonce annonce = annonceRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Annonce introuvable !"));
         annonce.setStatut(StatutAnnonce.REJETEE);
+        return toDTO(annonceRepository.save(annonce));
+    }
+
+    // ─── ARCHIVER (ADMIN) ─────────────────────────────────────
+    public AnnonceDTO archiver(Long id) {
+        Annonce annonce = annonceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Annonce introuvable !"));
+        annonce.setStatut(StatutAnnonce.ARCHIVEE);
         return toDTO(annonceRepository.save(annonce));
     }
 

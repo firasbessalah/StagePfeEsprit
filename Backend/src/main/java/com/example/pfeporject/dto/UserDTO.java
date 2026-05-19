@@ -1,6 +1,7 @@
 package com.example.pfeporject.dto;
 
 import lombok.Data;
+import java.time.LocalDateTime;
 
 @Data
 public class UserDTO {
@@ -12,4 +13,5 @@ public class UserDTO {
     private String telephone;
     private String photoProfil;
     private String role;
+    private LocalDateTime createdAt;
 }

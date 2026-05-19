@@ -49,6 +49,33 @@ export const NavigationItems: NavigationItem[] = [
         icon: 'feather icon-users',
         classes: 'nav-item',
         roles: ['ADMIN']
+      },
+      {
+        id: 'annonce-management',
+        title: 'Annonce management',
+        type: 'item',
+        url: '/annonces',
+        icon: 'feather icon-list',
+        classes: 'nav-item',
+        roles: ['ADMIN', 'BAILLEUR']
+      },
+      {
+        id: 'reservation-management',
+        title: 'Reservations',
+        type: 'item',
+        url: '/reservations',
+        icon: 'feather icon-briefcase',
+        classes: 'nav-item',
+        roles: ['ADMIN']
+      },
+      {
+        id: 'messages',
+        title: 'Messages',
+        type: 'item',
+        url: '/messages',
+        icon: 'feather icon-message-square',
+        classes: 'nav-item',
+        roles: ['ADMIN', 'BAILLEUR', 'LOCATAIRE']
       }
     ]
   }

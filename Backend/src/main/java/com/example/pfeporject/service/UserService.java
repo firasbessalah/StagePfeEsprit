@@ -224,6 +224,7 @@ public class UserService {
         dto.setTelephone(user.getTelephone());
         dto.setPhotoProfil(user.getPhotoProfil());
         dto.setRole(user.getRole().name());
+        dto.setCreatedAt(user.getCreatedAt());
         return dto;
     }
     // ─── GET ALL USERS ───────────────────────────────────────

@@ -68,6 +68,14 @@ public class ReservationService {
                 .toList();
     }
 
+    // ─── RÉSERVATIONS POUR UN BAILLEUR (Toutes ses annonces) ─
+    public List<ReservationDTO> getReservationsByBailleur(Long bailleurId) {
+        return reservationRepository.findAll().stream()
+                .filter(r -> r.getAnnonce() != null && r.getAnnonce().getUser() != null && r.getAnnonce().getUser().getId().equals(bailleurId))
+                .map(this::toDTO)
+                .toList();
+    }
+
     // ─── CONFIRMER ───────────────────────────────────────────
     public ReservationDTO confirmer(Long id) {
         Reservation reservation = reservationRepository.findById(id)
@@ -92,6 +100,14 @@ public class ReservationService {
         return toDTO(reservationRepository.save(reservation));
     }
 
+    // ─── TOUTES LES RÉSERVATIONS ─────────────────────────────
+    public List<ReservationDTO> getAllReservations() {
+        return reservationRepository.findAll()
+                .stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
     // ─── toDTO ───────────────────────────────────────────────
     private ReservationDTO toDTO(Reservation r) {
         ReservationDTO dto = new ReservationDTO();
@@ -100,12 +116,18 @@ public class ReservationService {
         dto.setDateFin(r.getDateFin());
         dto.setMessage(r.getMessage());
         dto.setPrixTotal(r.getPrixTotal());
-        dto.setStatut(r.getStatut().name());
+        dto.setStatut(r.getStatut() != null ? r.getStatut().name() : null);
         dto.setCreatedAt(r.getCreatedAt());
-        dto.setUserId(r.getUser().getId());
-        dto.setUserNom(r.getUser().getNom());
-        dto.setAnnonceId(r.getAnnonce().getId());
-        dto.setAnnonceTitre(r.getAnnonce().getTitre());
+        if (r.getUser() != null) {
+            dto.setUserId(r.getUser().getId());
+            dto.setUserNom(r.getUser().getNom());
+            dto.setUserPrenom(r.getUser().getPrenom());
+            dto.setUserEmail(r.getUser().getEmail());
+        }
+        if (r.getAnnonce() != null) {
+            dto.setAnnonceId(r.getAnnonce().getId());
+            dto.setAnnonceTitre(r.getAnnonce().getTitre());
+        }
         return dto;
     }
 }

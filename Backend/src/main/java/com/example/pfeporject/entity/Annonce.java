@@ -15,7 +15,8 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Annonce {
+public class
+Annonce {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,6 +57,6 @@ public class Annonce {
     private List<Avis> avis;
 
     public enum StatutAnnonce {
-        EN_ATTENTE, VALIDEE, REJETEE, SUSPENDUE
+        EN_ATTENTE, VALIDEE, REJETEE, SUSPENDUE, ARCHIVEE
     }
 }

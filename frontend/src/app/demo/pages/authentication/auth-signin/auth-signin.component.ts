@@ -1,5 +1,5 @@
 // angular import
-import { AfterViewInit, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { email, Field, form, minLength, required } from '@angular/forms/signals';
@@ -8,13 +8,17 @@ import { email, Field, form, minLength, required } from '@angular/forms/signals'
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { environment } from 'src/environments/environment';
+import { TranslationService, Language } from 'src/app/core/services/translation.service';
+import { TranslatePipe } from 'src/app/core/pipes/translate.pipe';
 
 declare const grecaptcha: any;
 declare const google: any;
 
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+
 @Component({
   selector: 'app-auth-signin',
-  imports: [CommonModule, RouterModule, SharedModule, Field],
+  imports: [CommonModule, RouterModule, SharedModule, Field, TranslatePipe, NgbDropdownModule],
   templateUrl: './auth-signin.component.html',
   styleUrls: ['./auth-signin.component.scss']
 })
@@ -23,6 +27,19 @@ export class AuthSigninComponent implements OnInit, AfterViewInit, OnDestroy {
   private auth = inject(AuthService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private translationService = inject(TranslationService);
+
+  currentLang = computed(() => this.translationService.currentLang());
+  activeLangName = computed(() => {
+    const l = this.currentLang();
+    if (l === 'en') return 'English';
+    if (l === 'fr') return 'Français';
+    return 'العربية';
+  });
+
+  setLang(lang: Language): void {
+    this.translationService.setLanguage(lang);
+  }
 
   submitted = signal(false);
   error = signal('');

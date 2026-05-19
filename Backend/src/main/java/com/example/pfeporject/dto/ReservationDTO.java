@@ -16,6 +16,8 @@ public class ReservationDTO {
     private LocalDateTime createdAt;
     private Long userId;
     private String userNom;
+    private String userPrenom;
+    private String userEmail;
     private Long annonceId;
     private String annonceTitre;
 }

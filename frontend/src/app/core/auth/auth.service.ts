@@ -85,10 +85,11 @@ export class AuthService {
     this.persist(t, user);
   }
 
-  getDefaultRouteForRole(): '/dashboard' | '/home' | '/login' {
+  getDefaultRouteForRole(): '/dashboard' | '/home' | '/' | '/login' {
     const role = this.user()?.role as UserRole | undefined;
     if (role === 'ADMIN') return '/dashboard';
-    if (role === 'LOCATAIRE' || role === 'BAILLEUR') return '/home';
+    if (role === 'BAILLEUR') return '/home';
+    if (role === 'LOCATAIRE') return '/';
     return '/login';
   }
 

@@ -11,8 +11,17 @@ import { roleGuard } from './core/auth/role.guard';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'login',
+    loadComponent: () => import('./demo/public-home/public-home.component').then((m) => m.PublicHomeComponent),
     pathMatch: 'full'
+  },
+  {
+    path: 'annonce/:id',
+    loadComponent: () => import('./demo/annonce-details/annonce-details.component').then((m) => m.AnnonceDetailsComponent)
+  },
+  {
+    path: 'my-profile',
+    canActivate: [authGuard],
+    loadComponent: () => import('./demo/public-profile/public-profile.component').then((m) => m.PublicProfileComponent)
   },
   {
     path: '',
@@ -79,6 +88,26 @@ const routes: Routes = [
       {
         path: 'profile',
         loadComponent: () => import('./demo/profile/profile.component').then((c) => c.ProfileComponent)
+      },
+      {
+        path: 'annonces',
+        canActivate: [roleGuard],
+        data: { roles: ['ADMIN', 'BAILLEUR'] },
+        loadComponent: () =>
+          import('./admin-features/annonce-management/annonce-management.component').then((c) => c.AnnonceManagementComponent)
+      },
+      {
+        path: 'reservations',
+        canActivate: [roleGuard],
+        data: { roles: ['ADMIN'] },
+        loadComponent: () =>
+          import('./admin-features/reservation-management/reservation-management.component').then((c) => c.ReservationManagementComponent)
+      },
+      {
+        path: 'messages',
+        canActivate: [roleGuard],
+        data: { roles: ['ADMIN', 'BAILLEUR', 'LOCATAIRE'] },
+        loadComponent: () => import('./demo/messages/messages.component').then((c) => c.MessagesComponent)
       }
     ]
   }

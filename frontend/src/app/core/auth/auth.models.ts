@@ -8,6 +8,7 @@ export interface UserDTO {
   telephone?: string | null;
   photoProfil?: string | null;
   role: UserRole | string;
+  createdAt?: string;
 }
 
 export interface AuthRequest {

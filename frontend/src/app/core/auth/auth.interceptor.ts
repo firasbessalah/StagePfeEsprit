@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
-import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 import { AuthService } from './auth.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private auth: AuthService) {}
+  constructor(private auth: AuthService, private router: Router) {}
 
   intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const token = this.auth.token();
@@ -21,20 +23,19 @@ export class AuthInterceptor implements HttpInterceptor {
         Authorization: `Bearer ${token}`
       }
     });
-    return next.handle(authed);
+    return next.handle(authed).pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 401 || error.status === 403) {
+          this.auth.logout();
+          this.router.navigate(['/login']);
+        }
+        return throwError(() => error);
+      })
+    );
   }
 
   private isBackendApiRequest(url: string): boolean {
-    const base = environment.apiBaseUrl;
-    if (base && base.length > 0) {
-      return url.startsWith(base);
-    }
-    try {
-      const pathname = url.startsWith('http') ? new URL(url).pathname : url.split('?')[0];
-      return pathname.startsWith('/api/');
-    } catch {
-      return url.includes('/api/');
-    }
+    return url.includes('/api/') || url.includes('api/');
   }
 }
 

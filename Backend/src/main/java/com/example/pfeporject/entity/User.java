@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -47,6 +49,10 @@ public class User {
     @Builder.Default
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Boolean enabled = true;
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Annonce> annonces;

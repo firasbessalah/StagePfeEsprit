@@ -1,0 +1,80 @@
+// Booking.com inspired colors
+$primary-blue: #003b95;
+$dark-blue: #00224f;
+$light-blue: #ebf3ff;
+$bg-gray: #f5f5f5;
+
+.booking-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+// Header
+.booking-header {
+  background-color: $bg-gray;
+  color: #333;
+  padding: 1rem 0;
+
+  .header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo a {
+    color: $primary-blue;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .btn-light {
+      background-color: $primary-blue;
+      color: white !important;
+      font-weight: 600;
+      border: none;
+      
+      &:hover {
+        background-color: $dark-blue;
+      }
+    }
+
+    .btn-outline-light {
+      border: 1px solid $primary-blue;
+      color: $primary-blue;
+      font-weight: 500;
+      
+      &:hover {
+        background-color: rgba(0, 59, 149, 0.1);
+      }
+    }
+  }
+}
+
+.bg-gray {
+  background-color: $bg-gray;
+}
+
+.booking-main {
+  background-color: $bg-gray; // Profile page has a light gray background in booking.com
+  flex: 1;
+}
+
+// Footer
+.booking-footer {
+  background-color: $dark-blue;
+  color: white;
+  
+  a.text-white-50 {
+    transition: color 0.2s;
+    &:hover {
+      color: white !important;
+    }
+  }
+}

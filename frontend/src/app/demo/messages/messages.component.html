@@ -1,0 +1,165 @@
+<div class="pc-container chat-layout">
+  <div class="pc-content h-100">
+    
+    <div class="row h-100 g-0 card-glass-wrapper">
+      <!-- Sidebar / Contacts List -->
+      <div class="col-md-4 border-end h-100 chat-sidebar">
+        <div class="sidebar-header d-flex align-items-center justify-content-between p-3 border-bottom">
+          <h5 class="m-b-0 fw-bold"><i class="feather icon-message-square me-2 text-primary"></i>Messages</h5>
+          <span class="badge bg-light text-primary border rounded-pill">{{ contacts().length }} Contacts</span>
+        </div>
+
+        <!-- Contacts Container -->
+        <div class="contacts-list p-2" style="overflow-y: auto; height: calc(100% - 70px);">
+          @if (loadingContacts()) {
+            <div class="text-center py-5">
+              <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+              <p class="text-muted mt-2 small">Loading your contacts...</p>
+            </div>
+          } @else if (contacts().length === 0) {
+            <div class="text-center py-5">
+              <i class="feather icon-users fs-2 text-muted mb-3 d-block"></i>
+              <p class="text-muted">No contacts found.</p>
+            </div>
+          } @else {
+            @for (contact of contacts(); track contact.id) {
+              <div 
+                class="contact-item d-flex align-items-center p-3 mb-2 rounded-3" 
+                [class.active]="activeContact()?.id === contact.id"
+                (click)="selectContact(contact)">
+                
+                <!-- Avatar -->
+                <div class="avatar-container me-3 position-relative">
+                  @if (contact.photoProfil) {
+                    <img [src]="contact.photoProfil" alt="Profile" class="avatar-img rounded-circle" />
+                  } @else {
+                    <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center fw-bold">
+                      {{ getInitials(contact.nom, contact.prenom) }}
+                    </div>
+                  }
+                  <span class="status-indicator online"></span>
+                </div>
+
+                <!-- Contact Details -->
+                <div class="contact-info flex-grow-1 min-width-0">
+                  <div class="d-flex justify-content-between align-items-baseline">
+                    <h6 class="mb-0 text-truncate contact-name">{{ contact.prenom }} {{ contact.nom }}</h6>
+                  </div>
+                  <div class="d-flex align-items-center justify-content-between mt-1">
+                    <span class="badge badge-role" [class.bg-warning]="contact.role === 'BAILLEUR'" [class.bg-info]="contact.role === 'LOCATAIRE'" [class.bg-danger]="contact.role === 'ADMIN'">
+                      {{ contact.role }}
+                    </span>
+                    <span class="small text-muted text-truncate ms-2">{{ contact.email }}</span>
+                  </div>
+                </div>
+              </div>
+            }
+          }
+        </div>
+      </div>
+
+      <!-- Chat Area -->
+      <div class="col-md-8 h-100 chat-main d-flex flex-column">
+        @if (activeContact()) {
+          <!-- Chat Header -->
+          <div class="chat-header p-3 border-bottom d-flex align-items-center justify-content-between bg-glass-header">
+            <div class="d-flex align-items-center">
+              <!-- Avatar -->
+              <div class="avatar-container me-3">
+                @if (activeContact()?.photoProfil) {
+                  <img [src]="activeContact()?.photoProfil" alt="Profile" class="avatar-img rounded-circle" />
+                } @else {
+                  <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center fw-bold">
+                    {{ getInitials(activeContact()?.nom, activeContact()?.prenom) }}
+                  </div>
+                }
+              </div>
+              <div>
+                <h6 class="mb-0 fw-bold">{{ activeContact()?.prenom }} {{ activeContact()?.nom }}</h6>
+                <span class="small text-muted d-flex align-items-center">
+                  <span class="badge bg-light text-dark border me-2">{{ activeContact()?.role }}</span>
+                  {{ activeContact()?.email }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Messages Area -->
+          <div class="chat-messages p-4 flex-grow-1" id="chat-messages-container" style="overflow-y: auto;">
+            @if (loadingMessages()) {
+              <div class="text-center py-5 my-auto">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="text-muted mt-2 small">Loading conversation...</p>
+              </div>
+            } @else if (messages().length === 0) {
+              <div class="text-center py-5 my-auto">
+                <i class="feather icon-message-circle fs-1 text-muted mb-3 d-block"></i>
+                <h5>Start the conversation!</h5>
+                <p class="text-muted small">Send a message to start chatting with {{ activeContact()?.prenom }}.</p>
+              </div>
+            } @else {
+              @for (msg of messages(); track msg.id) {
+                <div class="message-wrapper d-flex mb-3" [class.sent]="msg.expediteurId === currentUser()?.id">
+                  <!-- Avatar for received messages -->
+                  @if (msg.expediteurId !== currentUser()?.id) {
+                    <div class="message-avatar me-2 align-self-end">
+                      @if (activeContact()?.photoProfil) {
+                        <img [src]="activeContact()?.photoProfil" alt="Profile" class="avatar-img-sm rounded-circle" />
+                      } @else {
+                        <div class="avatar-placeholder-sm rounded-circle d-flex align-items-center justify-content-center fw-bold">
+                          {{ getInitials(activeContact()?.nom, activeContact()?.prenom) }}
+                        </div>
+                      }
+                    </div>
+                  }
+
+                  <!-- Message Box -->
+                  <div class="message-content-box">
+                    <div class="message-bubble shadow-sm">
+                      <p class="mb-0">{{ msg.contenu }}</p>
+                    </div>
+                    <div class="message-time small mt-1 d-flex align-items-center justify-content-end gap-1">
+                      {{ msg.createdAt | date:'shortTime' }}
+                      @if (msg.expediteurId === currentUser()?.id) {
+                        <i class="feather icon-check" [class.text-primary]="msg.lu" [class.text-muted]="!msg.lu" style="font-size: 0.8rem;"></i>
+                      }
+                    </div>
+                  </div>
+                </div>
+              }
+            }
+          </div>
+
+          <!-- Message Input Bar -->
+          <div class="chat-input-bar p-3 border-top bg-glass-input">
+            <div class="input-group align-items-center gap-2">
+              <input 
+                type="text" 
+                class="form-control rounded-pill border-0 px-4" 
+                placeholder="Type your message here..." 
+                [ngModel]="newMessageContenu()" 
+                (ngModelChange)="newMessageContenu.set($event)"
+                (keyup.enter)="sendMessage()" />
+              <button 
+                class="btn btn-primary rounded-circle btn-send d-flex align-items-center justify-content-center" 
+                (click)="sendMessage()" 
+                [disabled]="!newMessageContenu().trim()">
+                <i class="feather icon-send text-white"></i>
+              </button>
+            </div>
+          </div>
+        @} @else {
+          <!-- Empty State -->
+          <div class="chat-empty-state d-flex flex-column align-items-center justify-content-center h-100 text-center p-5">
+            <div class="empty-icon-wrapper mb-4">
+              <i class="feather icon-message-square text-primary"></i>
+            </div>
+            <h4 class="fw-bold">Your Live Chat inbox</h4>
+            <p class="text-muted max-width-350">Select a contact from the sidebar list to start exchanging real-time support and coordination messages.</p>
+          </div>
+        }
+      </div>
+    </div>
+
+  </div>
+</div>

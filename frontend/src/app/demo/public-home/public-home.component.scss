@@ -1,0 +1,268 @@
+// Booking.com inspired colors (swapped)
+$primary-blue: #003b95;
+$dark-blue: #00224f;
+$light-blue: #ebf3ff;
+$bg-gray: #f5f5f5;
+$accent-yellow: #febb02;
+
+.booking-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+// Header
+.booking-header {
+  background-color: $bg-gray;
+  color: #333;
+  padding: 1rem 0;
+
+  .header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo a {
+    color: $primary-blue;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .btn-light {
+      background-color: $primary-blue;
+      color: white !important;
+      font-weight: 600;
+      border: none;
+      
+      &:hover {
+        background-color: $dark-blue;
+      }
+    }
+
+    .btn-outline-light {
+      border: 1px solid $primary-blue;
+      color: $primary-blue;
+      font-weight: 500;
+      
+      &:hover {
+        background-color: rgba(0, 59, 149, 0.1);
+      }
+    }
+  }
+}
+
+// Hero Section
+.booking-hero {
+  background-color: $bg-gray;
+  color: #333;
+  padding: 4rem 0 6rem 0;
+  position: relative;
+
+  .hero-content {
+    max-width: 1024px;
+    margin: 0 auto;
+  }
+
+  .hero-title {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+}
+
+// Search Bar
+.search-bar {
+  display: flex;
+  background: white;
+  border: 4px solid $accent-yellow;
+  border-radius: 4px;
+  position: absolute;
+  bottom: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 1024px;
+  height: 64px;
+  z-index: 10;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    height: auto;
+    bottom: -150px;
+    padding: 0;
+  }
+
+  .search-input {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    border-right: 1px solid #e7e7e7;
+    background: white;
+
+    @media (max-width: 768px) {
+      border-right: none;
+      border-bottom: 1px solid #e7e7e7;
+      padding: 1rem;
+    }
+
+    i {
+      color: #666;
+      font-size: 1.25rem;
+      margin-right: 0.75rem;
+    }
+
+    input {
+      border: none;
+      outline: none;
+      width: 100%;
+      font-size: 1rem;
+      color: #333;
+      
+      &::placeholder {
+        color: #333;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .search-btn {
+    background-color: $bg-gray;
+    border: 1px solid #ccc;
+    color: #333;
+    font-weight: 600;
+    font-size: 1.25rem;
+    padding: 0 2rem;
+    border-radius: 0;
+    
+    &:hover {
+      background-color: #e0e0e0;
+    }
+
+    @media (max-width: 768px) {
+      padding: 1rem;
+      font-size: 1.1rem;
+    }
+  }
+}
+
+// Main Content
+.booking-main {
+  background-color: $primary-blue;
+  flex: 1;
+  padding-top: 6rem;
+  padding-bottom: 4rem;
+
+  @media (max-width: 768px) {
+    padding-top: 12rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+  }
+  
+  .text-muted {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+  
+  h4.text-muted {
+    color: white !important;
+  }
+}
+
+// Property Cards
+.property-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: 8px;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3) !important;
+  }
+
+  .property-image-container {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+
+    .property-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+    
+    .location-badge {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      background-color: rgba(245, 245, 245, 0.9) !important;
+      color: #333;
+      font-weight: 600;
+      padding: 0.4rem 0.6rem;
+      border-radius: 4px;
+    }
+  }
+
+  &:hover .property-image {
+    transform: scale(1.05);
+  }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem;
+  }
+
+  .description-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+
+  .price-tag {
+    color: #333;
+  }
+
+  .btn-reserve {
+    background-color: $bg-gray;
+    border-color: #ccc;
+    color: #333;
+    font-weight: 600;
+
+    &:hover {
+      background-color: #e0e0e0;
+      border-color: #ccc;
+    }
+  }
+}
+
+// Footer
+.booking-footer {
+  background-color: $dark-blue;
+  color: white;
+  
+  a.text-white-50 {
+    transition: color 0.2s;
+    &:hover {
+      color: white !important;
+    }
+  }
+}

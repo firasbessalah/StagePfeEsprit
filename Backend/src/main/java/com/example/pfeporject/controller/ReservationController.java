@@ -44,6 +44,13 @@ public class ReservationController {
         return ResponseEntity.ok(reservationService.getReservationsByAnnonce(annonceId));
     }
 
+    // ─── RÉSERVATIONS POUR UN BAILLEUR ───────────────────────
+    // GET /api/reservations/bailleur/1
+    @GetMapping("/bailleur/{bailleurId}")
+    public ResponseEntity<List<ReservationDTO>> getReservationsByBailleur(@PathVariable Long bailleurId) {
+        return ResponseEntity.ok(reservationService.getReservationsByBailleur(bailleurId));
+    }
+
     // ─── CONFIRMER UNE RÉSERVATION (Propriétaire) ────────────
     // PUT /api/reservations/10/confirmer
     @PutMapping("/{id}/confirmer")
@@ -63,5 +70,12 @@ public class ReservationController {
     @PutMapping("/{id}/terminer")
     public ResponseEntity<ReservationDTO> terminer(@PathVariable Long id) {
         return ResponseEntity.ok(reservationService.terminer(id));
+    }
+
+    // ─── TOUTES LES RÉSERVATIONS (Admin) ─────────────────────
+    // GET /api/reservations
+    @GetMapping
+    public ResponseEntity<List<ReservationDTO>> getAllReservations() {
+        return ResponseEntity.ok(reservationService.getAllReservations());
     }
 }

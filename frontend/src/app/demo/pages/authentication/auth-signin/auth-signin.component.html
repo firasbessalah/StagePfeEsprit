@@ -1,3 +1,27 @@
+<div class="position-absolute top-0 end-0 p-3" style="z-index: 1050;">
+  <!-- Language Switcher -->
+  <div class="dropdown" ngbDropdown>
+    <button class="btn btn-primary dropdown-toggle d-flex align-items-center shadow-sm" ngbDropdownToggle style="border-radius: 50px; font-size: 0.82rem; font-weight: 600; padding: 8px 20px; background-color: #006ce4; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+      <i class="feather icon-globe me-2" style="font-size: 0.95rem;"></i>
+      <span>{{ activeLangName() }}</span>
+    </button>
+    <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu>
+      <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')" style="width: 100%; border: none; background: transparent;">
+        <span>English</span>
+        <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'en'"></i>
+      </button>
+      <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')" style="width: 100%; border: none; background: transparent;">
+        <span>Français</span>
+        <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'fr'"></i>
+      </button>
+      <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')" style="width: 100%; border: none; background: transparent;">
+        <span>العربية</span>
+        <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'ar'"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
 <div class="auth-wrapper">
   <div class="auth-content">
     <div class="auth-bg">
@@ -12,7 +36,7 @@
           <div class="mb-4">
             <i class="feather icon-unlock auth-icon"></i>
           </div>
-          <h3 class="mb-4">Login</h3>
+          <h3 class="mb-4">{{ 'LOGIN' | translate }}</h3>
 
           @if (resetSuccess()) {
             <div class="alert alert-success text-start mb-3" role="alert">
@@ -25,7 +49,7 @@
               class="form-control"
               id="floatingInput"
               [class.is-invalid]="submitted() && loginForm.email().invalid()"
-              placeholder="Email Address"
+              placeholder="{{ 'EMAIL_ADDRESS' | translate }}"
               [field]="loginForm.email"
             />
             @if (submitted() && loginForm.email().invalid()) {
@@ -44,7 +68,7 @@
                 class="form-control"
                 [field]="loginForm.password"
                 [class.is-invalid]="submitted() && loginForm.password().errors().length > 0"
-                placeholder="Password (min. 8 characters)"
+                placeholder="{{ 'PASSWORD_MIN_8' | translate }}"
               />
             } @else {
               <input
@@ -53,7 +77,7 @@
                 class="form-control"
                 [field]="loginForm.password"
                 [class.is-invalid]="submitted() && loginForm.password().errors().length > 0"
-                placeholder="Password (min. 8 characters)"
+                placeholder="{{ 'PASSWORD_MIN_8' | translate }}"
               />
             }
             <i
@@ -77,7 +101,7 @@
           <div class="form-group text-start">
             <div class="checkbox checkbox-fill d-inline">
               <input type="checkbox" name="checkbox-fill-1" id="checkbox-fill-a1" checked="" />
-              <label for="checkbox-fill-a1" class="cr">Save Details</label>
+              <label for="checkbox-fill-a1" class="cr">{{ 'SAVE_DETAILS' | translate }}</label>
             </div>
           </div>
           <div class="mb-3 text-start recaptcha-container">
@@ -88,16 +112,16 @@
           </div>
           <button type="submit" class="btn btn-primary mb-4" [disabled]="submitting()">
             @if (submitting()) {
-              Logging in...
+              {{ 'LOGGING_IN' | translate }}
             } @else {
-              Login
+              {{ 'LOGIN' | translate }}
             }
           </button>
 
           @if (googleEnabled) {
-            <div class="text-muted mb-3 mt-1">or login with Google</div>
+            <div class="text-muted mb-3 mt-1">{{ 'OR_LOGIN_GOOGLE' | translate }}</div>
             <div class="mb-2">
-              <label class="d-block text-muted mb-2">Google account type</label>
+              <label class="d-block text-muted mb-2">{{ 'GOOGLE_ACCOUNT_TYPE' | translate }}</label>
               <div class="role-selector d-flex justify-content-center gap-2 mb-3">
                 <button
                   type="button"
@@ -105,7 +129,7 @@
                   [class.active]="selectedGoogleRole() === 'LOCATAIRE'"
                   (click)="selectGoogleRole('LOCATAIRE')"
                 >
-                  Locataire
+                  {{ 'LOCATAIRE' | translate }}
                 </button>
                 <button
                   type="button"
@@ -113,7 +137,7 @@
                   [class.active]="selectedGoogleRole() === 'BAILLEUR'"
                   (click)="selectGoogleRole('BAILLEUR')"
                 >
-                  Bailleur
+                  {{ 'BAILLEUR' | translate }}
                 </button>
               </div>
             </div>
@@ -122,13 +146,13 @@
             </div>
           }
           <p class="mb-2 text-muted">
-            Mot de passe oublié ?
-            <a [routerLink]="['/forgot-password']">Réinitialiser</a>
+            {{ 'FORGOT_PASSWORD_Q' | translate }}
+            <a [routerLink]="['/forgot-password']">{{ 'RESET' | translate }}</a>
           </p>
         </form>
         <p class="mb-0 text-muted">
-          Don’t have an account?
-          <a [routerLink]="['/register']">Sign up</a>
+          {{ 'DONT_HAVE_ACCOUNT' | translate }}
+          <a [routerLink]="['/register']">{{ 'SIGN_UP' | translate }}</a>
         </p>
       </div>
     </div>

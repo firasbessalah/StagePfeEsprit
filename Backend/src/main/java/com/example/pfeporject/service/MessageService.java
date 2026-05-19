@@ -5,6 +5,7 @@ import com.example.pfeporject.entity.Message;
 import com.example.pfeporject.entity.User;
 import com.example.pfeporject.repository.MessageRepository;
 import com.example.pfeporject.repository.UserRepository;
+import com.example.pfeporject.entity.Notification.TypeNotification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ public class MessageService {
 
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     // ─── ENVOYER UN MESSAGE ──────────────────────────────────
     public MessageDTO envoyer(MessageDTO dto, Long expediteurId, Long destinataireId) {
@@ -33,7 +35,17 @@ public class MessageService {
         message.setExpediteur(expediteur);
         message.setDestinataire(destinataire);
 
-        return toDTO(messageRepository.save(message));
+        Message saved = messageRepository.save(message);
+
+        // Send a notification to the recipient
+        String titre = expediteur.getPrenom() + " " + expediteur.getNom();
+        String summary = dto.getContenu();
+        if (summary != null && summary.length() > 50) {
+            summary = summary.substring(0, 47) + "...";
+        }
+        notificationService.envoyer(destinataireId, titre, summary, TypeNotification.MESSAGE);
+
+        return toDTO(saved);
     }
 
     // ─── CONVERSATION ENTRE DEUX USERS ───────────────────────

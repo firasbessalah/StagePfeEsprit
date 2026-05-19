@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, inject, signal } from '@angular/core';
+import { Component, OnInit, TemplateRef, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -19,6 +19,18 @@ export class UserManagementComponent implements OnInit {
   private modal = inject(NgbModal);
 
   users = signal<UserDTO[]>([]);
+  searchTerm = signal('');
+  filteredUsers = computed(() => {
+    const term = this.searchTerm().toLowerCase().trim();
+    if (!term) return this.users();
+    return this.users().filter(u =>
+      (u.nom?.toLowerCase().includes(term)) ||
+      (u.prenom?.toLowerCase().includes(term)) ||
+      (u.email?.toLowerCase().includes(term)) ||
+      (u.role?.toLowerCase().includes(term)) ||
+      (u.telephone?.toLowerCase().includes(term))
+    );
+  });
   loading = signal(false);
   error = signal('');
 
@@ -34,6 +46,7 @@ export class UserManagementComponent implements OnInit {
   };
 
   editModel: UserDTO | null = null;
+  showModel: UserDTO | null = null;
 
   ngOnInit(): void {
     this.reload();
@@ -92,6 +105,11 @@ export class UserManagementComponent implements OnInit {
 
   openEdit(user: UserDTO, content: TemplateRef<unknown>): void {
     this.editModel = { ...user };
+    this.modal.open(content, { size: 'lg', backdrop: 'static' });
+  }
+
+  openShow(user: UserDTO, content: TemplateRef<unknown>): void {
+    this.showModel = user;
     this.modal.open(content, { size: 'lg', backdrop: 'static' });
   }
 

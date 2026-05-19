@@ -1,0 +1,406 @@
+<div class="booking-layout">
+  <!-- Header -->
+  <header class="booking-header">
+    <div class="container header-container">
+      <div class="logo">
+        <a routerLink="/">BookingPFE</a>
+      </div>
+      <div class="header-actions d-flex align-items-center">
+        <!-- Language Switcher -->
+        <div class="dropdown me-3" ngbDropdown>
+          <button class="btn btn-primary dropdown-toggle d-flex align-items-center shadow-sm" ngbDropdownToggle style="border-radius: 50px; font-size: 0.82rem; font-weight: 600; padding: 6px 16px; background-color: #006ce4; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 10px rgba(0,0,0,0.12);">
+            <i class="feather icon-globe me-2" style="font-size: 0.95rem;"></i>
+            <span>{{ activeLangName() }}</span>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')" style="width: 100%; border: none; background: transparent;">
+              <span>English</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'en'"></i>
+            </button>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')" style="width: 100%; border: none; background: transparent;">
+              <span>Français</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'fr'"></i>
+            </button>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')" style="width: 100%; border: none; background: transparent;">
+              <span>العربية</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'ar'"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Unauthenticated -->
+        <ng-container *ngIf="!isAuthenticated()">
+          <button class="btn btn-outline-light me-2" (click)="onAddAnnonce()">{{ 'LIST_PROPERTY' | translate }}</button>
+          <a routerLink="/register" class="btn btn-light me-2 text-primary">{{ 'REGISTER' | translate }}</a>
+          <a routerLink="/login" class="btn btn-light text-primary">{{ 'SIGN_IN' | translate }}</a>
+        </ng-container>
+        <!-- Authenticated -->
+        <ng-container *ngIf="isAuthenticated()">
+          <button class="btn btn-outline-light me-2" (click)="onAddAnnonce()" *ngIf="user()?.role !== 'LOCATAIRE'">{{ 'LIST_PROPERTY' | translate }}</button>
+          <div class="user-dropdown dropdown" ngbDropdown>
+            <button class="btn btn-transparent dropdown-toggle text-dark d-flex align-items-center" ngbDropdownToggle style="border: none; background: transparent; padding: 0;">
+              <img [src]="user()?.photoProfil || 'assets/images/user/avatar-1.jpg'" alt="User Avatar" class="rounded-circle me-2" width="40" height="40" style="object-fit: cover; border: 2px solid #febb02;">
+              <div class="text-start me-2">
+                <div class="fw-bold" style="line-height: 1.2;">{{ user()?.nom }} {{ user()?.prenom }}</div>
+                <div class="small text-muted" style="font-size: 0.75rem; color: #febb02 !important; font-weight: 600;">Level 1 Member</div>
+              </div>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu style="min-width: 250px;">
+              <!-- Admin Links -->
+              <a class="dropdown-item py-2" routerLink="/dashboard" *ngIf="user()?.role === 'ADMIN'">
+                <i class="feather icon-monitor me-3 fs-5 align-middle"></i> {{ 'DASHBOARD' | translate }}
+              </a>
+              
+              <!-- Regular User Links -->
+              <a class="dropdown-item py-2" routerLink="/my-profile">
+                <i class="feather icon-user me-3 fs-5 align-middle"></i> {{ 'MY_ACCOUNT' | translate }}
+              </a>
+              <a class="dropdown-item py-2" routerLink="/reservations" *ngIf="user()?.role !== 'ADMIN'">
+                <i class="feather icon-briefcase me-3 fs-5 align-middle"></i> {{ 'RESERVATIONS' | translate }}
+              </a>
+              <a class="dropdown-item py-2" routerLink="/messages" *ngIf="user()?.role !== 'ADMIN'">
+                <i class="feather icon-message-circle me-3 fs-5 align-middle"></i> {{ 'MESSAGES' | translate }}
+              </a>
+
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item py-2 text-danger" (click)="logout()" style="cursor: pointer;">
+                <i class="feather icon-log-out me-3 fs-5 align-middle"></i> {{ 'LOGOUT' | translate }}
+              </a>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </header>
+
+  <!-- Subheader Breadcrumb -->
+  <div class="bg-gray py-2">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a routerLink="/">{{ 'HOME' | translate }}</a></li>
+          <li class="breadcrumb-item active" aria-current="page">{{ annonce()?.titre || 'Loading...' }}</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="booking-main pb-5">
+    <div class="container pt-4">
+      
+      <div *ngIf="loading()" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      
+      <div *ngIf="error()" class="alert alert-danger text-center">
+        {{ error() }}
+      </div>
+
+      <div *ngIf="!loading() && annonce()">
+        
+        <!-- Header Info -->
+        <div class="d-flex justify-content-between align-items-start mb-4">
+          <div>
+            <div class="d-flex align-items-center mb-2">
+              <span class="badge bg-secondary me-2">Apartment</span>
+              <div class="d-flex align-items-center gap-1 text-warning" *ngIf="averageRating() > 0">
+                <i class="feather icon-star-on text-warning" style="font-size: 0.95rem;"></i>
+                <span class="fw-bold text-dark ms-1" style="font-size: 0.85rem;">{{ averageRating() | number:'1.1-1' }}</span>
+                <span class="text-muted small" style="font-size: 0.8rem;">({{ avisList().length }} {{ 'REVIEWS' | translate }})</span>
+              </div>
+              <div class="text-muted small" *ngIf="averageRating() === 0">
+                <span>{{ 'NO_REVIEWS' | translate }}</span>
+              </div>
+            </div>
+            <h2 class="mb-1 fw-bold text-dark">{{ annonce()?.titre }}</h2>
+            <p class="text-muted mb-0"><i class="feather icon-map-pin me-1 text-primary"></i> {{ annonce()?.localisation }}</p>
+          </div>
+          <div class="text-end">
+            <p class="fs-4 fw-bold text-dark mb-0">{{ annonce()?.prix }} TND</p>
+            <p class="text-muted small">{{ 'MONTH' | translate }}</p>
+            <button class="btn btn-primary btn-lg shadow-sm" (click)="onReserve(reservationModal)">{{ 'RESERVE' | translate }}</button>
+          </div>
+        </div>
+
+        <!-- Image Gallery -->
+        <div class="gallery mb-5">
+          <div class="row g-2">
+            <div class="col-md-8">
+              <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80&w=1200" alt="Main Property Image" class="img-fluid rounded w-100 h-100 object-fit-cover" style="max-height: 500px;">
+            </div>
+            <div class="col-md-4">
+              <div class="row g-2 h-100">
+                <div class="col-12">
+                  <img src="https://images.unsplash.com/photo-1502672260266-1c1de2d93688?auto=format&fit=crop&q=80&w=600" alt="Room Image" class="img-fluid rounded w-100 object-fit-cover" style="height: 246px;">
+                </div>
+                <div class="col-12">
+                  <img src="https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80&w=600" alt="Kitchen Image" class="img-fluid rounded w-100 object-fit-cover" style="height: 246px;">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Details Section -->
+        <div class="row">
+          <!-- Main description -->
+          <div class="col-lg-8">
+            <div class="mb-5">
+              <h4 class="mb-3">Stay in the heart of {{ annonce()?.localisation }}</h4>
+              <p class="fs-5 text-muted" style="line-height: 1.8;">
+                {{ annonce()?.description }}
+              </p>
+            </div>
+            
+            <!-- Amenities (Mocked for Booking.com feel) -->
+            <div class="mb-5">
+              <h4 class="mb-3">Most popular facilities</h4>
+              <div class="d-flex flex-wrap gap-4">
+                <div class="text-success"><i class="feather icon-wifi me-2"></i>Free WiFi</div>
+                <div class="text-success"><i class="feather icon-monitor me-2"></i>Air conditioning</div>
+                <div class="text-success"><i class="feather icon-home me-2"></i>Non-smoking rooms</div>
+                <div class="text-success"><i class="feather icon-sun me-2"></i>Terrace</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Booking Box Sidebar -->
+          <div class="col-lg-4">
+            <div class="card shadow-sm border-0 bg-light-blue">
+              <div class="card-body p-4">
+                <h5 class="card-title fw-bold">Property Highlights</h5>
+                <p class="small text-muted mb-4"><i class="feather icon-map-pin"></i> Top Location: Highly rated by recent guests</p>
+                
+                <h5 class="fw-bold mb-3">Host details</h5>
+                <p class="mb-1"><i class="feather icon-user text-primary me-2"></i> {{ annonce()?.userNom }} {{ annonce()?.userPrenom }}</p>
+                
+                <hr>
+                
+                <div class="d-grid mt-4">
+                  <button class="btn btn-primary btn-lg fw-bold" (click)="onReserve(reservationModal)">{{ 'RESERVE' | translate }}</button>
+                </div>
+                <p class="text-center small mt-2 text-muted">You won't be charged yet</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reviews Section -->
+        <div class="mt-5 border-top pt-5">
+          <div class="row">
+            <!-- Left Side: Score Summary & Review Submission -->
+            <div class="col-lg-5 mb-4">
+              <h4 class="fw-bold text-dark mb-4">{{ 'REVIEWS' | translate }}</h4>
+              
+              <!-- Average Rating Card -->
+              <div class="card border-0 shadow-sm p-4 bg-light text-center mb-4">
+                <h1 class="fw-extrabold text-primary mb-1" style="font-size: 3.5rem;">
+                  {{ averageRating() > 0 ? (averageRating() | number:'1.1-1') : '0.0' }}
+                </h1>
+                <div class="d-flex justify-content-center text-warning mb-2" style="font-size: 1.4rem;">
+                  <i class="feather" [class.icon-star-on]="averageRating() >= 1" [class.icon-star]="averageRating() < 1"></i>
+                  <i class="feather" [class.icon-star-on]="averageRating() >= 2" [class.icon-star]="averageRating() < 2"></i>
+                  <i class="feather" [class.icon-star-on]="averageRating() >= 3" [class.icon-star]="averageRating() < 3"></i>
+                  <i class="feather" [class.icon-star-on]="averageRating() >= 4" [class.icon-star]="averageRating() < 4"></i>
+                  <i class="feather" [class.icon-star-on]="averageRating() >= 5" [class.icon-star]="averageRating() < 5"></i>
+                </div>
+                <p class="text-muted small mb-0">{{ 'AVERAGE_RATING' | translate }} ({{ avisList().length }} {{ 'REVIEWS' | translate }})</p>
+              </div>
+
+              <!-- Write Review Form (if authenticated) -->
+              <div class="card border-0 shadow-sm p-4 bg-white" *ngIf="isAuthenticated()">
+                <h5 class="fw-bold mb-3">{{ 'WRITE_REVIEW' | translate }}</h5>
+
+                <!-- Success / Error alerts -->
+                <div class="alert alert-success py-2 small" *ngIf="reviewSuccessMessage()">
+                  {{ reviewSuccessMessage() }}
+                </div>
+                <div class="alert alert-danger py-2 small" *ngIf="reviewErrorMessage()">
+                  {{ reviewErrorMessage() }}
+                </div>
+
+                <!-- Star Selector -->
+                <div class="mb-3">
+                  <label class="form-label text-muted small d-block mb-1">{{ 'RATING' | translate }}</label>
+                  <div class="d-flex gap-2" style="font-size: 1.5rem; cursor: pointer;">
+                    <i class="feather" [class.icon-star-on]="selectedNote() >= 1" [class.icon-star]="selectedNote() < 1" (click)="selectedNote.set(1)" style="color: #febb02;"></i>
+                    <i class="feather" [class.icon-star-on]="selectedNote() >= 2" [class.icon-star]="selectedNote() < 2" (click)="selectedNote.set(2)" style="color: #febb02;"></i>
+                    <i class="feather" [class.icon-star-on]="selectedNote() >= 3" [class.icon-star]="selectedNote() < 3" (click)="selectedNote.set(3)" style="color: #febb02;"></i>
+                    <i class="feather" [class.icon-star-on]="selectedNote() >= 4" [class.icon-star]="selectedNote() < 4" (click)="selectedNote.set(4)" style="color: #febb02;"></i>
+                    <i class="feather" [class.icon-star-on]="selectedNote() >= 5" [class.icon-star]="selectedNote() < 5" (click)="selectedNote.set(5)" style="color: #febb02;"></i>
+                  </div>
+                </div>
+
+                <!-- Comment Input -->
+                <div class="mb-3">
+                  <label class="form-label text-muted small">{{ 'COMMENT' | translate }}</label>
+                  <textarea 
+                    class="form-control" 
+                    rows="3" 
+                    [placeholder]="'TYPE_MESSAGE' | translate"
+                    [value]="reviewComment()"
+                    (input)="reviewComment.set($any($event.target).value)">
+                  </textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <button 
+                  class="btn btn-primary w-100" 
+                  [disabled]="submittingReview()" 
+                  (click)="submitReview()">
+                  <span *ngIf="submittingReview()" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  {{ 'SUBMIT' | translate }}
+                </button>
+              </div>
+
+              <!-- Write review prompt if not authenticated -->
+              <div class="card border-0 shadow-sm p-4 bg-white text-center" *ngIf="!isAuthenticated()">
+                <p class="text-muted small mb-3">Login to write a review for this property.</p>
+                <a routerLink="/login" class="btn btn-outline-primary btn-sm w-100">{{ 'SIGN_IN' | translate }}</a>
+              </div>
+            </div>
+
+            <!-- Right Side: Reviews List -->
+            <div class="col-lg-7">
+              <!-- Empty State -->
+              <div *ngIf="avisList().length === 0" class="text-center py-5 border rounded bg-light">
+                <i class="feather icon-message-square text-muted fs-1 mb-2"></i>
+                <p class="text-muted mb-0">{{ 'NO_REVIEWS' | translate }}</p>
+              </div>
+
+              <!-- Reviews list container -->
+              <div class="d-flex flex-column gap-3" *ngIf="avisList().length > 0">
+                <div class="card border-0 shadow-sm p-3 bg-white" *ngFor="let av of avisList()">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold" style="width: 36px; height: 36px; font-size: 0.9rem;">
+                        {{ av.userNom?.charAt(0) }}{{ av.userPrenom?.charAt(0) }}
+                      </div>
+                      <div>
+                        <div class="fw-bold text-dark" style="font-size: 0.88rem;">{{ av.userNom }} {{ av.userPrenom }}</div>
+                        <div class="text-muted small" style="font-size: 0.72rem;">{{ av.createdAt | date:'mediumDate' }}</div>
+                      </div>
+                    </div>
+                    
+                    <!-- Rating Stars -->
+                    <div class="d-flex text-warning" style="font-size: 0.85rem;">
+                      <i class="feather" [class.icon-star-on]="av.note >= 1" [class.icon-star]="av.note < 1"></i>
+                      <i class="feather" [class.icon-star-on]="av.note >= 2" [class.icon-star]="av.note < 2"></i>
+                      <i class="feather" [class.icon-star-on]="av.note >= 3" [class.icon-star]="av.note < 3"></i>
+                      <i class="feather" [class.icon-star-on]="av.note >= 4" [class.icon-star]="av.note < 4"></i>
+                      <i class="feather" [class.icon-star-on]="av.note >= 5" [class.icon-star]="av.note < 5"></i>
+                    </div>
+                  </div>
+                  <p class="text-muted mb-0 small" style="line-height: 1.6; white-space: pre-line;">{{ av.commentaire }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="booking-footer">
+    <div class="container py-5">
+      <div class="row g-4">
+        <div class="col-md-3">
+          <h5 class="text-white mb-3">BookingPFE</h5>
+          <p class="text-white-50 small">Your trusted platform for finding the best stays and apartments in Tunisia.</p>
+        </div>
+        <div class="col-md-3">
+          <h6 class="text-white mb-3">Quick Links</h6>
+          <ul class="list-unstyled">
+            <li><a routerLink="/" class="text-white-50 text-decoration-none">Home</a></li>
+            <li><a href="javascript:void(0)" (click)="onAddAnnonce()" class="text-white-50 text-decoration-none">List your property</a></li>
+            <li><a href="javascript:void(0)" class="text-white-50 text-decoration-none">About Us</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3">
+          <h6 class="text-white mb-3">Support</h6>
+          <ul class="list-unstyled">
+            <li><a href="javascript:void(0)" class="text-white-50 text-decoration-none">Help Center</a></li>
+            <li><a href="javascript:void(0)" class="text-white-50 text-decoration-none">Terms of Service</a></li>
+            <li><a href="javascript:void(0)" class="text-white-50 text-decoration-none">Privacy Policy</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3">
+          <h6 class="text-white mb-3">Contact</h6>
+          <ul class="list-unstyled">
+            <li class="text-white-50 mb-2"><i class="feather icon-mail me-2"></i> support@bookingpfe.com</li>
+            <li class="text-white-50 mb-2"><i class="feather icon-phone me-2"></i> +216 71 123 456</li>
+            <li class="text-white-50"><i class="feather icon-map-pin me-2"></i> Tunis, Tunisia</li>
+          </ul>
+        </div>
+      </div>
+      <hr class="border-secondary my-4">
+      <div class="text-center text-white-50 small">
+        &copy; 2026 BookingPFE. All rights reserved.
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- Reservation Modal -->
+<ng-template #reservationModal let-modal>
+  <div class="modal-header bg-light">
+    <h4 class="modal-title fw-bold text-dark" id="modal-basic-title">Request Reservation</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <div *ngIf="reservationSuccess()" class="alert alert-success">
+      <i class="feather icon-check-circle me-2"></i> Reservation request sent successfully! Waiting for admin approval.
+    </div>
+    <div *ngIf="reservationError()" class="alert alert-danger">
+      {{ reservationError() }}
+    </div>
+
+    <form [formGroup]="reservationForm" (ngSubmit)="submitReservation(modal)" *ngIf="!reservationSuccess()">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label text-muted small">Check-in Date</label>
+          <input type="date" class="form-control" formControlName="dateDebut" />
+          <small class="text-danger" *ngIf="reservationForm.get('dateDebut')?.invalid && reservationForm.get('dateDebut')?.touched">
+            Check-in date is required
+          </small>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label text-muted small">Check-out Date</label>
+          <input type="date" class="form-control" formControlName="dateFin" />
+          <small class="text-danger" *ngIf="reservationForm.get('dateFin')?.invalid && reservationForm.get('dateFin')?.touched">
+            Check-out date is required
+          </small>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label text-muted small">Message to Admin (Optional)</label>
+        <textarea class="form-control" rows="3" formControlName="message" placeholder="Hello, I would like to reserve..."></textarea>
+      </div>
+
+      <div class="bg-light p-3 rounded mb-3">
+        <h6 class="fw-bold mb-2">Price Details</h6>
+        <div class="d-flex justify-content-between mb-1">
+          <span class="text-muted">{{ annonce()?.prix }} TND x month(s)</span>
+          <span>Calculated automatically</span>
+        </div>
+        <hr class="my-2">
+        <div class="d-flex justify-content-between fw-bold">
+          <span>Total</span>
+          <span class="text-primary">Will be provided upon approval</span>
+        </div>
+      </div>
+      
+      <div class="d-grid mt-4">
+        <button type="submit" class="btn btn-primary btn-lg" [disabled]="reservationForm.invalid || isSubmitting()">
+          <span *ngIf="isSubmitting()" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          {{ isSubmitting() ? 'Sending Request...' : 'Send Reservation Request' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-template>

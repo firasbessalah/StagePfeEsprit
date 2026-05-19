@@ -24,8 +24,16 @@
       <div class="col-12">
         <app-card cardTitle="Users">
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <button type="button" class="btn btn-primary" (click)="openAdd(addTpl)">Add user</button>
-            <button type="button" class="btn btn-outline-secondary btn-sm" (click)="reload()" [disabled]="loading()">Refresh</button>
+            <div class="d-flex align-items-center gap-2">
+              <div class="input-group">
+                <span class="input-group-text"><i class="feather icon-search"></i></span>
+                <input type="text" class="form-control" placeholder="Search user..." [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" />
+              </div>
+            </div>
+            <div>
+              <button type="button" class="btn btn-primary me-2" (click)="openAdd(addTpl)"><i class="feather icon-plus"></i> Add user</button>
+              <button type="button" class="btn btn-outline-secondary" (click)="reload()" [disabled]="loading()"><i class="feather icon-refresh-cw"></i></button>
+            </div>
           </div>
 
           @if (loading()) {
@@ -40,11 +48,12 @@
                     <th>Email</th>
                     <th>Role</th>
                     <th>Phone</th>
+                    <th>Created At</th>
                     <th class="text-end">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  @for (u of users(); track u.id) {
+                  @for (u of filteredUsers(); track u.id) {
                     <tr>
                       <td>
                         <img
@@ -58,9 +67,11 @@
                       <td>{{ u.email }}</td>
                       <td>{{ u.role }}</td>
                       <td>{{ u.telephone || '—' }}</td>
+                      <td>{{ u.createdAt | date:'shortDate' }}</td>
                       <td class="text-end">
-                        <button type="button" class="btn btn-sm btn-outline-primary me-1" (click)="openEdit(u, editTpl)">Edit</button>
-                        <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteUser(u)">Delete</button>
+                        <button type="button" class="btn btn-icon btn-sm btn-outline-info me-1" (click)="openShow(u, showTpl)" title="Show Info"><i class="feather icon-eye"></i></button>
+                        <button type="button" class="btn btn-icon btn-sm btn-outline-primary me-1" (click)="openEdit(u, editTpl)" title="Edit"><i class="feather icon-edit"></i></button>
+                        <button type="button" class="btn btn-icon btn-sm btn-outline-danger" (click)="deleteUser(u)" title="Delete"><i class="feather icon-trash-2"></i></button>
                       </td>
                     </tr>
                   }
@@ -163,5 +174,44 @@
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
     <button type="button" class="btn btn-primary" (click)="submitEdit()">Save</button>
+  </div>
+</ng-template>
+
+<ng-template #showTpl let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">User Information</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  </div>
+  @if (showModel) {
+    @let s = showModel;
+    <div class="modal-body">
+      <div class="text-center mb-4">
+        <img
+          class="rounded-circle img-thumbnail"
+          style="width: 120px; height: 120px; object-fit: cover"
+          [src]="s.photoProfil || 'assets/images/user/avatar-1.jpg'"
+          alt=""
+        />
+        <h5 class="mt-3">{{ s.prenom }} {{ s.nom }}</h5>
+        <p class="text-muted mb-0">{{ s.role }}</p>
+      </div>
+      <div class="row g-3">
+        <div class="col-sm-6">
+          <p class="mb-1 text-muted">Email</p>
+          <h6 class="mb-0">{{ s.email }}</h6>
+        </div>
+        <div class="col-sm-6">
+          <p class="mb-1 text-muted">Telephone</p>
+          <h6 class="mb-0">{{ s.telephone || '—' }}</h6>
+        </div>
+        <div class="col-sm-6">
+          <p class="mb-1 text-muted">Created At</p>
+          <h6 class="mb-0">{{ s.createdAt | date:'medium' || '—' }}</h6>
+        </div>
+      </div>
+    </div>
+  }
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Close</button>
   </div>
 </ng-template>

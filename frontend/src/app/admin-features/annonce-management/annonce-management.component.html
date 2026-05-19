@@ -1,0 +1,218 @@
+<div class="pc-container">
+  <div class="pc-content">
+    <div class="page-header">
+      <div class="page-block">
+        <div class="row align-items-center">
+          <div class="col-md-12">
+            <div class="page-header-title">
+              <h5 class="m-b-10">Annonce management</h5>
+            </div>
+            <ul class="breadcrumb">
+              <li class="breadcrumb-item"><a [routerLink]="['/dashboard']">Dashboard</a></li>
+              <li class="breadcrumb-item">Annonces</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    @if (error()) {
+      <div class="alert alert-danger" role="alert">{{ error() }}</div>
+    }
+
+    <div class="row">
+      <div class="col-12">
+        <app-card cardTitle="Annonces">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex align-items-center gap-2">
+              <div class="input-group">
+                <span class="input-group-text"><i class="feather icon-search"></i></span>
+                <input type="text" class="form-control" placeholder="Search annonce..." [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" />
+              </div>
+            </div>
+            <div>
+              <button type="button" class="btn btn-primary me-2" (click)="openAdd(addTpl)"><i class="feather icon-plus"></i> Add annonce</button>
+              <button type="button" class="btn btn-outline-secondary" (click)="reload()" [disabled]="loading()"><i class="feather icon-refresh-cw"></i></button>
+            </div>
+          </div>
+
+          @if (loading()) {
+            <p class="text-muted mb-0">Loading…</p>
+          } @else {
+            <div class="table-responsive">
+              <table class="table table-hover mb-0">
+                <thead>
+                  <tr>
+                    <th>Titre</th>
+                    <th>Prix</th>
+                    <th>Localisation</th>
+                    <th>Créée le</th>
+                    <th>Statut</th>
+                    <th class="text-end">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (a of filteredAnnonces(); track a.id) {
+                    <tr>
+                      <td>{{ a.titre }} <br><small class="text-muted">par {{ a.userPrenom }} {{ a.userNom }}</small></td>
+                      <td>{{ a.prix }}</td>
+                      <td>{{ a.localisation }}</td>
+                      <td>{{ a.createdAt | date:'shortDate' }}</td>
+                      <td>
+                        <span [class]="getStatusBadgeClass(a.statut)">{{ a.statut }}</span>
+                      </td>
+                      <td class="text-end">
+                        <button type="button" class="btn btn-icon btn-sm btn-outline-info me-1" (click)="openShow(a, showTpl)" title="Show Info"><i class="feather icon-eye"></i></button>
+                        
+                        @if (isAdmin()) {
+                          @if (a.statut === 'EN_ATTENTE' || a.statut === 'REJETEE' || a.statut === 'ARCHIVEE') {
+                            <button type="button" class="btn btn-icon btn-sm btn-outline-success me-1" (click)="validerAnnonce(a)" title="Approve"><i class="feather icon-check"></i></button>
+                          }
+                          
+                          @if (a.statut === 'EN_ATTENTE' || a.statut === 'VALIDEE') {
+                            <button type="button" class="btn btn-icon btn-sm btn-outline-warning me-1" (click)="rejeterAnnonce(a)" title="Reject"><i class="feather icon-x"></i></button>
+                          }
+                          
+                          @if (a.statut === 'VALIDEE' || a.statut === 'REJETEE' || a.statut === 'SUSPENDUE') {
+                            <button type="button" class="btn btn-icon btn-sm btn-outline-secondary me-1" (click)="archiverAnnonce(a)" title="Archive"><i class="feather icon-archive"></i></button>
+                          }
+                        }
+
+                        <button type="button" class="btn btn-icon btn-sm btn-outline-primary me-1" (click)="openEdit(a, editTpl)" title="Edit"><i class="feather icon-edit"></i></button>
+                        <button type="button" class="btn btn-icon btn-sm btn-outline-danger" (click)="deleteAnnonce(a)" title="Delete"><i class="feather icon-trash-2"></i></button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </app-card>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #editTpl let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Edit Annonce</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  </div>
+  @if (editModel) {
+    @let m = editModel;
+    <div class="modal-body">
+      <div class="row g-2">
+        <div class="col-md-12">
+          <label class="form-label">Titre</label>
+          <input class="form-control" [(ngModel)]="m.titre" name="edTitre" />
+        </div>
+        <div class="col-md-12">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" [(ngModel)]="m.description" name="edDesc"></textarea>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Prix</label>
+          <input class="form-control" type="number" [(ngModel)]="m.prix" name="edPrix" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Localisation</label>
+          <input class="form-control" [(ngModel)]="m.localisation" name="edLoc" />
+        </div>
+      </div>
+    </div>
+  }
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="submitEdit()">Save</button>
+  </div>
+</ng-template>
+
+<ng-template #showTpl let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Annonce Information</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  </div>
+  @if (showModel) {
+    @let s = showModel;
+    <div class="modal-body">
+      <div class="row g-3">
+        <div class="col-sm-12">
+          <h5 class="mb-1">{{ s.titre }} <span [class]="getStatusBadgeClass(s.statut)">{{ s.statut }}</span></h5>
+          <p class="text-muted">{{ s.description }}</p>
+        </div>
+        <div class="col-sm-6">
+          <p class="mb-1 text-muted">Prix</p>
+          <h6 class="mb-0">{{ s.prix }} TND</h6>
+        </div>
+        <div class="col-sm-6">
+          <p class="mb-1 text-muted">Localisation</p>
+          <h6 class="mb-0">{{ s.localisation }}</h6>
+        </div>
+        <div class="col-sm-6">
+          <p class="mb-1 text-muted">Auteur</p>
+          <h6 class="mb-0">{{ s.userPrenom }} {{ s.userNom }}</h6>
+        </div>
+        <div class="col-sm-6">
+          <p class="mb-1 text-muted">Créée le</p>
+          <h6 class="mb-0">{{ s.createdAt | date:'medium' || '—' }}</h6>
+        </div>
+        <div class="col-sm-12 mt-4">
+          <p class="mb-1 text-muted">Emplacement sur la carte</p>
+          <div id="showMap" style="height: 250px; width: 100%; border-radius: 8px; z-index: 1;"></div>
+        </div>
+      </div>
+    </div>
+  }
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Close</button>
+  </div>
+</ng-template>
+
+<ng-template #addTpl let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Add Annonce</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <div class="row g-3">
+      @if (isAdmin()) {
+        <div class="col-md-12">
+          <label class="form-label">Auteur (Utilisateur)</label>
+          <select class="form-select" [(ngModel)]="selectedUserId">
+            @for (u of usersList(); track u.id) {
+              <option [ngValue]="u.id">{{ u.prenom }} {{ u.nom }} ({{ u.email }})</option>
+            }
+          </select>
+        </div>
+      }
+      <div class="col-md-12">
+        <label class="form-label">Titre</label>
+        <input class="form-control" [(ngModel)]="addModel.titre" />
+      </div>
+      <div class="col-md-12">
+        <label class="form-label">Description</label>
+        <textarea class="form-control" [(ngModel)]="addModel.description"></textarea>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Prix</label>
+        <input class="form-control" type="number" [(ngModel)]="addModel.prix" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Localisation (Texte)</label>
+        <input class="form-control" [(ngModel)]="addModel.localisation" />
+      </div>
+      <div class="col-md-12">
+        <label class="form-label">Position sur la carte (Cliquez pour placer le marqueur)</label>
+        <div id="map" style="height: 300px; width: 100%; border-radius: 8px; z-index: 1;"></div>
+        <div class="d-flex justify-content-between mt-2">
+          <small class="text-muted">Lat: {{ addModel.latitude | number:'1.2-6' }}</small>
+          <small class="text-muted">Lng: {{ addModel.longitude | number:'1.2-6' }}</small>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="submitAdd()">Create</button>
+  </div>
+</ng-template>

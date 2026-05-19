@@ -33,6 +33,12 @@ public class AnnonceController {
         return ResponseEntity.ok(annonceService.getAllAnnonces());
     }
 
+    // GET /api/annonces/admin/all
+    @GetMapping("/admin/all")
+    public ResponseEntity<List<AnnonceDTO>> getAllAnnoncesAdmin() {
+        return ResponseEntity.ok(annonceService.getAllAnnoncesAdmin());
+    }
+
     // GET /api/annonces/user/1
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<AnnonceDTO>> getAnnoncesByUser(
@@ -72,6 +78,12 @@ public class AnnonceController {
     @PutMapping("/{id}/rejeter")
     public ResponseEntity<AnnonceDTO> rejeter(@PathVariable Long id) {
         return ResponseEntity.ok(annonceService.rejeter(id));
+    }
+
+    // PUT /api/annonces/1/archiver
+    @PutMapping("/{id}/archiver")
+    public ResponseEntity<AnnonceDTO> archiver(@PathVariable Long id) {
+        return ResponseEntity.ok(annonceService.archiver(id));
     }
 
     // DELETE /api/annonces/1
