@@ -91,6 +91,19 @@ export class NavRightComponent implements OnInit, OnDestroy {
         next: () => this.loadNotifications()
       });
     }
+
+    const role = this.auth.user()?.role;
+    const isAdmin = role === 'ADMIN';
+
+    if (n.type === 'ANNONCE' && n.relatedEntityId) {
+      this.router.navigate(['/annonce', n.relatedEntityId]);
+    } else if (n.type === 'MESSAGE') {
+      this.router.navigate([isAdmin ? '/admin-messages' : '/messages']);
+    } else if (n.type === 'RESERVATION') {
+      this.router.navigate([isAdmin ? '/admin-reservations' : '/reservations']);
+    } else {
+      this.router.navigate([isAdmin ? '/dashboard' : '/browse']);
+    }
   }
 
   clearAll(): void {

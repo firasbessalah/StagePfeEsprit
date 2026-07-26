@@ -1,0 +1,280 @@
+<div class="search-results-layout">
+
+  <!-- ===== NAVBAR ===== -->
+  <header class="results-header">
+    <div class="container-fluid header-inner">
+      <a [routerLink]="homeLink()" class="logo">Lofina</a>
+
+      <form class="results-search-bar" (ngSubmit)="onSearch()">
+        <div class="search-field">
+          <label>{{ 'WHERE_GOING' | translate }}</label>
+          <input type="text" [(ngModel)]="localisation" name="localisation" [placeholder]="'SEARCH_DESTINATIONS' | translate">
+        </div>
+        <div class="search-field">
+          <label>{{ 'CHECK_IN' | translate }}</label>
+          <input type="date" [(ngModel)]="checkIn" name="checkIn">
+        </div>
+        <div class="search-field">
+          <label>{{ 'CHECK_OUT' | translate }}</label>
+          <input type="date" [(ngModel)]="checkOut" name="checkOut">
+        </div>
+        <button type="submit" class="search-submit">
+          <i class="feather icon-search"></i>
+          <span>{{ 'SEARCH' | translate }}</span>
+        </button>
+      </form>
+
+      <!-- Right-side actions -->
+      <div class="header-actions d-flex align-items-center">
+        <!-- Unauthenticated -->
+        <ng-container *ngIf="!isAuthenticated()">
+          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()">{{ 'LIST_PROPERTY' | translate }}</a>
+          <a routerLink="/register" class="header-nav-link">{{ 'REGISTER' | translate }}</a>
+          <a routerLink="/login" class="header-nav-link">{{ 'SIGN_IN' | translate }}</a>
+        </ng-container>
+
+        <!-- Authenticated -->
+        <ng-container *ngIf="isAuthenticated()">
+          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()" *ngIf="user()?.role !== 'LOCATAIRE'">{{ 'LIST_PROPERTY' | translate }}</a>
+          <app-notification-dropdown></app-notification-dropdown>
+          <div class="user-dropdown dropdown" ngbDropdown>
+            <button class="btn btn-transparent dropdown-toggle text-dark d-flex align-items-center" ngbDropdownToggle style="border: none; background: transparent; padding: 0;">
+              <img [src]="user()?.photoProfil || 'assets/images/user/avatar-1.jpg'" alt="User Avatar" class="rounded-circle me-2" width="40" height="40" style="object-fit: cover; border: 2px solid #febb02;">
+              <div class="text-start me-2">
+                <div class="fw-bold" style="line-height: 1.2;">{{ user()?.nom }} {{ user()?.prenom }}</div>
+              </div>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu style="min-width: 250px;">
+              <a class="dropdown-item py-2" routerLink="/dashboard" *ngIf="user()?.role === 'ADMIN'">
+                <i class="feather icon-monitor me-3 fs-5 align-middle"></i> Admin Dashboard
+              </a>
+              <a class="dropdown-item py-2" routerLink="/my-profile">
+                <i class="feather icon-user me-3 fs-5 align-middle"></i> {{ 'MY_ACCOUNT' | translate }}
+              </a>
+              <a class="dropdown-item py-2" routerLink="/reservations" *ngIf="user()?.role !== 'ADMIN'">
+                <i class="feather icon-briefcase me-3 fs-5 align-middle"></i> {{ 'RESERVATIONS' | translate }}
+              </a>
+              <a class="dropdown-item py-2" routerLink="/favoris" *ngIf="user()?.role === 'LOCATAIRE'">
+                <i class="feather icon-heart me-3 fs-5 align-middle"></i> Mes Favoris
+              </a>
+              <a class="dropdown-item py-2" routerLink="/alertes" *ngIf="user()?.role === 'LOCATAIRE'">
+                <i class="feather icon-bell me-3 fs-5 align-middle"></i> Mes Alertes
+              </a>
+              <a class="dropdown-item py-2" routerLink="/messages" *ngIf="user()?.role !== 'ADMIN'">
+                <i class="feather icon-message-circle me-3 fs-5 align-middle"></i> {{ 'MESSAGES' | translate }}
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item py-2 text-danger" (click)="logout()" style="cursor: pointer;">
+                <i class="feather icon-log-out me-3 fs-5 align-middle"></i> {{ 'LOGOUT' | translate }}
+              </a>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- Language Switcher -->
+        <div class="dropdown ms-2" ngbDropdown>
+          <button class="btn btn-primary dropdown-toggle d-flex align-items-center shadow-sm" ngbDropdownToggle style="border-radius: 50px; font-size: 0.82rem; font-weight: 600; padding: 6px 16px; background-color: #000080; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 10px rgba(0,0,0,0.12); color: #ffffff !important;">
+            <i class="feather icon-globe me-2" style="font-size: 0.95rem;"></i>
+            <span>{{ currentLang() }}</span>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')" style="width: 100%; border: none; background: transparent;">
+              <span>en</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'en'"></i>
+            </button>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')" style="width: 100%; border: none; background: transparent;">
+              <span>fr</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'fr'"></i>
+            </button>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')" style="width: 100%; border: none; background: transparent;">
+              <span>ar</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'ar'"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== DESCRIPTION BLOCK (like home page) ===== -->
+  <app-site-description></app-site-description>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="results-main">
+    <div class="container">
+      <div class="results-summary" *ngIf="isBailleur()">
+        <h1>{{ 'MY_ANNONCES' | translate }}</h1>
+        <p class="text-muted mb-0" *ngIf="hasActiveFilters()">
+          <span *ngIf="localisation">{{ localisation }}</span>
+          <span *ngIf="checkIn"> · {{ checkIn }}</span>
+          <span *ngIf="checkOut"> → {{ checkOut }}</span>
+        </p>
+      </div>
+      <div class="results-summary d-flex flex-wrap justify-content-between align-items-start gap-3" *ngIf="!isBailleur() && hasActiveFilters()">
+        <div>
+          <h1>{{ 'SEARCH_RESULTS' | translate }}</h1>
+          <p class="text-muted mb-0">
+            <span *ngIf="localisation">{{ localisation }}</span>
+            <span *ngIf="checkIn"> · {{ checkIn }}</span>
+            <span *ngIf="checkOut"> → {{ checkOut }}</span>
+            <span *ngIf="guests"> · {{ guests }} {{ 'GUESTS' | translate | lowercase }}</span>
+          </p>
+        </div>
+        <button
+          type="button"
+          class="btn btn-outline-primary"
+          *ngIf="canCreateAlert()"
+          [disabled]="creatingAlert()"
+          (click)="createAlertFromSearch()">
+          <i class="feather icon-bell me-1"></i>
+          {{ creatingAlert() ? 'Création...' : 'Créer une alerte' }}
+        </button>
+      </div>
+      <div class="results-summary d-flex flex-wrap justify-content-between align-items-start gap-3" *ngIf="!isBailleur() && !hasActiveFilters()">
+        <div>
+          <h1>{{ 'ALL_PROPERTIES' | translate }}</h1>
+        </div>
+        <button
+          type="button"
+          class="btn btn-outline-primary"
+          *ngIf="canCreateAlert()"
+          [disabled]="creatingAlert()"
+          (click)="createAlertFromSearch()">
+          <i class="feather icon-bell me-1"></i>
+          {{ creatingAlert() ? 'Création...' : 'Créer une alerte' }}
+        </button>
+      </div>
+
+      <div *ngIf="alertError()" class="alert alert-danger text-center">{{ alertError() }}</div>
+
+      <!-- AI Search Feedback Box -->
+      <div class="alert alert-info border-0 shadow-sm d-flex align-items-center gap-3 p-3 mb-4" *ngIf="aiFeedback()" style="background-color: rgba(118, 75, 162, 0.08); border-left: 5px solid #764ba2 !important;">
+        <div class="rounded-circle bg-white p-2 d-flex align-items-center justify-content-center shadow-sm" style="width: 42px; height: 42px; color: #764ba2;">
+          <i class="feather icon-cpu fs-4 animate-pulse"></i>
+        </div>
+        <div>
+          <h6 class="mb-1 fw-bold" style="color: #764ba2;">Recherche intelligente IA</h6>
+          <p class="mb-0 text-muted small">
+            Filtres extraits : 
+            <span class="badge bg-primary me-1" *ngIf="aiFeedback()?.localisation">Lieu: {{ aiFeedback()?.localisation }}</span>
+            <span class="badge bg-success me-1" *ngIf="aiFeedback()?.prixMax">Prix Max: {{ aiFeedback()?.prixMax }} TND</span>
+            <span class="badge bg-warning text-dark me-1" *ngIf="aiFeedback()?.categorie">Catégorie: {{ aiFeedback()?.categorie }}</span>
+            <span class="badge bg-info me-1" *ngIf="aiFeedback()?.duree">Durée Max: {{ aiFeedback()?.duree }} mois</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Interactive Filters Bar -->
+      <div class="card shadow-sm border-0 mb-4 filters-container" *ngIf="!loading() && annonces().length > 0">
+        <div class="card-body p-3">
+          <div class="row g-3">
+            <!-- Price Slider -->
+            <div class="col-md-3">
+              <label class="form-label d-flex justify-content-between mb-1">
+                <span class="fw-bold"><i class="feather icon-sliders me-1 text-primary"></i> Budget Max:</span>
+                <span class="text-primary fw-bold">{{ maxPrice() }} TND</span>
+              </label>
+              <input type="range" class="form-range" min="100" max="5000" step="50" [ngModel]="maxPrice()" (ngModelChange)="maxPrice.set($event); fetchResults()" name="maxPrice">
+            </div>
+            
+            <!-- Distance Slider -->
+            <div class="col-md-3">
+              <label class="form-label d-flex justify-content-between mb-1">
+                <span class="fw-bold"><i class="feather icon-map-pin me-1 text-success"></i> Distance Max:</span>
+                <span class="text-success fw-bold">{{ maxDistance() }} km</span>
+              </label>
+              <input type="range" class="form-range" min="1" max="100" step="1" [ngModel]="maxDistance()" (ngModelChange)="maxDistance.set($event)" name="maxDistance">
+            </div>
+
+            <!-- Duration Slider -->
+            <div class="col-md-3">
+              <label class="form-label d-flex justify-content-between mb-1">
+                <span class="fw-bold"><i class="feather icon-clock me-1 text-info"></i> Durée Max:</span>
+                <span class="text-info fw-bold">{{ maxDuree() }} mois</span>
+              </label>
+              <input type="range" class="form-range" min="1" max="12" step="1" [ngModel]="maxDuree()" (ngModelChange)="maxDuree.set($event); fetchResults()" name="maxDuree">
+            </div>
+
+            <!-- Category Selector -->
+            <div class="col-md-3">
+              <label class="form-label fw-bold mb-1"><i class="feather icon-home me-1 text-warning"></i> Catégorie:</label>
+              <div class="d-flex gap-1">
+                <select class="form-select" [ngModel]="selectedCategorie()" (ngModelChange)="selectedCategorie.set($event); fetchResults()" name="selectedCategorie">
+                  <option value="">Toutes</option>
+                  <option value="ETUDIANT">Logements Étudiants</option>
+                  <option value="VACANCES">Vacances</option>
+                  <option value="MAISON_HOTE_HOTEL">Maisons d'hôtes / Hôtels</option>
+                </select>
+                <button class="btn btn-outline-secondary btn-sm px-2" (click)="resetInteractiveFilters()" title="Reset Filters">
+                  <i class="feather icon-refresh-cw"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="loading()" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <div *ngIf="error()" class="alert alert-danger text-center">{{ error() }}</div>
+
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" *ngIf="!loading() && displayedAnnonces().length > 0">
+        <div class="col" *ngFor="let annonce of displayedAnnonces()">
+          <div class="card property-card h-100 shadow-sm border-0">
+            <div class="property-image-container" (click)="viewDetails(annonce.id!)" style="cursor: pointer;">
+              <img [src]="(annonce.images && annonce.images.length > 0) ? annonce.images[0] : 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80&w=800'" class="card-img-top property-image" alt="Property Image">
+              <button class="btn position-absolute top-0 end-0 m-2 p-1 rounded-circle favori-btn" 
+                      *ngIf="user()?.role === 'LOCATAIRE'"
+                      style="z-index: 10; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.2); background-color: rgba(255,255,255,0.9);"
+                      (click)="toggleFavori(annonce.id!, $event)"
+                      [title]="favoriService.isFavori(annonce.id!) ? 'Remove from favorites' : 'Add to favorites'">
+                <i [class]="favoriService.isFavori(annonce.id!) ? 'feather icon-heart-on text-danger' : 'feather icon-heart text-muted'" 
+                   style="font-size: 1.5rem;"></i>
+              </button>
+              <span class="badge bg-primary location-badge">
+                <i class="feather icon-map-pin"></i> {{ annonce.localisation }}
+              </span>
+              <span class="badge bg-warning text-dark distance-badge" *ngIf="getDistanceDisplay(annonce)" style="position: absolute; top: 10px; right: 45px; font-weight: 600; font-size: 0.8rem; border-radius: 5px; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+                <i class="feather icon-navigation me-1"></i> {{ getDistanceDisplay(annonce) }}
+              </span>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title text-truncate mb-2" [title]="annonce.titre" (click)="viewDetails(annonce.id!)" style="cursor: pointer;">
+                {{ annonce.titre }}
+              </h5>
+              <p class="card-text text-muted small description-text">{{ annonce.description }}</p>
+              <div class="d-flex justify-content-between align-items-end mt-auto">
+                <div>
+                  <span class="text-muted small">{{ 'PRICE' | translate }}</span>
+                  <div class="price-tag fw-bold text-dark fs-5">
+                    {{ annonce.prix }} TND <span class="fs-6 fw-normal text-muted">/ {{ 'MONTH' | translate }}</span>
+                  </div>
+                </div>
+                <button class="btn btn-primary btn-view" (click)="viewDetails(annonce.id!)">
+                  {{ (isBailleur() ? 'VIEW_DETAILS' : 'RESERVE') | translate }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!loading() && (annonces().length === 0 || displayedAnnonces().length === 0)" class="text-center py-5 no-results">
+        <i class="feather icon-search fs-1 text-muted mb-3 d-block"></i>
+        <h4>{{ 'NO_SEARCH_RESULTS' | translate }}</h4>
+        <p class="text-muted">{{ 'TRY_DIFFERENT_SEARCH' | translate }}</p>
+        <button class="btn btn-primary mt-2" *ngIf="displayedAnnonces().length === 0 && annonces().length > 0" (click)="resetInteractiveFilters()">
+          <i class="feather icon-refresh-cw me-1"></i> Reset Filters
+        </button>
+        <a [routerLink]="homeLink()" class="btn btn-primary mt-2" *ngIf="annonces().length === 0">{{ 'BACK_HOME' | translate }}</a>
+      </div>
+    </div>
+  </main>
+
+  <app-public-footer></app-public-footer>
+
+</div>

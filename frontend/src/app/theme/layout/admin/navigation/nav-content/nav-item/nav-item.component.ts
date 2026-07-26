@@ -37,7 +37,9 @@ export class NavItemComponent {
     if (id === 'user-management') return this.translationService.translate('USER_MANAGE');
     if (id === 'annonce-management') return this.translationService.translate('ANNONCE_MANAGE');
     if (id === 'reservation-management') return this.translationService.translate('RESERVATIONS');
+    if (id === 'reservation-user') return this.translationService.translate('RESERVATIONS');
     if (id === 'messages') return this.translationService.translate('MESSAGES');
+    if (id === 'messages-user') return this.translationService.translate('MESSAGES');
     return it.title || '';
   });
 

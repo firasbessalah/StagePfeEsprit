@@ -1,0 +1,120 @@
+<div class="search-results-layout">
+  <header class="results-header">
+    <div class="container-fluid header-inner">
+      <a [routerLink]="homeLink()" class="logo">Lofina</a>
+      <div style="flex: 1;"></div>
+      <div class="header-actions d-flex align-items-center">
+        <ng-container *ngIf="isAuthenticated()">
+          <app-notification-dropdown></app-notification-dropdown>
+          <div class="user-dropdown dropdown" ngbDropdown>
+            <button class="btn btn-transparent dropdown-toggle text-dark d-flex align-items-center" ngbDropdownToggle style="border: none; background: transparent; padding: 0;">
+              <img [src]="user()?.photoProfil || 'assets/images/user/avatar-1.jpg'" alt="User Avatar" class="rounded-circle me-2" width="40" height="40" style="object-fit: cover; border: 2px solid #febb02;">
+              <div class="text-start me-2">
+                <div class="fw-bold" style="line-height: 1.2;">{{ user()?.nom }} {{ user()?.prenom }}</div>
+              </div>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu style="min-width: 250px;">
+              <a class="dropdown-item py-2" routerLink="/my-profile">
+                <i class="feather icon-user me-3 fs-5 align-middle"></i> {{ 'MY_ACCOUNT' | translate }}
+              </a>
+              <a class="dropdown-item py-2" routerLink="/reservations">
+                <i class="feather icon-briefcase me-3 fs-5 align-middle"></i> {{ 'RESERVATIONS' | translate }}
+              </a>
+              <a class="dropdown-item py-2" routerLink="/favoris">
+                <i class="feather icon-heart me-3 fs-5 align-middle"></i> Mes Favoris
+              </a>
+              <a class="dropdown-item py-2" routerLink="/alertes">
+                <i class="feather icon-bell me-3 fs-5 align-middle"></i> Mes Alertes
+              </a>
+              <a class="dropdown-item py-2" routerLink="/messages">
+                <i class="feather icon-message-circle me-3 fs-5 align-middle"></i> {{ 'MESSAGES' | translate }}
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item py-2 text-danger" (click)="logout()" style="cursor: pointer;">
+                <i class="feather icon-log-out me-3 fs-5 align-middle"></i> {{ 'LOGOUT' | translate }}
+              </a>
+            </div>
+          </div>
+        </ng-container>
+
+        <div class="dropdown ms-2" ngbDropdown>
+          <button class="btn btn-primary dropdown-toggle d-flex align-items-center shadow-sm" ngbDropdownToggle style="border-radius: 50px; font-size: 0.82rem; font-weight: 600; padding: 6px 16px; background-color: #000080; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 10px rgba(0,0,0,0.12); color: #ffffff !important;">
+            <i class="feather icon-globe me-2" style="font-size: 0.95rem;"></i>
+            <span>{{ currentLang() }}</span>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')" style="width: 100%; border: none; background: transparent;">
+              <span>en</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'en'"></i>
+            </button>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')" style="width: 100%; border: none; background: transparent;">
+              <span>fr</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'fr'"></i>
+            </button>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')" style="width: 100%; border: none; background: transparent;">
+              <span>ar</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'ar'"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="results-main">
+    <div class="container">
+      <div class="results-summary mb-4">
+        <h1>Mes Favoris</h1>
+      </div>
+
+      <div *ngIf="loading()" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <div *ngIf="error()" class="alert alert-danger">{{ error() }}</div>
+
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" *ngIf="!loading() && favoris().length > 0">
+        <div class="col" *ngFor="let fav of favoris()">
+          <div class="card h-100 shadow-sm border-0 position-relative">
+            <button class="btn btn-light position-absolute top-0 end-0 m-2 p-1 rounded-circle"
+                    style="z-index: 10; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.2);"
+                    (click)="removeFavori(fav.annonceId, $event)" title="Remove from favorites">
+              <i class="feather icon-heart text-danger fw-bold" style="font-size: 1.5rem; fill: #dc3545;"></i>
+            </button>
+
+            <div class="card-body mt-4">
+              <h5 class="card-title text-truncate mb-2" [title]="fav.annonceTitre" [routerLink]="['/annonce', fav.annonceId]" style="cursor: pointer;">
+                {{ fav.annonceTitre }}
+              </h5>
+              <div class="mb-2">
+                <span class="badge bg-primary location-badge">
+                  <i class="feather icon-map-pin"></i> {{ fav.annonceLocalisation }}
+                </span>
+              </div>
+              <div class="d-flex justify-content-between align-items-end mt-3">
+                <div>
+                  <span class="text-muted small">Prix</span>
+                  <div class="price-tag fw-bold text-dark fs-5">
+                    {{ fav.annoncePrix }} TND <span class="fs-6 fw-normal text-muted">/ mois</span>
+                  </div>
+                </div>
+                <a [routerLink]="['/annonce', fav.annonceId]" class="btn btn-outline-primary btn-sm">
+                  Voir
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!loading() && favoris().length === 0" class="text-center py-5">
+        <i class="feather icon-heart text-muted mb-3 d-block" style="font-size: 3rem;"></i>
+        <h4>Aucun favori</h4>
+        <p class="text-muted">Vous n'avez pas encore ajouté d'annonces à vos favoris.</p>
+        <a routerLink="/search" class="btn btn-primary mt-2">Rechercher des annonces</a>
+      </div>
+    </div>
+  </main>
+</div>

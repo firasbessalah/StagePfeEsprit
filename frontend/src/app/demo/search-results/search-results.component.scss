@@ -1,0 +1,268 @@
+$primary-blue: #000080;
+$gold: #febb02;
+$bg-gray: #f5f5f5;
+
+.search-results-layout {
+  min-height: 100vh;
+  background: $bg-gray;
+  display: flex;
+  flex-direction: column;
+}
+
+// ===== HEADER =====
+.results-header {
+  background: #fff;
+  border-bottom: 1px solid #ebebeb;
+  padding: 0.75rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 1rem;
+  flex-wrap: wrap;
+}
+
+.logo {
+  color: $primary-blue;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.results-search-bar {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 999px;
+  padding: 0.35rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.search-field {
+  flex: 1;
+  min-width: 0;
+  padding: 0.5rem 1rem;
+  border-right: 1px solid #ebebeb;
+
+  &:last-of-type {
+    border-right: none;
+  }
+
+  label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 0.1rem;
+  }
+
+  input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 0.85rem;
+    color: #333;
+    background: transparent;
+  }
+}
+
+.search-submit {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: none;
+  background: linear-gradient(135deg, $gold, #e6a800);
+  color: #fff;
+  border-radius: 999px;
+  height: 44px;
+  padding: 0 1.25rem;
+  margin-left: 0.25rem;
+  flex-shrink: 0;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+
+  &:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 14px rgba(254, 187, 2, 0.45);
+  }
+
+  i {
+    font-size: 1rem;
+  }
+}
+
+.header-actions {
+  flex-shrink: 0;
+  gap: 0.25rem;
+}
+
+.header-nav-link {
+  color: #333;
+  font-weight: 500;
+  font-size: 0.875rem;
+  text-decoration: none;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  transition: background 0.15s;
+
+  &:hover {
+    background: #f5f5f5;
+    color: $primary-blue;
+  }
+}
+
+// ===== MAIN =====
+.results-main {
+  padding: 2rem 0 4rem;
+  flex: 1;
+}
+
+.results-summary h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 0.5rem;
+}
+
+.property-card {
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12) !important;
+  }
+
+  .property-image-container {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+
+    .property-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .location-badge {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      background-color: rgba(255, 255, 255, 0.92) !important;
+      color: #333;
+      font-weight: 600;
+    }
+  }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem;
+  }
+
+  .description-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+
+  .btn-view {
+    background: $primary-blue;
+    border-color: $primary-blue;
+    font-weight: 600;
+    color: #ffffff;
+  }
+}
+
+.no-results h4 {
+  color: #333;
+}
+
+// ===== RESPONSIVE =====
+@media (max-width: 992px) {
+  .results-search-bar {
+    flex-wrap: wrap;
+    border-radius: 16px;
+    width: 100%;
+  }
+
+  .search-field {
+    flex: 1 1 45%;
+    border-right: none;
+    border-bottom: 1px solid #ebebeb;
+  }
+
+  .search-submit {
+    width: 100%;
+    margin: 0.5rem 0 0;
+    justify-content: center;
+    border-radius: 12px;
+  }
+
+  .header-inner {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+// ===== FILTERS =====
+.filters-container {
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05) !important;
+  margin-top: 1rem;
+
+  .form-range {
+    height: 1.4rem;
+    padding: 0;
+    background: transparent;
+    appearance: none;
+
+    &::-webkit-slider-runnable-track {
+      background: #e9ecef;
+      height: 6px;
+      border-radius: 3px;
+    }
+
+    &::-webkit-slider-thumb {
+      background: $primary-blue;
+      width: 18px;
+      height: 18px;
+      margin-top: -6px;
+      border-radius: 50%;
+      cursor: pointer;
+      appearance: none;
+      transition: background-color 0.15s, transform 0.15s;
+
+      &:hover {
+        transform: scale(1.15);
+      }
+
+      &:active {
+        background-color: $gold;
+      }
+    }
+  }
+
+  .text-primary {
+    color: $primary-blue !important;
+  }
+}

@@ -46,4 +46,22 @@ public class EmailService {
 
         mailSender.send(message);
     }
+
+    public void sendAlerteLogementEmail(com.example.pfeporject.entity.User user, com.example.pfeporject.entity.Annonce annonce) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(user.getEmail());
+        message.setSubject("Alerte Logement : Nouvelle annonce correspondante !");
+        message.setText(
+                "Bonjour " + user.getPrenom() + ",\n\n"
+                + "Une nouvelle annonce correspondant à vos critères d'alerte logement vient d'être validée sur notre plateforme.\n\n"
+                + "Titre : " + annonce.getTitre() + "\n"
+                + "Localisation : " + annonce.getLocalisation() + "\n"
+                + "Prix : " + annonce.getPrix() + " TND\n\n"
+                + "Connectez-vous pour consulter cette nouvelle annonce !\n\n"
+                + "Cordialement,\n"
+                + "L'équipe PFE"
+        );
+
+        mailSender.send(message);
+    }
 }

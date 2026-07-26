@@ -1,0 +1,111 @@
+<div class="booking-layout user-browse-layout">
+  <header class="booking-header" [class.is-scrolled]="searchCompact()">
+    <div class="container-fluid header-container">
+      <div class="logo">
+        <a routerLink="/browse">Lofina</a>
+      </div>
+
+      <div class="header-compact-search" [class.is-visible]="searchCompact()">
+        <div class="airbnb-search-bar airbnb-search-bar--header">
+          <button type="button" class="search-compact-summary" (click)="scrollToHeroSearch()" aria-label="{{ 'SEARCH' | translate }}">
+            <span class="compact-item">{{ localisation || ('ANYWHERE' | translate) }}</span>
+            <span class="compact-dot"></span>
+            <span class="compact-item">{{ checkIn || checkOut ? (checkIn + ' → ' + checkOut) : ('ANY_WEEK' | translate) }}</span>
+          </button>
+          <button type="button" class="search-submit search-submit--icon" (click)="onSearch()" aria-label="{{ 'SEARCH' | translate }}">
+            <i class="feather icon-search"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="header-actions d-flex align-items-center">
+        <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()" *ngIf="isBailleur()">{{ 'LIST_PROPERTY' | translate }}</a>
+        <app-notification-dropdown></app-notification-dropdown>
+        <div class="user-dropdown dropdown" ngbDropdown>
+          <button class="btn btn-transparent dropdown-toggle text-dark d-flex align-items-center" ngbDropdownToggle style="border: none; background: transparent; padding: 0;">
+            <img [src]="user()?.photoProfil || 'assets/images/user/avatar-1.jpg'" alt="User Avatar" class="rounded-circle me-2" width="40" height="40" style="object-fit: cover; border: 2px solid #febb02;">
+            <div class="text-start me-2">
+              <div class="fw-bold" style="line-height: 1.2;">{{ user()?.nom }} {{ user()?.prenom }}</div>
+            </div>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu style="min-width: 250px;">
+            <a class="dropdown-item py-2" routerLink="/my-profile">
+              <i class="feather icon-user me-3 fs-5 align-middle"></i> {{ 'MY_ACCOUNT' | translate }}
+            </a>
+            <a class="dropdown-item py-2" routerLink="/reservations" *ngIf="!isBailleur()">
+              <i class="feather icon-briefcase me-3 fs-5 align-middle"></i> {{ 'RESERVATIONS' | translate }}
+            </a>
+            <a class="dropdown-item py-2" routerLink="/favoris" *ngIf="!isBailleur()">
+              <i class="feather icon-heart me-3 fs-5 align-middle"></i> Mes Favoris
+            </a>
+            <a class="dropdown-item py-2" routerLink="/alertes" *ngIf="!isBailleur()">
+              <i class="feather icon-bell me-3 fs-5 align-middle"></i> Mes Alertes
+            </a>
+            <a class="dropdown-item py-2" routerLink="/annonces" *ngIf="isBailleur()">
+              <i class="feather icon-home me-3 fs-5 align-middle"></i> {{ 'MY_ANNONCES' | translate }}
+            </a>
+            <a class="dropdown-item py-2" routerLink="/messages">
+              <i class="feather icon-message-circle me-3 fs-5 align-middle"></i> {{ 'MESSAGES' | translate }}
+            </a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item py-2 text-danger" (click)="logout()" style="cursor: pointer;">
+              <i class="feather icon-log-out me-3 fs-5 align-middle"></i> {{ 'LOGOUT' | translate }}
+            </a>
+          </div>
+        </div>
+
+        <div class="dropdown ms-2" ngbDropdown>
+          <button class="btn btn-primary dropdown-toggle d-flex align-items-center shadow-sm" ngbDropdownToggle style="border-radius: 50px; font-size: 0.82rem; font-weight: 600; padding: 6px 16px; background-color: #000080; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 10px rgba(0,0,0,0.12); color: #ffffff !important;">
+            <i class="feather icon-globe me-2" style="font-size: 0.95rem;"></i>
+            <span>{{ currentLang() }}</span>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')" style="width: 100%; border: none; background: transparent;">
+              <span>en</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'en'"></i>
+            </button>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')" style="width: 100%; border: none; background: transparent;">
+              <span>fr</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'fr'"></i>
+            </button>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')" style="width: 100%; border: none; background: transparent;">
+              <span>ar</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'ar'"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="booking-hero user-browse-hero">
+    <div class="container hero-content">
+      <form class="search-anchor" #heroSearchAnchor (ngSubmit)="onSearch()">
+        <div class="airbnb-search-shell">
+          <div class="airbnb-search-bar shadow">
+            <div class="search-expanded">
+              <div class="search-field search-field--where">
+                <label>{{ 'WHERE_GOING' | translate }}</label>
+                <input type="text" [(ngModel)]="localisation" name="localisation" [placeholder]="'SEARCH_DESTINATIONS' | translate">
+              </div>
+              <div class="search-field search-field--checkin">
+                <label>{{ 'CHECK_IN' | translate }}</label>
+                <input type="date" [(ngModel)]="checkIn" name="checkIn">
+              </div>
+              <div class="search-field search-field--checkout">
+                <label>{{ 'CHECK_OUT' | translate }}</label>
+                <input type="date" [(ngModel)]="checkOut" name="checkOut">
+              </div>
+            </div>
+            <button type="submit" class="search-submit" aria-label="{{ 'SEARCH' | translate }}">
+              <i class="feather icon-search"></i>
+              <span class="search-submit-text">{{ 'SEARCH' | translate }}</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <app-public-footer></app-public-footer>
+</div>

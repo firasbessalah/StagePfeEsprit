@@ -1,0 +1,11 @@
+<div class="wave-separator" [style.background-color]="topColor" aria-hidden="true">
+  @if (shape === 'curve') {
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 90" preserveAspectRatio="none" class="separator-svg separator-svg--curve">
+      <path d="M-10,-2 C360,90 1080,90 1450,-2 L1450,95 L-10,95 Z" [attr.fill]="bottomColor"/>
+    </svg>
+  } @else {
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 20" preserveAspectRatio="none" class="separator-svg separator-svg--flat">
+      <path d="M-10,10 L1450,10 L1450,22 L-10,22 Z" [attr.fill]="bottomColor"/>
+    </svg>
+  }
+</div>

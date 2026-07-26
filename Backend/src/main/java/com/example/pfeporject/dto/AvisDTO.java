@@ -14,4 +14,8 @@ public class AvisDTO {
     private String userNom;
     private String userPrenom;
     private Long annonceId;
+    private String sentiment;
+    private boolean flagged;
+    private String flagReason;
+    private Integer riskScore;
 }

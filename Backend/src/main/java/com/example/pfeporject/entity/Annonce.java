@@ -34,6 +34,29 @@ Annonce {
     @Enumerated(EnumType.STRING)
     private StatutAnnonce statut;
 
+    @Enumerated(EnumType.STRING)
+    private CategorieAnnonce categorie;
+
+    private Integer duree;
+
+    private Integer vues = 0;
+
+    private Integer riskScore = 0;
+    private Double rawScore = 0.0;
+    private Boolean flagged = false;
+    private String flagReason;
+    @Column(columnDefinition = "TEXT")
+    private String signalsJson;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "annonce_images", joinColumns = @JoinColumn(name = "annonce_id"))
+    @Column(name = "image_url", columnDefinition = "TEXT")
+    private List<String> images;
+
+    public enum CategorieAnnonce {
+        ETUDIANT, VACANCES, MAISON_HOTE_HOTEL
+    }
+
     @Column(updatable = false)
     private LocalDateTime createdAt;
 

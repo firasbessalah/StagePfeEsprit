@@ -27,12 +27,6 @@ export class AuthSignupComponent {
   private translationService = inject(TranslationService);
 
   currentLang = computed(() => this.translationService.currentLang());
-  activeLangName = computed(() => {
-    const l = this.currentLang();
-    if (l === 'en') return 'English';
-    if (l === 'fr') return 'Français';
-    return 'العربية';
-  });
 
   setLang(lang: Language): void {
     this.translationService.setLanguage(lang);
@@ -44,16 +38,18 @@ export class AuthSignupComponent {
   showPassword = signal(false);
   selectedRole = signal<'LOCATAIRE' | 'BAILLEUR'>('LOCATAIRE');
 
-  registerModel = signal<{ email: string; password: string; nom: string; prenom: string }>({
+  registerModel = signal<{ email: string; password: string; nom: string; prenom: string; telephone: string }>({
     email: '',
     password: '',
     nom: '',
-    prenom: ''
+    prenom: '',
+    telephone: ''
   });
 
   registerForm = form(this.registerModel, (schemaPath) => {
     required(schemaPath.nom, { message: 'Nom is required' });
     required(schemaPath.prenom, { message: 'Prenom is required' });
+    required(schemaPath.telephone, { message: 'Phone number is required' });
     required(schemaPath.email, { message: 'Email is required' });
     email(schemaPath.email, { message: 'Enter a valid email address' });
     required(schemaPath.password, { message: 'Password is required' });
@@ -67,9 +63,10 @@ export class AuthSignupComponent {
 
     const nomInvalid = this.registerForm.nom().errors().length > 0;
     const prenomInvalid = this.registerForm.prenom().errors().length > 0;
+    const telephoneInvalid = this.registerForm.telephone().errors().length > 0;
     const emailInvalid = this.registerForm.email().invalid();
     const passwordInvalid = this.registerForm.password().errors().length > 0;
-    if (nomInvalid || prenomInvalid || emailInvalid || passwordInvalid) {
+    if (nomInvalid || prenomInvalid || telephoneInvalid || emailInvalid || passwordInvalid) {
       this.cd.detectChanges();
       return;
     }
@@ -86,6 +83,7 @@ export class AuthSignupComponent {
             nom: model.nom,
             prenom: model.prenom,
             email: model.email,
+            telephone: model.telephone,
             password: model.password,
             role: this.selectedRole()
           };

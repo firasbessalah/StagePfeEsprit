@@ -37,8 +37,8 @@ export class AuthService {
     );
   }
 
-  loginWithGoogle(credential: string, role: 'LOCATAIRE' | 'BAILLEUR'): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${environment.apiBaseUrl}/api/auth/google`, { credential, role }).pipe(
+  loginWithGoogle(credential: string, role: 'LOCATAIRE' | 'BAILLEUR', telephone?: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${environment.apiBaseUrl}/api/auth/google`, { credential, role, telephone }).pipe(
       tap((res) => {
         this.setAuth(res.token, res.user);
       })
@@ -85,11 +85,10 @@ export class AuthService {
     this.persist(t, user);
   }
 
-  getDefaultRouteForRole(): '/dashboard' | '/home' | '/' | '/login' {
+  getDefaultRouteForRole(): '/dashboard' | '/browse' | '/home' | '/' | '/login' {
     const role = this.user()?.role as UserRole | undefined;
     if (role === 'ADMIN') return '/dashboard';
-    if (role === 'BAILLEUR') return '/home';
-    if (role === 'LOCATAIRE') return '/';
+    if (role === 'BAILLEUR' || role === 'LOCATAIRE') return '/browse';
     return '/login';
   }
 

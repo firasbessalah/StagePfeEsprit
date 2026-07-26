@@ -1,71 +1,172 @@
-<div class="row">
-  <div class="col-sm-12">
-    <app-card cardTitle="Reservations Management" blockClass="table-border-style">
-      
-      <div *ngIf="loading()" class="text-center my-4">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
+<div [class]="isAdmin() ? '' : 'search-results-layout'">
+
+  <!-- ===== NAVBAR ===== -->
+  <header class="results-header" *ngIf="!isAdmin()">
+    <div class="container-fluid header-inner">
+      <a [routerLink]="homeLink()" class="logo">Lofina</a>
+
+      <!-- Empty space to align right actions -->
+      <div style="flex: 1;"></div>
+
+      <!-- Right-side actions -->
+      <div class="header-actions d-flex align-items-center">
+        <!-- Unauthenticated -->
+        <ng-container *ngIf="!isAuthenticated()">
+          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()">{{ 'LIST_PROPERTY' | translate }}</a>
+          <a routerLink="/register" class="header-nav-link">{{ 'REGISTER' | translate }}</a>
+          <a routerLink="/login" class="header-nav-link">{{ 'SIGN_IN' | translate }}</a>
+        </ng-container>
+
+        <!-- Authenticated -->
+        <ng-container *ngIf="isAuthenticated()">
+          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()" *ngIf="user()?.role !== 'LOCATAIRE'">{{ 'LIST_PROPERTY' | translate }}</a>
+          <app-notification-dropdown></app-notification-dropdown>
+          <div class="user-dropdown dropdown" ngbDropdown>
+            <button class="btn btn-transparent dropdown-toggle text-dark d-flex align-items-center" ngbDropdownToggle style="border: none; background: transparent; padding: 0;">
+              <img [src]="(user()?.photoProfil && user()?.photoProfil !== 'null' && user()?.photoProfil!.trim().length > 0) ? user()?.photoProfil : 'assets/images/user/avatar-1.jpg'" alt="User Avatar" class="rounded-circle me-2" width="40" height="40" style="object-fit: cover; border: 2px solid #febb02;">
+              <div class="text-start me-2">
+                <div class="fw-bold" style="line-height: 1.2;">{{ user()?.nom }} {{ user()?.prenom }}</div>
+              </div>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu style="min-width: 250px;">
+              <a class="dropdown-item py-2" routerLink="/dashboard" *ngIf="user()?.role === 'ADMIN'">
+                <i class="feather icon-monitor me-3 fs-5 align-middle"></i> Admin Dashboard
+              </a>
+              <a class="dropdown-item py-2" routerLink="/my-profile">
+                <i class="feather icon-user me-3 fs-5 align-middle"></i> {{ 'MY_ACCOUNT' | translate }}
+              </a>
+              <a class="dropdown-item py-2" routerLink="/reservations" *ngIf="user()?.role !== 'ADMIN'">
+                <i class="feather icon-briefcase me-3 fs-5 align-middle"></i> {{ 'RESERVATIONS' | translate }}
+              </a>
+              <a class="dropdown-item py-2" routerLink="/favoris" *ngIf="user()?.role === 'LOCATAIRE'">
+                <i class="feather icon-heart me-3 fs-5 align-middle"></i> Mes Favoris
+              </a>
+              <a class="dropdown-item py-2" routerLink="/alertes" *ngIf="user()?.role === 'LOCATAIRE'">
+                <i class="feather icon-bell me-3 fs-5 align-middle"></i> Mes Alertes
+              </a>
+              <a class="dropdown-item py-2" routerLink="/messages" *ngIf="user()?.role !== 'ADMIN'">
+                <i class="feather icon-message-circle me-3 fs-5 align-middle"></i> {{ 'MESSAGES' | translate }}
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item py-2 text-danger" (click)="logout()" style="cursor: pointer;">
+                <i class="feather icon-log-out me-3 fs-5 align-middle"></i> {{ 'LOGOUT' | translate }}
+              </a>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- Language Switcher -->
+        <div class="dropdown ms-2" ngbDropdown>
+          <button class="btn btn-primary dropdown-toggle d-flex align-items-center shadow-sm" ngbDropdownToggle style="border-radius: 50px; font-size: 0.82rem; font-weight: 600; padding: 6px 16px; background-color: #000080; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 10px rgba(0,0,0,0.12); color: #ffffff !important;">
+            <i class="feather icon-globe me-2" style="font-size: 0.95rem;"></i>
+            <span>{{ currentLang() }}</span>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')" style="width: 100%; border: none; background: transparent;">
+              <span>en</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'en'"></i>
+            </button>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')" style="width: 100%; border: none; background: transparent;">
+              <span>fr</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'fr'"></i>
+            </button>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')" style="width: 100%; border: none; background: transparent;">
+              <span>ar</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'ar'"></i>
+            </button>
+          </div>
         </div>
       </div>
-      
-      <div *ngIf="error()" class="alert alert-danger">
-        {{ error() }}
+    </div>
+  </header>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main [class]="isAdmin() ? 'container py-4' : 'results-main'">
+    <div class="container">
+      <div class="results-summary mb-4">
+        <h1>{{ 'RESERVATIONS' | translate }}</h1>
+        <p class="text-muted">Manage all your bookings and requests here.</p>
       </div>
 
-      <div class="table-responsive" *ngIf="!loading() && !error()">
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>Property</th>
-              <th>Applicant</th>
-              <th>Dates</th>
-              <th>Message</th>
-              <th>Total Price</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let res of reservations()">
-              <td><span class="fw-bold">{{ res.annonceTitre }}</span></td>
-              <td>{{ res.userPrenom }} {{ res.userNom }}</td>
-              <td>
-                <div class="small">In: {{ res.dateDebut | date:'shortDate' }}</div>
-                <div class="small">Out: {{ res.dateFin | date:'shortDate' }}</div>
-              </td>
-              <td style="max-width: 200px;" class="text-truncate" [title]="res.message || 'No message'">
-                {{ res.message || '-' }}
-              </td>
-              <td>{{ res.prixTotal }} TND</td>
-              <td>
-                <span class="badge" 
-                      [ngClass]="{
-                        'bg-warning text-dark': res.statut === 'EN_ATTENTE',
-                        'bg-success': res.statut === 'CONFIRMEE',
-                        'bg-danger': res.statut === 'ANNULEE',
-                        'bg-secondary': res.statut === 'TERMINEE'
-                      }">
-                  {{ res.statut }}
-                </span>
-              </td>
-              <td>
-                <div class="btn-group btn-group-sm" *ngIf="res.statut === 'EN_ATTENTE'">
-                  <button type="button" class="btn btn-success" (click)="acceptReservation(res.id!)" title="Accept">
-                    <i class="feather icon-check"></i>
-                  </button>
-                  <button type="button" class="btn btn-danger" (click)="refuseReservation(res.id!)" title="Refuse">
-                    <i class="feather icon-x"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-            <tr *ngIf="reservations().length === 0">
-              <td colspan="7" class="text-center py-4 text-muted">No reservations found.</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+          
+          <div *ngIf="loading()" class="text-center my-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+          
+          <div *ngIf="error()" class="alert alert-danger m-4">
+            {{ error() }}
+          </div>
+
+          <div class="table-responsive" *ngIf="!loading() && !error()">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="bg-light">
+                <tr>
+                  <th class="ps-4">Property</th>
+                  <th>Applicant</th>
+                  <th>Dates</th>
+                  <th>Message</th>
+                  <th>Total Price</th>
+                  <th>Status</th>
+                  <th class="text-end pe-4">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let res of reservations()">
+                  <td class="ps-4"><span class="fw-bold">{{ res.annonceTitre }}</span></td>
+                  <td>
+                    <div class="fw-bold">{{ res.userPrenom }} {{ res.userNom }}</div>
+                    <div class="small text-muted" *ngIf="res.userEmail">{{ res.userEmail }}</div>
+                    <div class="small text-muted"><i class="feather icon-phone me-1"></i>{{ res.userTelephone || 'N/A' }}</div>
+                  </td>
+                  <td>
+                    <div class="small">In: {{ res.dateDebut | date:'shortDate' }}</div>
+                    <div class="small">Out: {{ res.dateFin | date:'shortDate' }}</div>
+                  </td>
+                  <td style="max-width: 200px;" class="text-truncate" [title]="res.message || 'No message'">
+                    {{ res.message || '-' }}
+                  </td>
+                  <td><span class="fw-bold text-dark">{{ res.prixTotal }} TND</span></td>
+                  <td>
+                    <span class="badge" 
+                          [ngClass]="{
+                            'bg-warning text-dark': res.statut === 'EN_ATTENTE',
+                            'bg-success': res.statut === 'CONFIRMEE',
+                            'bg-danger': res.statut === 'ANNULEE',
+                            'bg-secondary': res.statut === 'TERMINEE'
+                          }">
+                      {{ res.statut }}
+                    </span>
+                  </td>
+                  <td class="text-end pe-4">
+                    <div class="btn-group btn-group-sm" *ngIf="res.statut === 'EN_ATTENTE' && user()?.role !== 'LOCATAIRE'">
+                      <button type="button" class="btn btn-success" (click)="acceptReservation(res.id!)" title="Accept">
+                        <i class="feather icon-check"></i>
+                      </button>
+                      <button type="button" class="btn btn-danger" (click)="refuseReservation(res.id!)" title="Refuse">
+                        <i class="feather icon-x"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="reservations().length === 0">
+                  <td colspan="7" class="text-center py-5 text-muted">
+                    <i class="feather icon-briefcase fs-1 mb-3 d-block"></i>
+                    <h5>No reservations found</h5>
+                    <p class="mb-0">You do not have any active reservations.</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+        </div>
       </div>
-      
-    </app-card>
-  </div>
+    </div>
+  </main>
+
+  <app-public-footer *ngIf="!isAdmin()"></app-public-footer>
 </div>

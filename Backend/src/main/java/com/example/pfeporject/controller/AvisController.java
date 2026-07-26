@@ -45,6 +45,13 @@ public class AvisController {
         return ResponseEntity.ok(moyenne != null ? moyenne : 0.0);
     }
 
+    // ─── TOUS LES AVIS (ADMIN) ───────────────────────────────
+    // GET /api/avis/admin/all
+    @GetMapping("/admin/all")
+    public ResponseEntity<List<AvisDTO>> getAllAvis() {
+        return ResponseEntity.ok(avisService.getAllAvis());
+    }
+
     // ─── MODÉRER UN AVIS (ADMIN) ─────────────────────────────
     // PUT /api/avis/1/moderer
     @PutMapping("/{id}/moderer")

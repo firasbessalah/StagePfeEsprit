@@ -1,0 +1,39 @@
+$primary-blue: #000080;
+$footer-border: #e8e8e8;
+
+.public-footer {
+  background: #ffffff;
+  color: $primary-blue;
+  margin-top: auto;
+  border-top: 1px solid $footer-border;
+}
+
+.footer-brand,
+.footer-heading {
+  color: $primary-blue;
+  font-weight: 700;
+}
+
+.footer-text,
+.footer-copyright {
+  color: rgba(0, 0, 128, 0.75);
+}
+
+.footer-link {
+  color: rgba(0, 0, 128, 0.75);
+  text-decoration: none;
+  transition: color 0.2s;
+
+  &:hover {
+    color: $primary-blue;
+    text-decoration: underline;
+  }
+}
+
+.footer-links li + li {
+  margin-top: 0.5rem;
+}
+
+.footer-divider {
+  border-color: $footer-border;
+}

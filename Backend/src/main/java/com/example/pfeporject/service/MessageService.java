@@ -18,6 +18,7 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
     private final NotificationService notificationService;
+    private final AiModerationService aiModerationService;
 
     // ─── ENVOYER UN MESSAGE ──────────────────────────────────
     public MessageDTO envoyer(MessageDTO dto, Long expediteurId, Long destinataireId) {
@@ -34,6 +35,14 @@ public class MessageService {
         message.setModere(false);
         message.setExpediteur(expediteur);
         message.setDestinataire(destinataire);
+
+        // Analyze moderation
+        com.example.pfeporject.dto.ModerationResultDTO modResult = aiModerationService.moderateContent(dto.getContenu(), "MESSAGE");
+        if (modResult != null) {
+            message.setFlagged(modResult.isFlagged());
+            message.setRiskScore(modResult.getRiskScore());
+            message.setFlagReason(modResult.getExplanation());
+        }
 
         Message saved = messageRepository.save(message);
 
@@ -81,6 +90,9 @@ public class MessageService {
         dto.setExpediteurNom(m.getExpediteur().getNom());
         dto.setDestinataireId(m.getDestinataire().getId());
         dto.setDestinataireNom(m.getDestinataire().getNom());
+        dto.setFlagged(m.isFlagged());
+        dto.setFlagReason(m.getFlagReason());
+        dto.setRiskScore(m.getRiskScore());
         return dto;
     }
 }

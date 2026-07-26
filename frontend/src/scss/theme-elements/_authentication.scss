@@ -9,6 +9,7 @@
   overflow: hidden;
   min-width: 100%;
   min-height: 100vh;
+  background: #ffffff;
 
   a,
   p > a {
@@ -64,7 +65,7 @@
     font-size: 30px;
 
     &:before {
-      background: $theme-color;
+      background: #000080;
       background-clip: text;
       text-fill-color: transparent;
       -webkit-background-clip: text;
@@ -90,13 +91,13 @@
       &:first-child {
         top: -100px;
         right: -100px;
-        background: $theme-color;
+        background: #000080;
       }
 
       &:last-child {
         left: -100px;
         bottom: -100px;
-        background: $theme-color2;
+        background: #FFD700;
       }
 
       &.s {
@@ -105,13 +106,14 @@
         &:nth-child(2) {
           top: 150px;
           right: -150px;
-          background: $primary-color;
+          background: #ffffff;
+          border: 3px solid #000080;
         }
 
         &:nth-child(3) {
           left: -150px;
           bottom: 150px;
-          background: $success-color;
+          background: #000080;
         }
       }
 

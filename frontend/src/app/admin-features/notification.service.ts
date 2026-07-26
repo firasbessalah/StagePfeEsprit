@@ -11,6 +11,7 @@ export interface NotificationDTO {
   type: string;
   createdAt: string;
   userId: number;
+  relatedEntityId?: number;
 }
 
 @Injectable({

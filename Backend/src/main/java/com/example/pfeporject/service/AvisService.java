@@ -19,6 +19,7 @@ public class AvisService {
     private final AvisRepository avisRepository;
     private final UserRepository userRepository;
     private final AnnonceRepository annonceRepository;
+    private final AiModerationService aiModerationService;
 
     // ─── PUBLIER UN AVIS ─────────────────────────────────────
     public AvisDTO publier(AvisDTO dto, Long userId, Long annonceId) {
@@ -40,6 +41,18 @@ public class AvisService {
         avis.setUser(user);
         avis.setAnnonce(annonce);
 
+        // Analyze sentiment using Python microservice
+        String sentiment = aiModerationService.analyzeSentiment(dto.getCommentaire());
+        avis.setSentiment(sentiment);
+
+        // Analyze moderation
+        com.example.pfeporject.dto.ModerationResultDTO modResult = aiModerationService.moderateContent(dto.getCommentaire(), "AVIS");
+        if (modResult != null) {
+            avis.setFlagged(modResult.isFlagged());
+            avis.setRiskScore(modResult.getRiskScore());
+            avis.setFlagReason(modResult.getExplanation());
+        }
+
         return toDTO(avisRepository.save(avis));
     }
 
@@ -47,6 +60,15 @@ public class AvisService {
     public List<AvisDTO> getAvisByAnnonce(Long annonceId) {
         return avisRepository.findByAnnonceId(annonceId)
                 .stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
+    // ─── TOUS LES AVIS (ADMIN) ──────────────────────────────
+    public List<AvisDTO> getAllAvis() {
+        return avisRepository.findAll()
+                .stream()
+                .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
                 .map(this::toDTO)
                 .toList();
     }
@@ -72,6 +94,8 @@ public class AvisService {
         avisRepository.deleteById(id);
     }
 
+
+
     // ─── toDTO ───────────────────────────────────────────────
     private AvisDTO toDTO(Avis a) {
         AvisDTO dto = new AvisDTO();
@@ -84,6 +108,10 @@ public class AvisService {
         dto.setUserNom(a.getUser().getNom());
         dto.setUserPrenom(a.getUser().getPrenom());
         dto.setAnnonceId(a.getAnnonce().getId());
+        dto.setSentiment(a.getSentiment() != null ? a.getSentiment() : "NEUTRE");
+        dto.setFlagged(a.isFlagged());
+        dto.setFlagReason(a.getFlagReason());
+        dto.setRiskScore(a.getRiskScore());
         return dto;
     }
 }

@@ -33,16 +33,16 @@
   }
 
   &:hover {
-    border-color: #04a9f5;
-    color: #04a9f5;
-    background: #f0f9ff;
+    border-color: #000080;
+    color: #000080;
+    background: #f0f0ff;
   }
 
   &.active {
-    border-color: #04a9f5;
-    background: #e8f4fd;
-    color: #04a9f5;
-    box-shadow: 0 2px 8px rgba(4, 169, 245, 0.2);
+    border-color: #000080;
+    background: #e8e8ff;
+    color: #000080;
+    box-shadow: 0 2px 8px rgba(0, 0, 128, 0.2);
     font-weight: 600;
   }
 }

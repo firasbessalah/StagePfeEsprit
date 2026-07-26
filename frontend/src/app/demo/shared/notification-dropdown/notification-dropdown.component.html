@@ -1,0 +1,47 @@
+<div class="dropdown ms-2 me-2" ngbDropdown placement="bottom-end">
+  <button class="btn btn-transparent position-relative shadow-sm hide-caret" ngbDropdownToggle style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1); background: #fff; padding: 0;">
+    <i class="feather icon-bell fs-5 text-primary" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+    <span class="badge bg-danger rounded-pill position-absolute" style="top: -2px; right: -2px; font-size: 0.65rem;" *ngIf="unreadCount() > 0">
+      {{ unreadCount() }}
+    </span>
+  </button>
+  <div ngbDropdownMenu class="dropdown-menu dropdown-menu-end shadow border-0" style="min-width: 320px; padding: 0;">
+    <div class="p-3 border-bottom bg-light d-flex justify-content-between align-items-center">
+      <h6 class="m-0 fw-bold">{{ 'NOTIFICATIONS' | translate }}</h6>
+      <div class="d-flex gap-2">
+        <a href="javascript:void(0)" class="text-decoration-none small" (click)="clearAll()">{{ 'MARK_AS_READ' | translate }}</a>
+      </div>
+    </div>
+    <ul class="list-unstyled mb-0" style="max-height: 350px; overflow-y: auto;">
+      <ng-container *ngIf="notifications().length === 0">
+        <li class="text-center py-4">
+          <p class="text-muted mb-0 small">{{ 'NO_NOTIFS' | translate }}</p>
+        </li>
+      </ng-container>
+
+      <ng-container *ngIf="notifications().length > 0">
+        <li 
+          *ngFor="let n of notifications()" 
+          class="p-3 border-bottom notification-item" 
+          [class.bg-light]="!n.lu"
+          style="cursor: pointer; transition: background 0.2s;"
+          (click)="markAsRead(n)">
+          <div class="d-flex align-items-start gap-3">
+            <div class="rounded-circle d-flex align-items-center justify-content-center bg-white shadow-sm" style="width: 40px; height: 40px; flex-shrink: 0;">
+              <i [class]="getNotificationIcon(n.type)" style="font-size: 1.2rem;"></i>
+            </div>
+            <div class="flex-grow-1 min-width-0">
+              <div class="d-flex justify-content-between align-items-baseline mb-1">
+                <strong class="text-truncate d-block text-dark" style="max-width: 150px; font-size: 0.9rem;">{{ n.titre }}</strong>
+                <span class="text-muted small" style="font-size: 0.75rem;">
+                  <i class="feather icon-clock me-1"></i>{{ getTimeAgo(n.createdAt) }}
+                </span>
+              </div>
+              <p class="mb-0 text-muted text-truncate" style="font-size: 0.85rem;">{{ n.message }}</p>
+            </div>
+          </div>
+        </li>
+      </ng-container>
+    </ul>
+  </div>
+</div>

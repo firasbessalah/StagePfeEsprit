@@ -29,14 +29,14 @@
     transition: all 0.2s ease;
 
     &:hover {
-      border-color: #04a9f5;
-      color: #04a9f5;
+      border-color: #000080;
+      color: #000080;
     }
 
     &.active {
-      border-color: #04a9f5;
-      background: #eaf7ff;
-      color: #04a9f5;
+      border-color: #000080;
+      background: #e8e8ff;
+      color: #000080;
       font-weight: 600;
     }
   }

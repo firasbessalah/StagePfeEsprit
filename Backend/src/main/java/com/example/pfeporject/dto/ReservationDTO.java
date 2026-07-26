@@ -18,6 +18,7 @@ public class ReservationDTO {
     private String userNom;
     private String userPrenom;
     private String userEmail;
+    private String userTelephone;
     private Long annonceId;
     private String annonceTitre;
 }

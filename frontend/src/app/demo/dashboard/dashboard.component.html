@@ -1,22 +1,469 @@
-<div class="row">
-  <div class="col-md-6 col-xl-4">
-    <app-card [hidHeader]="true">
-      <h6 class="mb-2 text-muted text-uppercase">Users</h6>
-      <h2 class="m-b-0">{{ loading() ? '…' : userCount() }}</h2>
-      <p class="text-muted mb-0">Total registered users</p>
-    </app-card>
+<!-- Loading Spinner -->
+@if (loading()) {
+  <div class="dash-loader">
+    <div class="spinner"></div>
+    <p>{{ 'LOADING_ANALYTICS' | translate }}</p>
   </div>
-  <div class="col-md-6 col-xl-4">
-    <app-card [hidHeader]="true">
-      <h6 class="mb-2 text-muted text-uppercase">Annonces</h6>
-      <h2 class="m-b-0">{{ loading() ? '…' : annonceCount() }}</h2>
-      <p class="text-muted mb-0">Total announcements</p>
-    </app-card>
-  </div>
-</div>
+}
 
+<!-- Error Alert -->
 @if (error()) {
   <div class="alert alert-warning mt-3" role="alert">{{ error() }}</div>
 }
 
+<!-- Dashboard Content -->
+@if (!loading() && data(); as d) {
 
+  <!-- ─── Header & Actions ───────────────────────────────────── -->
+  <div class="d-flex justify-content-between align-items-center mb-4 mt-2">
+    <h2 class="mb-0 text-white" style="font-weight: 600;">Tableau de Bord</h2>
+    <button class="btn btn-primary shadow-sm d-flex align-items-center gap-2" (click)="exportExcel()" style="border-radius: 8px;">
+      <i class="feather icon-download"></i> Exporter en Excel
+    </button>
+  </div>
+
+  <!-- ─── KPI Cards ───────────────────────────────────── -->
+  <div class="kpi-grid">
+    
+    <div class="kpi-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white;">
+      <div class="kpi-icon" style="color: rgba(255,255,255,0.8);"><i class="feather icon-dollar-sign"></i></div>
+      <div class="kpi-body">
+        <span class="kpi-value">{{ d.totalRevenue }} DT</span>
+        <span class="kpi-label" style="color: rgba(255,255,255,0.9);">Revenus Totaux</span>
+      </div>
+    </div>
+
+    <div class="kpi-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white;">
+      <div class="kpi-icon" style="color: rgba(255,255,255,0.8);"><i class="feather icon-percent"></i></div>
+      <div class="kpi-body">
+        <span class="kpi-value">{{ d.totalCommission }} DT</span>
+        <span class="kpi-label" style="color: rgba(255,255,255,0.9);">Commission (10%)</span>
+      </div>
+    </div>
+    <div class="kpi-card kpi-card--navy">
+      <div class="kpi-icon"><i class="feather icon-users"></i></div>
+      <div class="kpi-body">
+        <span class="kpi-value">{{ d.totalUsers }}</span>
+        <span class="kpi-label">{{ 'TOTAL_USERS' | translate }}</span>
+      </div>
+    </div>
+
+    <div class="kpi-card kpi-card--teal">
+      <div class="kpi-icon"><i class="feather icon-activity"></i></div>
+      <div class="kpi-body">
+        <span class="kpi-value">{{ d.activeUsersMonth }}</span>
+        <span class="kpi-label">{{ 'ACTIVE_USERS_MAU' | translate }}</span>
+      </div>
+    </div>
+
+    <div class="kpi-card kpi-card--gold">
+      <div class="kpi-icon"><i class="feather icon-calendar"></i></div>
+      <div class="kpi-body">
+        <span class="kpi-value">{{ d.totalReservations }}</span>
+        <span class="kpi-label">{{ 'TOTAL_RESERVATIONS' | translate }}</span>
+      </div>
+    </div>
+
+    <div class="kpi-card kpi-card--coral">
+      <div class="kpi-icon"><i class="feather icon-user-check"></i></div>
+      <div class="kpi-body">
+        <span class="kpi-value">{{ d.usersWithReservations }}</span>
+        <span class="kpi-label">{{ 'USERS_WITH_RESERVATIONS' | translate }}</span>
+        <span class="kpi-sub">{{ d.reservationUserPercentage }}%</span>
+      </div>
+    </div>
+
+    <div class="kpi-card kpi-card--purple">
+      <div class="kpi-icon"><i class="feather icon-file-text"></i></div>
+      <div class="kpi-body">
+        <span class="kpi-value">{{ d.totalAnnonces }}</span>
+        <span class="kpi-label">{{ 'TOTAL_ANNONCES' | translate }}</span>
+      </div>
+    </div>
+
+    <div class="kpi-card kpi-card--green">
+      <div class="kpi-icon"><i class="feather icon-user-plus"></i></div>
+      <div class="kpi-body">
+        <span class="kpi-value">{{ d.newUsersThisMonth }}</span>
+        <span class="kpi-label">{{ 'NEW_USERS_THIS_MONTH' | translate }}</span>
+        <span class="kpi-trend" [class.up]="d.userComparison.trend === 'up'" [class.down]="d.userComparison.trend === 'down'">
+          {{ d.userComparison.trend === 'up' ? '↑' : d.userComparison.trend === 'down' ? '↓' : '→' }}
+          {{ d.userComparison.percentageChange > 0 ? '+' : '' }}{{ d.userComparison.percentageChange }}%
+        </span>
+      </div>
+    </div>
+
+    <div class="kpi-card kpi-card--blue">
+      <div class="kpi-icon"><i class="feather icon-bookmark"></i></div>
+      <div class="kpi-body">
+        <span class="kpi-value">{{ d.reservationsThisMonth }}</span>
+        <span class="kpi-label">{{ 'RESERVATIONS_THIS_MONTH' | translate }}</span>
+        <span class="kpi-trend" [class.up]="d.reservationComparison.trend === 'up'" [class.down]="d.reservationComparison.trend === 'down'">
+          {{ d.reservationComparison.trend === 'up' ? '↑' : d.reservationComparison.trend === 'down' ? '↓' : '→' }}
+          {{ d.reservationComparison.percentageChange > 0 ? '+' : '' }}{{ d.reservationComparison.percentageChange }}%
+        </span>
+      </div>
+    </div>
+
+    <div class="kpi-card kpi-card--orange">
+      <div class="kpi-icon"><i class="feather icon-edit"></i></div>
+      <div class="kpi-body">
+        <span class="kpi-value">{{ d.annoncesThisMonth }}</span>
+        <span class="kpi-label">{{ 'ANNONCES_THIS_MONTH' | translate }}</span>
+        <span class="kpi-trend" [class.up]="d.annonceComparison.trend === 'up'" [class.down]="d.annonceComparison.trend === 'down'">
+          {{ d.annonceComparison.trend === 'up' ? '↑' : d.annonceComparison.trend === 'down' ? '↓' : '→' }}
+          {{ d.annonceComparison.percentageChange > 0 ? '+' : '' }}{{ d.annonceComparison.percentageChange }}%
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Charts Grid ─────────────────────────────────── -->
+  <div class="charts-grid">
+
+    <!-- Monthly New Users -->
+    <div class="chart-card">
+      <h3 class="chart-title">{{ 'MONTHLY_NEW_USERS' | translate }}</h3>
+      @if (monthlyUsersChart()) {
+        <apx-chart
+          [series]="monthlyUsersChart().series"
+          [chart]="monthlyUsersChart().chart"
+          [plotOptions]="monthlyUsersChart().plotOptions"
+          [dataLabels]="monthlyUsersChart().dataLabels"
+          [xaxis]="monthlyUsersChart().xaxis"
+          [yaxis]="monthlyUsersChart().yaxis"
+          [colors]="monthlyUsersChart().colors"
+          [grid]="monthlyUsersChart().grid"
+          [tooltip]="monthlyUsersChart().tooltip"
+        ></apx-chart>
+      }
+    </div>
+
+    <!-- Active Users (Radial) -->
+    <div class="chart-card">
+      <h3 class="chart-title">{{ 'ACTIVE_USERS' | translate }}</h3>
+      <div class="active-stats">
+        <span class="active-stat"><strong>{{ d.activeUsersToday }}</strong> DAU</span>
+        <span class="active-stat"><strong>{{ d.activeUsersWeek }}</strong> WAU</span>
+        <span class="active-stat"><strong>{{ d.activeUsersMonth }}</strong> MAU</span>
+      </div>
+      @if (activeUsersChart()) {
+        <apx-chart
+          [series]="activeUsersChart().series"
+          [chart]="activeUsersChart().chart"
+          [plotOptions]="activeUsersChart().plotOptions"
+          [labels]="activeUsersChart().labels"
+          [colors]="activeUsersChart().colors"
+          [legend]="activeUsersChart().legend"
+        ></apx-chart>
+      }
+    </div>
+
+    <!-- Peak Usage Time -->
+    <div class="chart-card">
+      <h3 class="chart-title">{{ 'PEAK_USAGE_TIME' | translate }}</h3>
+      @if (peakHoursChart()) {
+        <apx-chart
+          [series]="peakHoursChart().series"
+          [chart]="peakHoursChart().chart"
+          [plotOptions]="peakHoursChart().plotOptions"
+          [dataLabels]="peakHoursChart().dataLabels"
+          [xaxis]="peakHoursChart().xaxis"
+          [yaxis]="peakHoursChart().yaxis"
+          [colors]="peakHoursChart().colors"
+          [grid]="peakHoursChart().grid"
+          [tooltip]="peakHoursChart().tooltip"
+        ></apx-chart>
+      }
+    </div>
+
+    <!-- User Activity Over Time -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <h3 class="chart-title">{{ 'USER_ACTIVITY_OVER_TIME' | translate }}</h3>
+        <div class="period-toggle">
+          <button [class.active]="activityPeriod() === '7d'" (click)="setActivityPeriod('7d')">{{ 'DAYS_7' | translate }}</button>
+          <button [class.active]="activityPeriod() === '30d'" (click)="setActivityPeriod('30d')">{{ 'DAYS_30' | translate }}</button>
+          <button [class.active]="activityPeriod() === '12m'" (click)="setActivityPeriod('12m')">{{ 'MONTHS_12' | translate }}</button>
+        </div>
+      </div>
+      @if (activityChart()) {
+        <apx-chart
+          [series]="activityChart().series"
+          [chart]="activityChart().chart"
+          [dataLabels]="activityChart().dataLabels"
+          [stroke]="activityChart().stroke"
+          [xaxis]="activityChart().xaxis"
+          [yaxis]="activityChart().yaxis"
+          [colors]="activityChart().colors"
+          [fill]="activityChart().fill"
+          [grid]="activityChart().grid"
+          [tooltip]="activityChart().tooltip"
+        ></apx-chart>
+      }
+    </div>
+
+    <!-- Monthly Reservations -->
+    <div class="chart-card">
+      <h3 class="chart-title">{{ 'MONTHLY_RESERVATIONS' | translate }}</h3>
+      @if (reservationsChart()) {
+        <apx-chart
+          [series]="reservationsChart().series"
+          [chart]="reservationsChart().chart"
+          [plotOptions]="reservationsChart().plotOptions"
+          [dataLabels]="reservationsChart().dataLabels"
+          [xaxis]="reservationsChart().xaxis"
+          [yaxis]="reservationsChart().yaxis"
+          [colors]="reservationsChart().colors"
+          [grid]="reservationsChart().grid"
+          [tooltip]="reservationsChart().tooltip"
+        ></apx-chart>
+      }
+    </div>
+
+    <!-- Users with Reservations (Donut) -->
+    <div class="chart-card">
+      <h3 class="chart-title">{{ 'USERS_WHO_MADE_RESERVATIONS' | translate }}</h3>
+      <p class="chart-subtitle">{{ d.usersWithReservations }} {{ 'OF' | translate }} {{ d.totalUsers }} {{ 'USERS' | translate }} ({{ d.reservationUserPercentage }}%)</p>
+      @if (usersWithReservationsChart()) {
+        <apx-chart
+          [series]="usersWithReservationsChart().series"
+          [chart]="usersWithReservationsChart().chart"
+          [labels]="usersWithReservationsChart().labels"
+          [colors]="usersWithReservationsChart().colors"
+          [legend]="usersWithReservationsChart().legend"
+          [dataLabels]="usersWithReservationsChart().dataLabels"
+          [plotOptions]="usersWithReservationsChart().plotOptions"
+          [tooltip]="usersWithReservationsChart().tooltip"
+        ></apx-chart>
+      }
+    </div>
+
+    <!-- Monthly Announcements -->
+    <div class="chart-card">
+      <h3 class="chart-title">{{ 'MONTHLY_ANNONCES' | translate }}</h3>
+      <p class="chart-subtitle">{{ d.usersWithAnnonces }} {{ 'USERS_CREATED_ANNONCES' | translate }}</p>
+      @if (annoncesChart()) {
+        <apx-chart
+          [series]="annoncesChart().series"
+          [chart]="annoncesChart().chart"
+          [plotOptions]="annoncesChart().plotOptions"
+          [dataLabels]="annoncesChart().dataLabels"
+          [xaxis]="annoncesChart().xaxis"
+          [yaxis]="annoncesChart().yaxis"
+          [colors]="annoncesChart().colors"
+          [grid]="annoncesChart().grid"
+          [tooltip]="annoncesChart().tooltip"
+        ></apx-chart>
+      }
+    </div>
+
+    <!-- Monthly Comparison -->
+    <div class="chart-card">
+      <h3 class="chart-title">{{ 'MONTHLY_COMPARISON' | translate }}</h3>
+      <div class="comparison-badges">
+        <span class="comp-badge" [class.up]="d.userComparison.trend === 'up'" [class.down]="d.userComparison.trend === 'down'">
+          {{ 'USERS' | translate }} {{ d.userComparison.trend === 'up' ? '↑' : d.userComparison.trend === 'down' ? '↓' : '→' }} {{ d.userComparison.percentageChange }}%
+        </span>
+        <span class="comp-badge" [class.up]="d.reservationComparison.trend === 'up'" [class.down]="d.reservationComparison.trend === 'down'">
+          {{ 'RESERVATIONS' | translate }} {{ d.reservationComparison.trend === 'up' ? '↑' : d.reservationComparison.trend === 'down' ? '↓' : '→' }} {{ d.reservationComparison.percentageChange }}%
+        </span>
+        <span class="comp-badge" [class.up]="d.annonceComparison.trend === 'up'" [class.down]="d.annonceComparison.trend === 'down'">
+          {{ 'ANNONCES' | translate }} {{ d.annonceComparison.trend === 'up' ? '↑' : d.annonceComparison.trend === 'down' ? '↓' : '→' }} {{ d.annonceComparison.percentageChange }}%
+        </span>
+      </div>
+      @if (comparisonChart()) {
+        <apx-chart
+          [series]="comparisonChart().series"
+          [chart]="comparisonChart().chart"
+          [plotOptions]="comparisonChart().plotOptions"
+          [dataLabels]="comparisonChart().dataLabels"
+          [xaxis]="comparisonChart().xaxis"
+          [yaxis]="comparisonChart().yaxis"
+          [colors]="comparisonChart().colors"
+          [grid]="comparisonChart().grid"
+          [legend]="comparisonChart().legend"
+          [tooltip]="comparisonChart().tooltip"
+        ></apx-chart>
+      }
+    </div>
+  </div>
+
+  <!-- ─── Nouveaux Tableaux (Top & Périodes) ──────────────── -->
+  <div class="row mt-4 g-4">
+    <!-- Top 5 Logements les plus recherchés -->
+    <div class="col-md-6">
+      <div class="chart-card h-100">
+        <h3 class="chart-title">
+          <i class="feather icon-star text-warning me-2"></i>Top 5 Logements Recherchés
+        </h3>
+        <div class="table-responsive mt-3">
+          <table class="table table-hover table-dark mb-0">
+            <thead>
+              <tr>
+                <th>Titre</th>
+                <th>Localisation</th>
+                <th>Prix</th>
+                <th class="text-end">Vues</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (a of d.topAnnonces; track a.id) {
+                <tr>
+                  <td>{{ a.titre }}</td>
+                  <td>{{ a.localisation }}</td>
+                  <td>{{ a.prix }} DT</td>
+                  <td class="text-end"><span class="badge bg-primary rounded-pill">{{ a.vues }} <i class="feather icon-eye"></i></span></td>
+                </tr>
+              }
+              @if (d.topAnnonces.length === 0) {
+                <tr><td colspan="4" class="text-center text-muted">Aucune donnée</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Périodes de forte demande -->
+    <div class="col-md-6">
+      <div class="chart-card h-100">
+        <h3 class="chart-title">
+          <i class="feather icon-trending-up text-success me-2"></i>Périodes de forte demande
+        </h3>
+        <ul class="list-group list-group-flush mt-3" style="border-radius: 8px; overflow: hidden;">
+          @for (p of d.peakDemandPeriods; track p.label; let i = $index) {
+            <li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white" style="border-color: #2c3e50;">
+              <div class="d-flex align-items-center gap-3">
+                <span class="badge bg-secondary rounded-circle" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;">#{{ i + 1 }}</span>
+                <span class="fw-semibold">{{ p.label }}</span>
+              </div>
+              <span class="badge bg-success rounded-pill px-3 py-2" style="font-size: 0.9rem;">{{ p.count }} Réservations</span>
+            </li>
+          }
+          @if (d.peakDemandPeriods.length === 0) {
+            <li class="list-group-item bg-dark text-white text-center text-muted">Aucune donnée</li>
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── AI Reviews & Sentiment Analysis Section ────────── -->
+  <div class="reviews-section mt-4">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h3 class="chart-title mb-0">
+        <i class="feather icon-message-circle me-2 text-primary"></i>
+        Avis utilisateurs — Analyse IA ✨
+      </h3>
+      <span class="badge bg-secondary rounded-pill">{{ sentimentCounts().total }} avis</span>
+    </div>
+
+    <!-- Sentiment KPI counters -->
+    <div class="sentiment-kpis d-flex gap-3 flex-wrap mb-4">
+      <div class="sentiment-kpi sentiment-kpi--positif" (click)="sentimentFilter.set('POSITIF')" [class.active]="sentimentFilter() === 'POSITIF'">
+        <i class="feather icon-thumbs-up"></i>
+        <div>
+          <span class="kpi-value">{{ sentimentCounts().positif }}</span>
+          <span class="kpi-label">Positifs</span>
+        </div>
+      </div>
+      <div class="sentiment-kpi sentiment-kpi--negatif" (click)="sentimentFilter.set('NEGATIF')" [class.active]="sentimentFilter() === 'NEGATIF'">
+        <i class="feather icon-thumbs-down"></i>
+        <div>
+          <span class="kpi-value">{{ sentimentCounts().negatif }}</span>
+          <span class="kpi-label">Négatifs</span>
+        </div>
+      </div>
+      <div class="sentiment-kpi sentiment-kpi--neutre" (click)="sentimentFilter.set('NEUTRE')" [class.active]="sentimentFilter() === 'NEUTRE'">
+        <i class="feather icon-minus-circle"></i>
+        <div>
+          <span class="kpi-value">{{ sentimentCounts().neutre }}</span>
+          <span class="kpi-label">Neutres</span>
+        </div>
+      </div>
+      <div class="sentiment-kpi sentiment-kpi--all" (click)="sentimentFilter.set('ALL')" [class.active]="sentimentFilter() === 'ALL'">
+        <i class="feather icon-list"></i>
+        <div>
+          <span class="kpi-value">{{ sentimentCounts().total }}</span>
+          <span class="kpi-label">Tous</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <!-- Sentiment Donut Chart -->
+      <div class="col-md-4">
+        <div class="chart-card h-100">
+          <h4 class="chart-title">Répartition des sentiments</h4>
+          @if (sentimentChart()) {
+            <apx-chart
+              [series]="sentimentChart().series"
+              [chart]="sentimentChart().chart"
+              [labels]="sentimentChart().labels"
+              [colors]="sentimentChart().colors"
+              [legend]="sentimentChart().legend"
+              [dataLabels]="sentimentChart().dataLabels"
+              [plotOptions]="sentimentChart().plotOptions"
+              [tooltip]="sentimentChart().tooltip"
+            ></apx-chart>
+          } @else {
+            <div class="text-center text-muted py-4">
+              <i class="feather icon-pie-chart fs-1 d-block mb-2"></i>
+              Aucune donnée
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Review Cards -->
+      <div class="col-md-8">
+        <div class="reviews-list">
+          @if (reviewsLoading()) {
+            <div class="text-center py-4 text-muted">
+              <div class="spinner-border spinner-border-sm me-2"></div>Chargement...
+            </div>
+          } @else if (filteredReviews().length === 0) {
+            <div class="text-center py-5 text-muted border rounded">
+              <i class="feather icon-message-square fs-1 d-block mb-2"></i>
+              Aucun avis
+            </div>
+          } @else {
+            <div class="d-flex flex-column gap-2" style="max-height: 420px; overflow-y: auto;">
+              @for (av of filteredReviews(); track av.id) {
+                <div class="review-card">
+                  <div class="d-flex justify-content-between align-items-start mb-1">
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="review-avatar">{{ av.userNom?.charAt(0) }}{{ av.userPrenom?.charAt(0) }}</div>
+                      <div>
+                        <div class="fw-semibold" style="font-size: 0.85rem;">{{ av.userNom }} {{ av.userPrenom }}</div>
+                        <div class="text-muted" style="font-size: 0.72rem;">{{ av.createdAt | date:'dd/MM/yyyy HH:mm' }}</div>
+                      </div>
+                    </div>
+                    <span class="sentiment-badge"
+                          [class.sentiment-badge--positif]="av.sentiment === 'POSITIF'"
+                          [class.sentiment-badge--negatif]="av.sentiment === 'NEGATIF'"
+                          [class.sentiment-badge--neutre]="!av.sentiment || av.sentiment === 'NEUTRE'">
+                      <i class="feather"
+                         [class.icon-thumbs-up]="av.sentiment === 'POSITIF'"
+                         [class.icon-thumbs-down]="av.sentiment === 'NEGATIF'"
+                         [class.icon-minus]="!av.sentiment || av.sentiment === 'NEUTRE'"></i>
+                      {{ av.sentiment === 'POSITIF' ? 'Positif' : av.sentiment === 'NEGATIF' ? 'Négatif' : 'Neutre' }}
+                    </span>
+                  </div>
+                  <div class="d-flex text-warning mb-1" style="font-size: 0.78rem;">
+                    @for (s of [1,2,3,4,5]; track s) {
+                      <i class="feather" [class.icon-star-on]="av.note! >= s" [class.icon-star]="av.note! < s"></i>
+                    }
+                  </div>
+                  <p class="text-muted mb-0" style="font-size: 0.83rem; line-height: 1.5;">{{ av.commentaire }}</p>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+}

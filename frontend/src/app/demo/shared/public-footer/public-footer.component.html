@@ -1,0 +1,38 @@
+<footer class="public-footer">
+  <div class="container py-5">
+    <div class="row g-4">
+      <div class="col-md-3">
+        <h5 class="footer-brand mb-3">Lofina</h5>
+        <p class="footer-text small">{{ 'FOOTER_TAGLINE' | translate }}</p>
+      </div>
+      <div class="col-md-3">
+        <h6 class="footer-heading mb-3">{{ 'FOOTER_QUICK_LINKS' | translate }}</h6>
+        <ul class="list-unstyled footer-links">
+          <li><a [routerLink]="homeLink()" class="footer-link">{{ 'HOME' | translate }}</a></li>
+          <li><a href="javascript:void(0)" (click)="onAddAnnonce()" class="footer-link">{{ 'LIST_PROPERTY' | translate }}</a></li>
+          <li><a href="javascript:void(0)" class="footer-link">{{ 'FOOTER_ABOUT_US' | translate }}</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h6 class="footer-heading mb-3">{{ 'FOOTER_SUPPORT' | translate }}</h6>
+        <ul class="list-unstyled footer-links">
+          <li><a href="javascript:void(0)" class="footer-link">{{ 'FOOTER_HELP_CENTER' | translate }}</a></li>
+          <li><a href="javascript:void(0)" class="footer-link">{{ 'FOOTER_TERMS' | translate }}</a></li>
+          <li><a href="javascript:void(0)" class="footer-link">{{ 'FOOTER_PRIVACY' | translate }}</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h6 class="footer-heading mb-3">{{ 'FOOTER_CONTACT' | translate }}</h6>
+        <ul class="list-unstyled footer-contact">
+          <li class="footer-text mb-2"><i class="feather icon-mail me-2"></i> support&#64;lofina.com</li>
+          <li class="footer-text mb-2"><i class="feather icon-phone me-2"></i> +216 71 123 456</li>
+          <li class="footer-text"><i class="feather icon-map-pin me-2"></i> Tunis, Tunisia</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="footer-divider my-4">
+    <div class="text-center footer-copyright small">
+      &copy; {{ currentYear }} Lofina. {{ 'ALL_RIGHTS_RESERVED' | translate }}
+    </div>
+  </div>
+</footer>

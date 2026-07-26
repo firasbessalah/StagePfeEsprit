@@ -30,12 +30,6 @@ export class AuthSigninComponent implements OnInit, AfterViewInit, OnDestroy {
   private translationService = inject(TranslationService);
 
   currentLang = computed(() => this.translationService.currentLang());
-  activeLangName = computed(() => {
-    const l = this.currentLang();
-    if (l === 'en') return 'English';
-    if (l === 'fr') return 'Français';
-    return 'العربية';
-  });
 
   setLang(lang: Language): void {
     this.translationService.setLanguage(lang);
@@ -51,7 +45,9 @@ export class AuthSigninComponent implements OnInit, AfterViewInit, OnDestroy {
   googleSubmitting = signal(false);
   googleEnabled = !!environment.googleClientId?.trim();
   selectedGoogleRole = signal<'LOCATAIRE' | 'BAILLEUR'>('LOCATAIRE');
-  private captchaToken = '';
+  googleTelephone = signal('');
+
+  private captchaToken: string | null = null;
   private recaptchaWidgetId: number | null = null;
   private recaptchaRenderRetries = 0;
 
@@ -305,7 +301,7 @@ export class AuthSigninComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.googleSubmitting.set(true);
     this.error.set('');
-    this.auth.loginWithGoogle(credential, this.selectedGoogleRole()).subscribe({
+    this.auth.loginWithGoogle(credential, this.selectedGoogleRole(), this.googleTelephone()).subscribe({
       next: () => {
         this.googleSubmitting.set(false);
         const target = this.auth.getDefaultRouteForRole();

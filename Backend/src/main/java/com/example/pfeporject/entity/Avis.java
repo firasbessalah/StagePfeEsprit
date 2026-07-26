@@ -20,6 +20,11 @@ public class Avis {
     private Integer note;
     private String commentaire;
     private boolean isModere;
+    private String sentiment;
+
+    private boolean flagged = false;
+    private String flagReason;
+    private Integer riskScore = 0;
 
     @Column(updatable = false)
     private LocalDateTime createdAt;

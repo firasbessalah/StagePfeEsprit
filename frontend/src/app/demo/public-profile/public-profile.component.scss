@@ -1,6 +1,6 @@
 // Booking.com inspired colors
-$primary-blue: #003b95;
-$dark-blue: #00224f;
+$primary-blue: #000000;
+$dark-blue: #FFD700;
 $light-blue: #ebf3ff;
 $bg-gray: #f5f5f5;
 
@@ -14,44 +14,45 @@ $bg-gray: #f5f5f5;
 .booking-header {
   background-color: $bg-gray;
   color: #333;
-  padding: 1rem 0;
+  padding: 0.75rem 0;
 
   .header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding-left: 0.75rem;
+    padding-right: 1rem;
   }
 
-  .logo a {
-    color: $primary-blue;
-    font-size: 1.5rem;
-    font-weight: 700;
-    text-decoration: none;
+  .logo {
+    margin-left: 0;
+    padding-left: 0;
+
+    a {
+      color: $primary-blue;
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-decoration: none;
+    }
   }
 
   .header-actions {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 1.25rem;
 
-    .btn-light {
-      background-color: $primary-blue;
-      color: white !important;
-      font-weight: 600;
-      border: none;
-      
-      &:hover {
-        background-color: $dark-blue;
-      }
-    }
-
-    .btn-outline-light {
-      border: 1px solid $primary-blue;
+    .header-nav-link {
       color: $primary-blue;
-      font-weight: 500;
-      
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: color 0.2s;
+
       &:hover {
-        background-color: rgba(0, 59, 149, 0.1);
+        color: $dark-blue;
+        text-decoration: underline;
       }
     }
   }
@@ -59,6 +60,16 @@ $bg-gray: #f5f5f5;
 
 .bg-gray {
   background-color: $bg-gray;
+  
+  .breadcrumb-item a {
+    color: #000000 !important;
+    text-decoration: none;
+    font-weight: 500;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 
 .booking-main {
@@ -78,3 +89,103 @@ $bg-gray: #f5f5f5;
     }
   }
 }
+
+$gold: #febb02;
+
+.header-avatar-img {
+  object-fit: cover;
+  border: 2px solid #febb02;
+}
+
+.header-avatar-placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e4e6eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  flex-shrink: 0;
+
+  i {
+    font-size: 1.15rem;
+    color: #bcc0c4;
+  }
+}
+
+.profile-avatar-img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border: 4px solid #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+}
+
+.profile-avatar-placeholder {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: #e4e6eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  border: 4px solid #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+
+  i {
+    font-size: 4.5rem;
+    color: #bcc0c4;
+  }
+}
+
+.user-role {
+  color: $primary-blue;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.btn-save {
+  background-color: $gold !important;
+  border-color: $gold !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+
+  &:hover:not(:disabled) {
+    background-color: darken($gold, 8%) !important;
+    border-color: darken($gold, 8%) !important;
+    color: #ffffff !important;
+  }
+
+  &:disabled {
+    background-color: rgba(254, 187, 2, 0.45) !important;
+    border-color: transparent !important;
+    color: rgba(255, 255, 255, 0.75) !important;
+    cursor: not-allowed;
+  }
+}
+
+.btn-gold {
+  background-color: $gold !important;
+  border-color: $gold !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: darken($gold, 8%) !important;
+    border-color: darken($gold, 8%) !important;
+    color: #ffffff !important;
+  }
+
+  &:disabled {
+    background-color: rgba(254, 187, 2, 0.5) !important;
+    border-color: transparent !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    cursor: not-allowed;
+  }
+}
+

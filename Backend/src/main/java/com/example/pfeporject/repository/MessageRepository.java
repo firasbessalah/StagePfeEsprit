@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -23,4 +24,11 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
                                    @Param("userId2") Long userId2);
 
     long countByDestinataireIdAndIsLu(Long destinataireId, boolean isLu);
+
+    // ─── Analytics ──────────────────────────────────────────
+    List<Message> findByCreatedAtAfter(LocalDateTime since);
+
+    List<Message> findByFlaggedTrue();
+
+    long countByFlaggedTrue();
 }

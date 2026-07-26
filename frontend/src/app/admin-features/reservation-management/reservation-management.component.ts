@@ -1,23 +1,41 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core'; 
 import { CommonModule } from '@angular/common';
+import { RouterModule, Router } from '@angular/router';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { ReservationService, ReservationDTO } from 'src/app/demo/reservations/reservation.service';
 import { AuthService } from 'src/app/core/auth/auth.service';
+import { TranslatePipe } from 'src/app/core/pipes/translate.pipe';
+import { NotificationDropdownComponent } from 'src/app/demo/shared/notification-dropdown/notification-dropdown.component';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { TranslationService, Language } from 'src/app/core/services/translation.service';
+import { PublicFooterComponent } from 'src/app/demo/shared/public-footer/public-footer.component';
 
 @Component({
   selector: 'app-reservation-management',
   standalone: true,
-  imports: [CommonModule, SharedModule],
-  templateUrl: './reservation-management.component.html'
+  imports: [CommonModule, SharedModule, RouterModule, NgbDropdownModule, TranslatePipe, PublicFooterComponent, NotificationDropdownComponent],
+  templateUrl: './reservation-management.component.html',
+  styleUrls: ['./reservation-management.component.scss']
 })
 export class ReservationManagementComponent implements OnInit {
   private reservationService = inject(ReservationService);
   private auth = inject(AuthService);
+  private router = inject(Router);
+  private translationService = inject(TranslationService);
 
   reservations = signal<ReservationDTO[]>([]);
   loading = signal(true);
   error = signal('');
-  isAdmin = computed(() => this.auth.user()?.role === 'ADMIN');
+  user = computed(() => this.auth.user());
+  isAdmin = computed(() => this.user()?.role === 'ADMIN');
+  isAuthenticated = computed(() => this.auth.isAuthenticated());
+  isBailleur = computed(() => this.user()?.role === 'BAILLEUR');
+  currentLang = computed(() => this.translationService.currentLang());
+  homeLink = computed(() => {
+    const role = this.user()?.role;
+    if (role === 'LOCATAIRE' || role === 'BAILLEUR') return '/browse';
+    return '/';
+  });
 
   ngOnInit(): void {
     this.loadReservations();
@@ -25,14 +43,24 @@ export class ReservationManagementComponent implements OnInit {
 
   loadReservations() {
     this.loading.set(true);
-    
-    const obs$ = this.isAdmin() 
-      ? this.reservationService.getAllReservations() 
-      : this.reservationService.getReservationsByBailleur(this.auth.user()?.id as number);
+    const u = this.user();
+    if (!u || !u.id) {
+      this.loading.set(false);
+      return;
+    }
+
+    let obs$;
+    if (u.role === 'ADMIN') {
+      obs$ = this.reservationService.getAllReservations();
+    } else if (u.role === 'BAILLEUR') {
+      obs$ = this.reservationService.getReservationsByBailleur(u.id);
+    } else {
+      obs$ = this.reservationService.getReservationsByUser(u.id);
+    }
 
     obs$.subscribe({
       next: (data) => {
-        // Show pending first, then others
+        // Show pending first, then others sorted by creation date
         data.sort((a, b) => {
           if (a.statut === 'EN_ATTENTE' && b.statut !== 'EN_ATTENTE') return -1;
           if (a.statut !== 'EN_ATTENTE' && b.statut === 'EN_ATTENTE') return 1;
@@ -64,5 +92,22 @@ export class ReservationManagementComponent implements OnInit {
         error: (err) => alert('Error refusing reservation.')
       });
     }
+  }
+
+  setLang(lang: Language): void {
+    this.translationService.setLanguage(lang);
+  }
+
+  onAddAnnonce(): void {
+    if (this.isAuthenticated()) {
+      this.router.navigate(['/annonces']);
+    } else {
+      this.router.navigate(['/login']);
+    }
+  }
+
+  logout(): void {
+    this.auth.logout();
+    this.router.navigate(['/login']);
   }
 }

@@ -1,48 +1,26 @@
 <div class="booking-layout">
   <!-- Header -->
   <header class="booking-header">
-    <div class="container header-container">
+    <div class="container-fluid header-container">
       <div class="logo">
-        <a routerLink="/">BookingPFE</a>
+        <a routerLink="/">Lofina</a>
       </div>
       <div class="header-actions d-flex align-items-center">
-        <!-- Language Switcher -->
-        <div class="dropdown me-3" ngbDropdown>
-          <button class="btn btn-primary dropdown-toggle d-flex align-items-center shadow-sm" ngbDropdownToggle style="border-radius: 50px; font-size: 0.82rem; font-weight: 600; padding: 6px 16px; background-color: #006ce4; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 10px rgba(0,0,0,0.12);">
-            <i class="feather icon-globe me-2" style="font-size: 0.95rem;"></i>
-            <span>{{ activeLangName() }}</span>
-          </button>
-          <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu>
-            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')" style="width: 100%; border: none; background: transparent;">
-              <span>English</span>
-              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'en'"></i>
-            </button>
-            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')" style="width: 100%; border: none; background: transparent;">
-              <span>Français</span>
-              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'fr'"></i>
-            </button>
-            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')" style="width: 100%; border: none; background: transparent;">
-              <span>العربية</span>
-              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'ar'"></i>
-            </button>
-          </div>
-        </div>
-
         <!-- Unauthenticated -->
         <ng-container *ngIf="!isAuthenticated()">
-          <button class="btn btn-outline-light me-2" (click)="onAddAnnonce()">{{ 'LIST_PROPERTY' | translate }}</button>
-          <a routerLink="/register" class="btn btn-light me-2 text-primary">{{ 'REGISTER' | translate }}</a>
-          <a routerLink="/login" class="btn btn-light text-primary">{{ 'SIGN_IN' | translate }}</a>
+          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()">{{ 'LIST_PROPERTY' | translate }}</a>
+          <a routerLink="/register" class="header-nav-link">{{ 'REGISTER' | translate }}</a>
+          <a routerLink="/login" class="header-nav-link">{{ 'SIGN_IN' | translate }}</a>
         </ng-container>
         <!-- Authenticated -->
         <ng-container *ngIf="isAuthenticated()">
-          <button class="btn btn-outline-light me-2" (click)="onAddAnnonce()" *ngIf="user()?.role !== 'LOCATAIRE'">{{ 'LIST_PROPERTY' | translate }}</button>
+          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()" *ngIf="user()?.role !== 'LOCATAIRE'">{{ 'LIST_PROPERTY' | translate }}</a>
+          <app-notification-dropdown></app-notification-dropdown>
           <div class="user-dropdown dropdown" ngbDropdown>
             <button class="btn btn-transparent dropdown-toggle text-dark d-flex align-items-center" ngbDropdownToggle style="border: none; background: transparent; padding: 0;">
-              <img [src]="user()?.photoProfil || 'assets/images/user/avatar-1.jpg'" alt="User Avatar" class="rounded-circle me-2" width="40" height="40" style="object-fit: cover; border: 2px solid #febb02;">
+              <img [src]="(user()?.photoProfil && user()?.photoProfil !== 'null' && user()?.photoProfil!.trim().length > 0) ? user()?.photoProfil : 'assets/images/user/avatar-1.jpg'" alt="User Avatar" class="rounded-circle me-2" width="40" height="40" style="object-fit: cover; border: 2px solid #febb02;">
               <div class="text-start me-2">
                 <div class="fw-bold" style="line-height: 1.2;">{{ user()?.nom }} {{ user()?.prenom }}</div>
-                <div class="small text-muted" style="font-size: 0.75rem; color: #febb02 !important; font-weight: 600;">Level 1 Member</div>
               </div>
             </button>
             <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu style="min-width: 250px;">
@@ -58,6 +36,12 @@
               <a class="dropdown-item py-2" routerLink="/reservations" *ngIf="user()?.role !== 'ADMIN'">
                 <i class="feather icon-briefcase me-3 fs-5 align-middle"></i> {{ 'RESERVATIONS' | translate }}
               </a>
+              <a class="dropdown-item py-2" routerLink="/favoris" *ngIf="user()?.role === 'LOCATAIRE'">
+                <i class="feather icon-heart me-3 fs-5 align-middle"></i> Mes Favoris
+              </a>
+              <a class="dropdown-item py-2" routerLink="/alertes" *ngIf="user()?.role === 'LOCATAIRE'">
+                <i class="feather icon-bell me-3 fs-5 align-middle"></i> Mes Alertes
+              </a>
               <a class="dropdown-item py-2" routerLink="/messages" *ngIf="user()?.role !== 'ADMIN'">
                 <i class="feather icon-message-circle me-3 fs-5 align-middle"></i> {{ 'MESSAGES' | translate }}
               </a>
@@ -69,6 +53,28 @@
             </div>
           </div>
         </ng-container>
+
+        <!-- Language Switcher -->
+        <div class="dropdown ms-2" ngbDropdown>
+          <button class="btn btn-primary dropdown-toggle d-flex align-items-center shadow-sm" ngbDropdownToggle style="border-radius: 50px; font-size: 0.82rem; font-weight: 600; padding: 6px 16px; background-color: #000080; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 10px rgba(0,0,0,0.12); color: #ffffff !important;">
+            <i class="feather icon-globe me-2" style="font-size: 0.95rem;"></i>
+            <span>{{ currentLang() }}</span>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')" style="width: 100%; border: none; background: transparent;">
+              <span>en</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'en'"></i>
+            </button>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')" style="width: 100%; border: none; background: transparent;">
+              <span>fr</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'fr'"></i>
+            </button>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')" style="width: 100%; border: none; background: transparent;">
+              <span>ar</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'ar'"></i>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </header>
@@ -121,7 +127,16 @@
           <div class="text-end">
             <p class="fs-4 fw-bold text-dark mb-0">{{ annonce()?.prix }} TND</p>
             <p class="text-muted small">{{ 'MONTH' | translate }}</p>
-            <button class="btn btn-primary btn-lg shadow-sm" (click)="onReserve(reservationModal)">{{ 'RESERVE' | translate }}</button>
+            <div class="d-flex align-items-center justify-content-end gap-2">
+              <button class="btn btn-lg shadow-sm px-3" 
+                      [ngClass]="favoriService.isFavori(annonce()!.id!) ? 'btn-danger' : 'btn-outline-danger'"
+                      *ngIf="user()?.role === 'LOCATAIRE'"
+                      (click)="toggleFavori(annonce()!.id!)" 
+                      [title]="favoriService.isFavori(annonce()!.id!) ? 'Remove from favorites' : 'Add to favorites'">
+                <i [class]="favoriService.isFavori(annonce()!.id!) ? 'feather icon-heart-on' : 'feather icon-heart'"></i>
+              </button>
+              <button class="btn btn-primary btn-lg shadow-sm" (click)="onReserve(reservationModal)">{{ 'RESERVE' | translate }}</button>
+            </div>
           </div>
         </div>
 
@@ -129,15 +144,15 @@
         <div class="gallery mb-5">
           <div class="row g-2">
             <div class="col-md-8">
-              <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80&w=1200" alt="Main Property Image" class="img-fluid rounded w-100 h-100 object-fit-cover" style="max-height: 500px;">
+              <img [src]="annonce()?.images?.[0] || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80&w=1200'" alt="Main Property Image" class="img-fluid rounded w-100 h-100 object-fit-cover" style="max-height: 500px;">
             </div>
             <div class="col-md-4">
               <div class="row g-2 h-100">
                 <div class="col-12">
-                  <img src="https://images.unsplash.com/photo-1502672260266-1c1de2d93688?auto=format&fit=crop&q=80&w=600" alt="Room Image" class="img-fluid rounded w-100 object-fit-cover" style="height: 246px;">
+                  <img [src]="annonce()?.images?.[1] || 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&q=80&w=600'" alt="Room Image" class="img-fluid rounded w-100 object-fit-cover" style="height: 246px;">
                 </div>
                 <div class="col-12">
-                  <img src="https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80&w=600" alt="Kitchen Image" class="img-fluid rounded w-100 object-fit-cover" style="height: 246px;">
+                  <img [src]="annonce()?.images?.[2] || 'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80&w=600'" alt="Kitchen Image" class="img-fluid rounded w-100 object-fit-cover" style="height: 246px;">
                 </div>
               </div>
             </div>
@@ -305,45 +320,7 @@
     </div>
   </main>
 
-  <!-- Footer -->
-  <footer class="booking-footer">
-    <div class="container py-5">
-      <div class="row g-4">
-        <div class="col-md-3">
-          <h5 class="text-white mb-3">BookingPFE</h5>
-          <p class="text-white-50 small">Your trusted platform for finding the best stays and apartments in Tunisia.</p>
-        </div>
-        <div class="col-md-3">
-          <h6 class="text-white mb-3">Quick Links</h6>
-          <ul class="list-unstyled">
-            <li><a routerLink="/" class="text-white-50 text-decoration-none">Home</a></li>
-            <li><a href="javascript:void(0)" (click)="onAddAnnonce()" class="text-white-50 text-decoration-none">List your property</a></li>
-            <li><a href="javascript:void(0)" class="text-white-50 text-decoration-none">About Us</a></li>
-          </ul>
-        </div>
-        <div class="col-md-3">
-          <h6 class="text-white mb-3">Support</h6>
-          <ul class="list-unstyled">
-            <li><a href="javascript:void(0)" class="text-white-50 text-decoration-none">Help Center</a></li>
-            <li><a href="javascript:void(0)" class="text-white-50 text-decoration-none">Terms of Service</a></li>
-            <li><a href="javascript:void(0)" class="text-white-50 text-decoration-none">Privacy Policy</a></li>
-          </ul>
-        </div>
-        <div class="col-md-3">
-          <h6 class="text-white mb-3">Contact</h6>
-          <ul class="list-unstyled">
-            <li class="text-white-50 mb-2"><i class="feather icon-mail me-2"></i> support@bookingpfe.com</li>
-            <li class="text-white-50 mb-2"><i class="feather icon-phone me-2"></i> +216 71 123 456</li>
-            <li class="text-white-50"><i class="feather icon-map-pin me-2"></i> Tunis, Tunisia</li>
-          </ul>
-        </div>
-      </div>
-      <hr class="border-secondary my-4">
-      <div class="text-center text-white-50 small">
-        &copy; 2026 BookingPFE. All rights reserved.
-      </div>
-    </div>
-  </footer>
+  <app-public-footer></app-public-footer>
 </div>
 
 <!-- Reservation Modal -->

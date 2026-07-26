@@ -20,6 +20,10 @@ public class NotificationService {
 
     // ─── ENVOYER UNE NOTIFICATION ────────────────────────────
     public void envoyer(Long userId, String titre, String message, TypeNotification type) {
+        envoyer(userId, titre, message, type, null);
+    }
+
+    public void envoyer(Long userId, String titre, String message, TypeNotification type, Long relatedEntityId) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Utilisateur introuvable !"));
@@ -30,6 +34,7 @@ public class NotificationService {
         notification.setType(type);
         notification.setLu(false);
         notification.setUser(user);
+        notification.setRelatedEntityId(relatedEntityId);
 
         notificationRepository.save(notification);
     }
@@ -65,6 +70,7 @@ public class NotificationService {
         dto.setType(n.getType().name());
         dto.setCreatedAt(n.getCreatedAt());
         dto.setUserId(n.getUser().getId());
+        dto.setRelatedEntityId(n.getRelatedEntityId());
         return dto;
     }
 }

@@ -1,26 +1,26 @@
 <ul class="navbar-nav">
   <li class="me-2">
     <div class="dropdown" ngbDropdown placement="auto">
-      <a href="javascript:void(0)" ngbDropdownToggle data-toggle="dropdown" class="d-flex align-items-center justify-content-center rounded-circle shadow-sm" style="width: 38px; height: 38px; background-color: rgba(0, 108, 228, 0.08); border: 1.5px solid rgba(0, 108, 228, 0.25); color: #006ce4; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0, 108, 228, 0.1);">
+      <a href="javascript:void(0)" ngbDropdownToggle data-toggle="dropdown" class="d-flex align-items-center justify-content-center rounded-circle shadow-sm" style="width: 38px; height: 38px; background-color: rgba(0, 0, 128, 0.08); border: 1.5px solid rgba(0, 0, 128, 0.25); color: #000080; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0, 0, 128, 0.1);">
         <i class="icon feather icon-globe" style="font-size: 1.15rem; margin: 0;"></i>
       </a>
       <div class="dropdown-menu dropdown-menu-end profile-notification" ngbDropdownMenu style="padding: 10px 0;">
         <ul class="pro-body" style="padding: 0; margin-bottom: 0;">
           <li>
             <a href="javascript:void(0)" class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')">
-              <span>English</span>
+              <span>en</span>
               <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'en'"></i>
             </a>
           </li>
           <li>
             <a href="javascript:void(0)" class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')">
-              <span>Français</span>
+              <span>fr</span>
               <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'fr'"></i>
             </a>
           </li>
           <li>
             <a href="javascript:void(0)" class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')">
-              <span>العربية</span>
+              <span>ar</span>
               <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'ar'"></i>
             </a>
           </li>
@@ -57,8 +57,7 @@
               class="notification" 
               [class.bg-light]="!n.lu"
               style="cursor: pointer; border-bottom: 1px solid rgba(0,0,0,0.03);"
-              (click)="markAsRead(n)"
-              [routerLink]="n.type === 'MESSAGE' ? '/messages' : '/home'">
+              (click)="markAsRead(n)">
               <div class="d-flex align-items-start gap-2">
                 <div class="rounded-circle d-flex align-items-center justify-content-center bg-light p-2" style="width: 38px; height: 38px; flex-shrink: 0;">
                   <i [class]="getNotificationIcon(n.type)" style="font-size: 1.1rem;"></i>

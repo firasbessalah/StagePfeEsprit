@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { Subscription, interval, startWith, switchMap } from 'rxjs';
 
 import { AuthService } from 'src/app/core/auth/auth.service';
@@ -9,11 +9,16 @@ import { MessageService, MessageDTO } from './message.service';
 import { UserAdminService } from 'src/app/admin-features/user-admin.service';
 import { UserDTO } from 'src/app/core/auth/auth.models';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
+import { TranslatePipe } from 'src/app/core/pipes/translate.pipe';
+import { NotificationDropdownComponent } from '../shared/notification-dropdown/notification-dropdown.component';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { TranslationService, Language } from 'src/app/core/services/translation.service';
+import { PublicFooterComponent } from '../shared/public-footer/public-footer.component';
 
 @Component({
   selector: 'app-messages',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, SharedModule],
+  imports: [CommonModule, RouterModule, SharedModule, NgbDropdownModule, FormsModule, TranslatePipe, PublicFooterComponent, NotificationDropdownComponent],
   templateUrl: './messages.component.html',
   styleUrls: ['./messages.component.scss']
 })
@@ -21,9 +26,19 @@ export class MessagesComponent implements OnInit, OnDestroy {
   private auth = inject(AuthService);
   private messageService = inject(MessageService);
   private userService = inject(UserAdminService);
+  private router = inject(Router);
+  private translationService = inject(TranslationService);
 
   currentUser = computed(() => this.auth.user());
+  user = this.currentUser; // Map for navbar compatibility
   isAdmin = computed(() => this.currentUser()?.role === 'ADMIN');
+  isAuthenticated = computed(() => this.auth.isAuthenticated());
+  currentLang = computed(() => this.translationService.currentLang());
+  homeLink = computed(() => {
+    const role = this.currentUser()?.role;
+    if (role === 'LOCATAIRE' || role === 'BAILLEUR') return '/browse';
+    return '/';
+  });
 
   // Contacts list
   contacts = signal<UserDTO[]>([]);
@@ -160,5 +175,22 @@ export class MessagesComponent implements OnInit, OnDestroy {
     const n = name?.substring(0, 1) || '';
     const p = prenom?.substring(0, 1) || '';
     return (p + n).toUpperCase() || '?';
+  }
+
+  setLang(lang: Language): void {
+    this.translationService.setLanguage(lang);
+  }
+
+  onAddAnnonce(): void {
+    if (this.isAuthenticated()) {
+      this.router.navigate(['/annonces']);
+    } else {
+      this.router.navigate(['/login']);
+    }
+  }
+
+  logout(): void {
+    this.auth.logout();
+    this.router.navigate(['/login']);
   }
 }

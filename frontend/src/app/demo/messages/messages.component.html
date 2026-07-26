@@ -1,165 +1,239 @@
-<div class="pc-container chat-layout">
-  <div class="pc-content h-100">
-    
-    <div class="row h-100 g-0 card-glass-wrapper">
-      <!-- Sidebar / Contacts List -->
-      <div class="col-md-4 border-end h-100 chat-sidebar">
-        <div class="sidebar-header d-flex align-items-center justify-content-between p-3 border-bottom">
-          <h5 class="m-b-0 fw-bold"><i class="feather icon-message-square me-2 text-primary"></i>Messages</h5>
-          <span class="badge bg-light text-primary border rounded-pill">{{ contacts().length }} Contacts</span>
+<div [class]="isAdmin() ? '' : 'search-results-layout'">
+
+  <!-- ===== NAVBAR ===== -->
+  <header class="results-header" *ngIf="!isAdmin()">
+    <div class="container-fluid header-inner">
+      <a [routerLink]="homeLink()" class="logo">Lofina</a>
+
+      <!-- Empty space to align right actions -->
+      <div style="flex: 1;"></div>
+
+      <!-- Right-side actions -->
+      <div class="header-actions d-flex align-items-center">
+        <!-- Unauthenticated -->
+        <ng-container *ngIf="!isAuthenticated()">
+          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()">{{ 'LIST_PROPERTY' | translate }}</a>
+          <a routerLink="/register" class="header-nav-link">{{ 'REGISTER' | translate }}</a>
+          <a routerLink="/login" class="header-nav-link">{{ 'SIGN_IN' | translate }}</a>
+        </ng-container>
+
+        <!-- Authenticated -->
+        <ng-container *ngIf="isAuthenticated()">
+          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()" *ngIf="user()?.role !== 'LOCATAIRE'">{{ 'LIST_PROPERTY' | translate }}</a>
+          <app-notification-dropdown></app-notification-dropdown>
+          <div class="user-dropdown dropdown" ngbDropdown>
+            <button class="btn btn-transparent dropdown-toggle text-dark d-flex align-items-center" ngbDropdownToggle style="border: none; background: transparent; padding: 0;">
+              <img [src]="(user()?.photoProfil && user()?.photoProfil !== 'null' && user()?.photoProfil!.trim().length > 0) ? user()?.photoProfil : 'assets/images/user/avatar-1.jpg'" alt="User Avatar" class="rounded-circle me-2" width="40" height="40" style="object-fit: cover; border: 2px solid #febb02;">
+              <div class="text-start me-2">
+                <div class="fw-bold" style="line-height: 1.2;">{{ user()?.nom }} {{ user()?.prenom }}</div>
+              </div>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu style="min-width: 250px;">
+              <a class="dropdown-item py-2" routerLink="/dashboard" *ngIf="user()?.role === 'ADMIN'">
+                <i class="feather icon-monitor me-3 fs-5 align-middle"></i> Admin Dashboard
+              </a>
+              <a class="dropdown-item py-2" routerLink="/my-profile">
+                <i class="feather icon-user me-3 fs-5 align-middle"></i> {{ 'MY_ACCOUNT' | translate }}
+              </a>
+              <a class="dropdown-item py-2" routerLink="/reservations" *ngIf="user()?.role !== 'ADMIN'">
+                <i class="feather icon-briefcase me-3 fs-5 align-middle"></i> {{ 'RESERVATIONS' | translate }}
+              </a>
+              <a class="dropdown-item py-2" routerLink="/favoris" *ngIf="user()?.role === 'LOCATAIRE'">
+                <i class="feather icon-heart me-3 fs-5 align-middle"></i> Mes Favoris
+              </a>
+              <a class="dropdown-item py-2" routerLink="/alertes" *ngIf="user()?.role === 'LOCATAIRE'">
+                <i class="feather icon-bell me-3 fs-5 align-middle"></i> Mes Alertes
+              </a>
+              <a class="dropdown-item py-2" routerLink="/messages" *ngIf="user()?.role !== 'ADMIN'">
+                <i class="feather icon-message-circle me-3 fs-5 align-middle"></i> {{ 'MESSAGES' | translate }}
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item py-2 text-danger" (click)="logout()" style="cursor: pointer;">
+                <i class="feather icon-log-out me-3 fs-5 align-middle"></i> {{ 'LOGOUT' | translate }}
+              </a>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- Language Switcher -->
+        <div class="dropdown ms-2" ngbDropdown>
+          <button class="btn btn-primary dropdown-toggle d-flex align-items-center shadow-sm" ngbDropdownToggle style="border-radius: 50px; font-size: 0.82rem; font-weight: 600; padding: 6px 16px; background-color: #000080; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 10px rgba(0,0,0,0.12); color: #ffffff !important;">
+            <i class="feather icon-globe me-2" style="font-size: 0.95rem;"></i>
+            <span>{{ currentLang() }}</span>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')" style="width: 100%; border: none; background: transparent;">
+              <span>en</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'en'"></i>
+            </button>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')" style="width: 100%; border: none; background: transparent;">
+              <span>fr</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'fr'"></i>
+            </button>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')" style="width: 100%; border: none; background: transparent;">
+              <span>ar</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'ar'"></i>
+            </button>
+          </div>
         </div>
-
-        <!-- Contacts Container -->
-        <div class="contacts-list p-2" style="overflow-y: auto; height: calc(100% - 70px);">
-          @if (loadingContacts()) {
-            <div class="text-center py-5">
-              <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
-              <p class="text-muted mt-2 small">Loading your contacts...</p>
-            </div>
-          } @else if (contacts().length === 0) {
-            <div class="text-center py-5">
-              <i class="feather icon-users fs-2 text-muted mb-3 d-block"></i>
-              <p class="text-muted">No contacts found.</p>
-            </div>
-          } @else {
-            @for (contact of contacts(); track contact.id) {
-              <div 
-                class="contact-item d-flex align-items-center p-3 mb-2 rounded-3" 
-                [class.active]="activeContact()?.id === contact.id"
-                (click)="selectContact(contact)">
-                
-                <!-- Avatar -->
-                <div class="avatar-container me-3 position-relative">
-                  @if (contact.photoProfil) {
-                    <img [src]="contact.photoProfil" alt="Profile" class="avatar-img rounded-circle" />
-                  } @else {
-                    <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center fw-bold">
-                      {{ getInitials(contact.nom, contact.prenom) }}
-                    </div>
-                  }
-                  <span class="status-indicator online"></span>
-                </div>
-
-                <!-- Contact Details -->
-                <div class="contact-info flex-grow-1 min-width-0">
-                  <div class="d-flex justify-content-between align-items-baseline">
-                    <h6 class="mb-0 text-truncate contact-name">{{ contact.prenom }} {{ contact.nom }}</h6>
-                  </div>
-                  <div class="d-flex align-items-center justify-content-between mt-1">
-                    <span class="badge badge-role" [class.bg-warning]="contact.role === 'BAILLEUR'" [class.bg-info]="contact.role === 'LOCATAIRE'" [class.bg-danger]="contact.role === 'ADMIN'">
-                      {{ contact.role }}
-                    </span>
-                    <span class="small text-muted text-truncate ms-2">{{ contact.email }}</span>
-                  </div>
-                </div>
-              </div>
-            }
-          }
-        </div>
-      </div>
-
-      <!-- Chat Area -->
-      <div class="col-md-8 h-100 chat-main d-flex flex-column">
-        @if (activeContact()) {
-          <!-- Chat Header -->
-          <div class="chat-header p-3 border-bottom d-flex align-items-center justify-content-between bg-glass-header">
-            <div class="d-flex align-items-center">
-              <!-- Avatar -->
-              <div class="avatar-container me-3">
-                @if (activeContact()?.photoProfil) {
-                  <img [src]="activeContact()?.photoProfil" alt="Profile" class="avatar-img rounded-circle" />
-                } @else {
-                  <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center fw-bold">
-                    {{ getInitials(activeContact()?.nom, activeContact()?.prenom) }}
-                  </div>
-                }
-              </div>
-              <div>
-                <h6 class="mb-0 fw-bold">{{ activeContact()?.prenom }} {{ activeContact()?.nom }}</h6>
-                <span class="small text-muted d-flex align-items-center">
-                  <span class="badge bg-light text-dark border me-2">{{ activeContact()?.role }}</span>
-                  {{ activeContact()?.email }}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Messages Area -->
-          <div class="chat-messages p-4 flex-grow-1" id="chat-messages-container" style="overflow-y: auto;">
-            @if (loadingMessages()) {
-              <div class="text-center py-5 my-auto">
-                <div class="spinner-border text-primary" role="status"></div>
-                <p class="text-muted mt-2 small">Loading conversation...</p>
-              </div>
-            } @else if (messages().length === 0) {
-              <div class="text-center py-5 my-auto">
-                <i class="feather icon-message-circle fs-1 text-muted mb-3 d-block"></i>
-                <h5>Start the conversation!</h5>
-                <p class="text-muted small">Send a message to start chatting with {{ activeContact()?.prenom }}.</p>
-              </div>
-            } @else {
-              @for (msg of messages(); track msg.id) {
-                <div class="message-wrapper d-flex mb-3" [class.sent]="msg.expediteurId === currentUser()?.id">
-                  <!-- Avatar for received messages -->
-                  @if (msg.expediteurId !== currentUser()?.id) {
-                    <div class="message-avatar me-2 align-self-end">
-                      @if (activeContact()?.photoProfil) {
-                        <img [src]="activeContact()?.photoProfil" alt="Profile" class="avatar-img-sm rounded-circle" />
-                      } @else {
-                        <div class="avatar-placeholder-sm rounded-circle d-flex align-items-center justify-content-center fw-bold">
-                          {{ getInitials(activeContact()?.nom, activeContact()?.prenom) }}
-                        </div>
-                      }
-                    </div>
-                  }
-
-                  <!-- Message Box -->
-                  <div class="message-content-box">
-                    <div class="message-bubble shadow-sm">
-                      <p class="mb-0">{{ msg.contenu }}</p>
-                    </div>
-                    <div class="message-time small mt-1 d-flex align-items-center justify-content-end gap-1">
-                      {{ msg.createdAt | date:'shortTime' }}
-                      @if (msg.expediteurId === currentUser()?.id) {
-                        <i class="feather icon-check" [class.text-primary]="msg.lu" [class.text-muted]="!msg.lu" style="font-size: 0.8rem;"></i>
-                      }
-                    </div>
-                  </div>
-                </div>
-              }
-            }
-          </div>
-
-          <!-- Message Input Bar -->
-          <div class="chat-input-bar p-3 border-top bg-glass-input">
-            <div class="input-group align-items-center gap-2">
-              <input 
-                type="text" 
-                class="form-control rounded-pill border-0 px-4" 
-                placeholder="Type your message here..." 
-                [ngModel]="newMessageContenu()" 
-                (ngModelChange)="newMessageContenu.set($event)"
-                (keyup.enter)="sendMessage()" />
-              <button 
-                class="btn btn-primary rounded-circle btn-send d-flex align-items-center justify-content-center" 
-                (click)="sendMessage()" 
-                [disabled]="!newMessageContenu().trim()">
-                <i class="feather icon-send text-white"></i>
-              </button>
-            </div>
-          </div>
-        @} @else {
-          <!-- Empty State -->
-          <div class="chat-empty-state d-flex flex-column align-items-center justify-content-center h-100 text-center p-5">
-            <div class="empty-icon-wrapper mb-4">
-              <i class="feather icon-message-square text-primary"></i>
-            </div>
-            <h4 class="fw-bold">Your Live Chat inbox</h4>
-            <p class="text-muted max-width-350">Select a contact from the sidebar list to start exchanging real-time support and coordination messages.</p>
-          </div>
-        }
       </div>
     </div>
+  </header>
 
-  </div>
+  <!-- ===== MAIN CONTENT ===== -->
+  <main [class]="isAdmin() ? '' : 'results-main'">
+    <div class="container">
+      <div class="results-summary mb-4">
+        <h1>Messages</h1>
+        <p class="text-muted">Chat with your landlord, tenant, or administrators here.</p>
+      </div>
+
+      <div class="chat-layout">
+        <div class="row h-100 g-0 card-glass-wrapper">
+          <!-- Sidebar / Contacts List -->
+          <div class="col-md-4 border-end h-100 chat-sidebar">
+            <div class="sidebar-header d-flex align-items-center justify-content-between p-3 border-bottom">
+              <h5 class="m-b-0 fw-bold"><i class="feather icon-message-square me-2 text-primary"></i>Messages</h5>
+              <span class="badge bg-light text-primary border rounded-pill">{{ contacts().length }} Contacts</span>
+            </div>
+
+            <!-- Contacts Container -->
+            <div class="contacts-list p-2" style="overflow-y: auto; height: calc(100% - 70px);">
+              @if (loadingContacts()) {
+                <div class="text-center py-5">
+                  <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                  <p class="text-muted mt-2 small">Loading your contacts...</p>
+                </div>
+              } @else if (contacts().length === 0) {
+                <div class="text-center py-5">
+                  <i class="feather icon-users fs-2 text-muted mb-3 d-block"></i>
+                  <p class="text-muted">No contacts found.</p>
+                </div>
+              } @else {
+                @for (contact of contacts(); track contact.id) {
+                  <div 
+                    class="contact-item d-flex align-items-center p-3 mb-2 rounded-3" 
+                    [class.active]="activeContact()?.id === contact.id"
+                    (click)="selectContact(contact)">
+                    
+                    <!-- Avatar -->
+                    <div class="avatar-container me-3 position-relative">
+                      <img [src]="contact.photoProfil || 'assets/images/user/avatar-1.jpg'" alt="Profile" class="avatar-img rounded-circle" />
+                      <span class="status-indicator online"></span>
+                    </div>
+
+                    <!-- Contact Details -->
+                    <div class="contact-info flex-grow-1 min-width-0">
+                      <div class="d-flex justify-content-between align-items-baseline">
+                        <h6 class="mb-0 text-truncate contact-name">{{ contact.prenom }} {{ contact.nom }}</h6>
+                      </div>
+                      <div class="d-flex align-items-center justify-content-between mt-1">
+                        <span class="badge badge-role" [class.bg-warning]="contact.role === 'BAILLEUR'" [class.bg-info]="contact.role === 'LOCATAIRE'" [class.bg-danger]="contact.role === 'ADMIN'">
+                          {{ contact.role }}
+                        </span>
+                        <span class="small text-muted text-truncate ms-2">{{ contact.email }}</span>
+                      </div>
+                    </div>
+                  </div>
+                }
+              }
+            </div>
+          </div>
+
+          <!-- Chat Area -->
+          <div class="col-md-8 h-100 chat-main d-flex flex-column">
+            @if (activeContact()) {
+              <!-- Chat Header -->
+              <div class="chat-header p-3 border-bottom d-flex align-items-center justify-content-between bg-glass-header">
+                <div class="d-flex align-items-center">
+                  <!-- Avatar -->
+                  <div class="avatar-container me-3">
+                    <img [src]="activeContact()?.photoProfil || 'assets/images/user/avatar-1.jpg'" alt="Profile" class="avatar-img rounded-circle" />
+                  </div>
+                  <div>
+                    <h6 class="mb-0 fw-bold">{{ activeContact()?.prenom }} {{ activeContact()?.nom }}</h6>
+                    <span class="small text-muted d-flex align-items-center">
+                      <span class="badge bg-light text-dark border me-2">{{ activeContact()?.role }}</span>
+                      {{ activeContact()?.email }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Messages Area -->
+              <div class="chat-messages p-4 flex-grow-1" id="chat-messages-container" style="overflow-y: auto;">
+                @if (loadingMessages()) {
+                  <div class="text-center py-5 my-auto">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="text-muted mt-2 small">Loading conversation...</p>
+                  </div>
+                } @else if (messages().length === 0) {
+                  <div class="text-center py-5 my-auto">
+                    <i class="feather icon-message-circle fs-1 text-muted mb-3 d-block"></i>
+                    <h5>Start the conversation!</h5>
+                    <p class="text-muted small">Send a message to start chatting with {{ activeContact()?.prenom }}.</p>
+                  </div>
+                } @else {
+                  @for (msg of messages(); track msg.id) {
+                    <div class="message-wrapper d-flex mb-3" [class.sent]="msg.expediteurId === currentUser()?.id">
+                      <!-- Avatar for received messages -->
+                      @if (msg.expediteurId !== currentUser()?.id) {
+                        <div class="message-avatar me-2 align-self-end">
+                          <img [src]="activeContact()?.photoProfil || 'assets/images/user/avatar-1.jpg'" alt="Profile" class="avatar-img-sm rounded-circle" />
+                        </div>
+                      }
+
+                      <!-- Message Box -->
+                      <div class="message-content-box">
+                        <div class="message-bubble shadow-sm">
+                          <p class="mb-0">{{ msg.contenu }}</p>
+                        </div>
+                        <div class="message-time small mt-1 d-flex align-items-center justify-content-end gap-1">
+                          {{ msg.createdAt | date:'shortTime' }}
+                          @if (msg.expediteurId === currentUser()?.id) {
+                            <i class="feather icon-check" [class.text-primary]="msg.lu" [class.text-muted]="!msg.lu" style="font-size: 0.8rem;"></i>
+                          }
+                        </div>
+                      </div>
+                    </div>
+                  }
+                }
+              </div>
+
+              <!-- Message Input Bar -->
+              <div class="chat-input-bar p-3 border-top bg-glass-input">
+                <div class="input-group align-items-center gap-2">
+                  <input 
+                    type="text" 
+                    class="form-control rounded-pill border-0 px-4" 
+                    placeholder="Type your message here..." 
+                    [ngModel]="newMessageContenu()" 
+                    (ngModelChange)="newMessageContenu.set($event)"
+                    (keyup.enter)="sendMessage()" />
+                  <button 
+                    class="btn btn-primary rounded-circle btn-send d-flex align-items-center justify-content-center" 
+                    (click)="sendMessage()" 
+                    [disabled]="!newMessageContenu().trim()">
+                    <i class="feather icon-send text-white"></i>
+                  </button>
+                </div>
+              </div>
+            @} @else {
+              <!-- Empty State -->
+              <div class="chat-empty-state d-flex flex-column align-items-center justify-content-center h-100 text-center p-5">
+                <div class="empty-icon-wrapper mb-4">
+                  <i class="feather icon-message-square text-primary"></i>
+                </div>
+                <h4 class="fw-bold">Your Live Chat inbox</h4>
+                <p class="text-muted max-width-350">Select a contact from the sidebar list to start exchanging real-time support and coordination messages.</p>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <app-public-footer *ngIf="!isAdmin()"></app-public-footer>
+
 </div>

@@ -1,0 +1,367 @@
+// ─── Dashboard Variables ────────────────────────────────
+$dash-bg: #0a1628;
+$card-bg: #111d33;
+$card-border: #1a2d4a;
+$text-primary: #ffffff;
+$text-muted: #8899a6;
+$navy: #000080;
+$gold: #FFD700;
+
+// ─── Loading Spinner ────────────────────────────────────
+.dash-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  color: $text-muted;
+  gap: 1rem;
+
+  .spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid $card-border;
+    border-top-color: $gold;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// ─── KPI Grid ───────────────────────────────────────────
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.kpi-card {
+  background: $card-bg;
+  border: 1px solid $card-border;
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: 16px 16px 0 0;
+  }
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  }
+
+  // Color variants
+  &--navy::before { background: $navy; }
+  &--teal::before { background: #26c6da; }
+  &--gold::before { background: $gold; }
+  &--coral::before { background: #ef5350; }
+  &--purple::before { background: #ab47bc; }
+  &--green::before { background: #66bb6a; }
+  &--blue::before { background: #42a5f5; }
+  &--orange::before { background: #ffa726; }
+
+  &--navy .kpi-icon { background: rgba(0, 0, 128, 0.15); color: lighten($navy, 30%); }
+  &--teal .kpi-icon { background: rgba(38, 198, 218, 0.15); color: #26c6da; }
+  &--gold .kpi-icon { background: rgba(255, 215, 0, 0.15); color: $gold; }
+  &--coral .kpi-icon { background: rgba(239, 83, 80, 0.15); color: #ef5350; }
+  &--purple .kpi-icon { background: rgba(171, 71, 188, 0.15); color: #ab47bc; }
+  &--green .kpi-icon { background: rgba(102, 187, 106, 0.15); color: #66bb6a; }
+  &--blue .kpi-icon { background: rgba(66, 165, 245, 0.15); color: #42a5f5; }
+  &--orange .kpi-icon { background: rgba(255, 167, 38, 0.15); color: #ffa726; }
+}
+
+.kpi-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  i {
+    font-size: 1.4rem;
+  }
+}
+
+.kpi-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.kpi-value {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: $text-primary;
+  line-height: 1.1;
+}
+
+.kpi-label {
+  font-size: 0.8rem;
+  color: $text-muted;
+  margin-top: 0.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.kpi-sub {
+  font-size: 0.75rem;
+  color: $text-muted;
+  font-weight: 600;
+}
+
+.kpi-trend {
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-top: 0.15rem;
+
+  &.up { color: #66bb6a; }
+  &.down { color: #ef5350; }
+}
+
+// ─── Charts Grid ────────────────────────────────────────
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+.chart-card {
+  background: $card-bg;
+  border: 1px solid $card-border;
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.chart-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: $text-primary;
+  margin: 0 0 0.75rem;
+}
+
+.chart-header .chart-title {
+  margin-bottom: 0;
+}
+
+.chart-subtitle {
+  font-size: 0.82rem;
+  color: $text-muted;
+  margin: -0.5rem 0 0.75rem;
+}
+
+// ─── Period Toggle ──────────────────────────────────────
+.period-toggle {
+  display: flex;
+  gap: 0;
+  border: 1px solid $card-border;
+  border-radius: 8px;
+  overflow: hidden;
+
+  button {
+    background: transparent;
+    border: none;
+    color: $text-muted;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-right: 1px solid $card-border;
+
+    &:last-child { border-right: none; }
+
+    &:hover {
+      background: rgba(255, 215, 0, 0.08);
+      color: $gold;
+    }
+
+    &.active {
+      background: $gold;
+      color: #111;
+    }
+  }
+}
+
+// ─── Active Users Stats ────────────────────────────────
+.active-stats {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.active-stat {
+  font-size: 0.82rem;
+  color: $text-muted;
+
+  strong {
+    color: $text-primary;
+    font-size: 1rem;
+    margin-right: 0.25rem;
+  }
+}
+
+// ─── Comparison Badges ──────────────────────────────────
+.comparison-badges {
+  display: flex;
+  gap: 0.65rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.comp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid $card-border;
+  border-radius: 20px;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: $text-muted;
+
+  &.up { color: #66bb6a; border-color: rgba(102, 187, 106, 0.3); background: rgba(102, 187, 106, 0.08); }
+  &.down { color: #ef5350; border-color: rgba(239, 83, 80, 0.3); background: rgba(239, 83, 80, 0.08); }
+}
+
+// ─── Responsive ─────────────────────────────────────────
+@media (max-width: 1200px) {
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .kpi-value {
+    font-size: 1.4rem;
+  }
+}
+
+// ─── Reviews & Sentiment Section ────────────────────────
+.reviews-section {
+  background: $card-bg;
+  border: 1px solid $card-border;
+  border-radius: 16px;
+  padding: 1.5rem;
+}
+
+// Sentiment KPI cards (clickable filter buttons)
+.sentiment-kpis {
+  .sentiment-kpi {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.8rem 1.2rem;
+    border-radius: 12px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 120px;
+    background: #0d1f38;
+
+    i.feather { font-size: 1.4rem; }
+    .kpi-value { display: block; font-size: 1.5rem; font-weight: 700; line-height: 1; }
+    .kpi-label { display: block; font-size: 0.72rem; color: $text-muted; }
+
+    &:hover { transform: translateY(-2px); }
+
+    &--positif {
+      i { color: #22c55e; }
+      &.active { border-color: #22c55e; background: rgba(34, 197, 94, 0.1); }
+    }
+    &--negatif {
+      i { color: #ef4444; }
+      &.active { border-color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+    }
+    &--neutre {
+      i { color: #94a3b8; }
+      &.active { border-color: #94a3b8; background: rgba(148, 163, 184, 0.1); }
+    }
+    &--all {
+      i { color: $gold; }
+      &.active { border-color: $gold; background: rgba(255, 215, 0, 0.1); }
+    }
+  }
+}
+
+// Individual review card
+.review-card {
+  background: #0d1f38;
+  border: 1px solid $card-border;
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  transition: box-shadow 0.2s;
+  &:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
+}
+
+// Avatar circle
+.review-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1e3a5f, #2563eb);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+// Sentiment badge on review card
+.sentiment-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: 50px;
+  i { font-size: 0.7rem; }
+
+  &--positif { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+  &--negatif  { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+  &--neutre   { background: rgba(148, 163, 184, 0.15); color: #94a3b8; }
+}

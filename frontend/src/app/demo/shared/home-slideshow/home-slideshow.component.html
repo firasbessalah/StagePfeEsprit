@@ -1,0 +1,39 @@
+<section class="slideshow-section">
+  <div class="slideshow-container shadow-lg">
+    <!-- Slides -->
+    <div class="slide-wrapper" [style.transform]="'translateX(-' + (currentIndex() * 100) + '%)'">
+      @for (slide of slides; track slide.url) {
+        <div class="slide-item">
+          <img [src]="slide.url" [alt]="slide.title" class="slide-img" />
+          <div class="slide-overlay">
+            <div class="slide-caption">
+              <h3 class="slide-title">{{ slide.title }}</h3>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Left Arrow Button -->
+    <button class="slide-btn slide-btn--prev" (click)="prevSlide()" aria-label="Previous Slide">
+      <i class="feather icon-chevron-left"></i>
+    </button>
+
+    <!-- Right Arrow Button -->
+    <button class="slide-btn slide-btn--next" (click)="nextSlide()" aria-label="Next Slide">
+      <i class="feather icon-chevron-right"></i>
+    </button>
+
+    <!-- Dot Indicators -->
+    <div class="slide-dots">
+      @for (slide of slides; track slide.url; let i = $index) {
+        <button 
+          class="slide-dot" 
+          [class.active]="currentIndex() === i" 
+          (click)="setSlide(i)" 
+          [attr.aria-label]="'Go to slide ' + (i + 1)">
+        </button>
+      }
+    </div>
+  </div>
+</section>

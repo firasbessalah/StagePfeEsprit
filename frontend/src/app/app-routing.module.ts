@@ -19,9 +19,51 @@ const routes: Routes = [
     loadComponent: () => import('./demo/annonce-details/annonce-details.component').then((m) => m.AnnonceDetailsComponent)
   },
   {
+    path: 'search',
+    loadComponent: () => import('./demo/search-results/search-results.component').then((m) => m.SearchResultsComponent)
+  },
+  {
+    path: 'browse',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['LOCATAIRE', 'BAILLEUR'] },
+    loadComponent: () => import('./demo/user-browse/user-browse.component').then((m) => m.UserBrowseComponent)
+  },
+  {
     path: 'my-profile',
     canActivate: [authGuard],
     loadComponent: () => import('./demo/public-profile/public-profile.component').then((m) => m.PublicProfileComponent)
+  },
+  {
+    path: 'reservations',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['BAILLEUR', 'LOCATAIRE'] },
+    loadComponent: () =>
+      import('./admin-features/reservation-management/reservation-management.component').then((c) => c.ReservationManagementComponent)
+  },
+  {
+    path: 'messages',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['BAILLEUR', 'LOCATAIRE'] },
+    loadComponent: () => import('./demo/messages/messages.component').then((c) => c.MessagesComponent)
+  },
+  {
+    path: 'favoris',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['LOCATAIRE'] },
+    loadComponent: () => import('./demo/favoris/favoris').then((c) => c.FavorisComponent)
+  },
+  {
+    path: 'alertes',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['LOCATAIRE'] },
+    loadComponent: () => import('./demo/alertes/alertes').then((c) => c.AlertesComponent)
+  },
+  {
+    path: 'annonces',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['BAILLEUR'] },
+    loadComponent: () =>
+      import('./admin-features/annonce-management/annonce-management.component').then((c) => c.AnnonceManagementComponent)
   },
   {
     path: '',
@@ -90,23 +132,23 @@ const routes: Routes = [
         loadComponent: () => import('./demo/profile/profile.component').then((c) => c.ProfileComponent)
       },
       {
-        path: 'annonces',
+        path: 'admin-annonces',
         canActivate: [roleGuard],
-        data: { roles: ['ADMIN', 'BAILLEUR'] },
+        data: { roles: ['ADMIN'] },
         loadComponent: () =>
           import('./admin-features/annonce-management/annonce-management.component').then((c) => c.AnnonceManagementComponent)
       },
       {
-        path: 'reservations',
+        path: 'admin-reservations',
         canActivate: [roleGuard],
         data: { roles: ['ADMIN'] },
         loadComponent: () =>
           import('./admin-features/reservation-management/reservation-management.component').then((c) => c.ReservationManagementComponent)
       },
       {
-        path: 'messages',
+        path: 'admin-messages',
         canActivate: [roleGuard],
-        data: { roles: ['ADMIN', 'BAILLEUR', 'LOCATAIRE'] },
+        data: { roles: ['ADMIN'] },
         loadComponent: () => import('./demo/messages/messages.component').then((c) => c.MessagesComponent)
       }
     ]

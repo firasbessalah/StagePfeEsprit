@@ -15,6 +15,7 @@ export interface ReservationDTO {
   userNom?: string;
   userPrenom?: string;
   userEmail?: string;
+  userTelephone?: string;
   annonceId?: number;
   annonceTitre?: string;
   annoncePrix?: number;

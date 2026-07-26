@@ -50,21 +50,26 @@ public class UserService {
             throw new DuplicateEmailException("Email déjà utilisé !");
         }
 
-        // 2. Encoder le mot de passe avant de sauvegarder
+        // 2. Vérifier le numéro de téléphone pour les non-admins
+        if (user.getRole() != User.Role.ADMIN && (user.getTelephone() == null || user.getTelephone().isBlank())) {
+            throw new RuntimeException("Le numéro de téléphone est obligatoire !");
+        }
+
+        // 3. Encoder le mot de passe avant de sauvegarder
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        // 3. Rôle par défaut = LOCATAIRE
+        // 4. Rôle par défaut = LOCATAIRE
         if (user.getRole() == null) {
             user.setRole(User.Role.LOCATAIRE);
         }
 
-        // 4. Account is NOT active until email is verified
+        // 5. Account is NOT active until email is verified
         user.setEnabled(false);
 
-        // 5. Sauvegarder dans la base de données
+        // 6. Sauvegarder dans la base de données
         User saved = userRepository.save(user);
 
-        // 6. Generate 6-digit code (expires in 15 minutes)
+        // 7. Generate 6-digit code (expires in 15 minutes)
         String code = generateVerificationCode();
         VerificationToken verificationToken = VerificationToken.builder()
                 .token(code)
@@ -73,10 +78,10 @@ public class UserService {
                 .build();
         verificationTokenRepository.save(verificationToken);
 
-        // 7. Send verification email
+        // 8. Send verification email
         emailService.sendVerificationEmail(saved.getEmail(), code);
 
-        // 8. Retourner le DTO (sans le password)
+        // 9. Retourner le DTO (sans le password)
         return toDTO(saved);
     }
 
@@ -112,7 +117,6 @@ public class UserService {
     }
 
     // ─── LOGIN ──────────────────────────────────────────────
-    // ─── LOGIN ──────────────────────────────────────────────
     public AuthResponse login(AuthRequest request) {
 
         // 1. Chercher l'utilisateur par email
@@ -137,7 +141,7 @@ public class UserService {
     }
 
     @Transactional
-    public AuthResponse loginWithGoogle(String credential, String requestedRole) {
+    public AuthResponse loginWithGoogle(String credential, String requestedRole, String telephone) {
         if (googleClientId == null || googleClientId.isBlank()) {
             throw new RuntimeException("Google login n'est pas configuré sur le serveur.");
         }
@@ -173,15 +177,28 @@ public class UserService {
 
         User user = userRepository.findByEmailIgnoreCase(email).orElseGet(() -> {
             User.Role role = resolveGoogleRole(requestedRole);
+            if (role != User.Role.ADMIN && (telephone == null || telephone.isBlank())) {
+                throw new RuntimeException("Le numéro de téléphone est obligatoire pour la connexion Google.");
+            }
             User created = new User();
             created.setEmail(email);
             created.setNom(!familyName.isBlank() ? familyName : (!fullName.isBlank() ? fullName : "Google"));
             created.setPrenom(!givenName.isBlank() ? givenName : "User");
+            created.setTelephone(telephone != null ? telephone.trim() : null);
             created.setPassword(passwordEncoder.encode("google-auth-" + java.util.UUID.randomUUID()));
             created.setRole(role);
             created.setEnabled(true);
             return userRepository.save(created);
         });
+
+        // Enforce phone number for existing non-admin user
+        if (user.getRole() != User.Role.ADMIN && (user.getTelephone() == null || user.getTelephone().isBlank())) {
+            if (telephone == null || telephone.isBlank()) {
+                throw new RuntimeException("Le numéro de téléphone est obligatoire pour la connexion Google.");
+            }
+            user.setTelephone(telephone.trim());
+            userRepository.save(user);
+        }
 
         if (!user.getEnabled()) {
             user.setEnabled(true);

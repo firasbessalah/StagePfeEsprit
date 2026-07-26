@@ -21,6 +21,10 @@ public class Message {
     private boolean isLu;
     private boolean isModere;
 
+    private boolean flagged = false;
+    private String flagReason;
+    private Integer riskScore = 0;
+
     @Column(updatable = false)
     private LocalDateTime createdAt;
 

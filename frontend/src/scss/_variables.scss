@@ -10,13 +10,13 @@ $Menu-collapsed-width: 80px;
 // temp variables
 $theme-color: linear-gradient(-135deg, #1de9b6 0%, #1dc4e9 100%);
 $theme-color2: linear-gradient(-135deg, #899fd4 0%, #a389d4 100%);
-$primary-color: #04a9f5;
+$primary-color: #FFD700;
 $warning-color: #f4c22b;
 $danger-color: #f44236;
 $success-color: #1de9b6;
 $purple-color: #a389d4;
 $info-color: #3ebfea;
-$secondary-color: #748892;
+$secondary-color: #000080;
 $default-color: #d6d6d6;
 $light-color: #f2f2f2;
 $dark-color: #37474f;
@@ -25,19 +25,19 @@ $theme-border: #eaeaea;
 $white: #fff;
 
 // header
-$brand-background: #3f4d67;
-$header-dark-background: #3f4d67;
+$brand-background: #000080;
+$header-dark-background: #000080;
 $header-dark-text-color: #fff;
 $header-light-background: #fff;
 $header-light-text-color: #3f4d67;
 
 // Menu
 $menu-caption-color: #14171d;
-$menu-dark-background: #3f4d67;
+$menu-dark-background: #000080;
 $menu-dark-text-color: #a9b7d0;
 $menu-light-background: #fff;
 $menu-light-text-color: #3f4d67;
-$menu-active-color: #04a9f5;
+$menu-active-color: #FFD700;
 
 // dark layout colors
 $dark-layout: #212224;
@@ -60,7 +60,7 @@ $color-title-color: $primary-color, #ff5252, #9575cd, #23b7e5, lighten($dark-lay
 
 $theme-font-family: 'Open Sans', sans-serif;
 $theme-font-size: 14px;
-$theme-background: #f4f7fa;
+$theme-background: #ffffff;
 $theme-font-color: #888;
 $theme-heading-color: #111;
 

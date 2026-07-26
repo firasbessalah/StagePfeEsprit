@@ -1,6 +1,83 @@
-<div class="pc-container">
-  <div class="pc-content">
-    <div class="page-header">
+<div [class]="isAdmin() ? 'pc-container' : 'search-results-layout'">
+
+  <!-- ===== NAVBAR ===== -->
+  <header class="results-header" *ngIf="!isAdmin()">
+    <div class="container-fluid header-inner">
+      <a [routerLink]="homeLink()" class="logo">Lofina</a>
+
+      <!-- Empty space to align right actions -->
+      <div style="flex: 1;"></div>
+
+      <!-- Right-side actions -->
+      <div class="header-actions d-flex align-items-center">
+        <!-- Unauthenticated -->
+        <ng-container *ngIf="!isAuthenticated()">
+          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()">{{ 'LIST_PROPERTY' | translate }}</a>
+          <a routerLink="/register" class="header-nav-link">{{ 'REGISTER' | translate }}</a>
+          <a routerLink="/login" class="header-nav-link">{{ 'SIGN_IN' | translate }}</a>
+        </ng-container>
+
+        <!-- Authenticated -->
+        <ng-container *ngIf="isAuthenticated()">
+          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()" *ngIf="user()?.role !== 'LOCATAIRE'">{{ 'LIST_PROPERTY' | translate }}</a>
+          <div class="user-dropdown dropdown" ngbDropdown>
+            <button class="btn btn-transparent dropdown-toggle text-dark d-flex align-items-center" ngbDropdownToggle style="border: none; background: transparent; padding: 0;">
+              <img [src]="(user()?.photoProfil && user()?.photoProfil !== 'null' && user()?.photoProfil!.trim().length > 0) ? user()?.photoProfil : 'assets/images/user/avatar-1.jpg'" alt="User Avatar" class="rounded-circle me-2" width="40" height="40" style="object-fit: cover; border: 2px solid #febb02;">
+              <div class="text-start me-2">
+                <div class="fw-bold" style="line-height: 1.2;">{{ user()?.nom }} {{ user()?.prenom }}</div>
+              </div>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu style="min-width: 250px;">
+              <a class="dropdown-item py-2" routerLink="/dashboard" *ngIf="user()?.role === 'ADMIN'">
+                <i class="feather icon-monitor me-3 fs-5 align-middle"></i> Admin Dashboard
+              </a>
+              <a class="dropdown-item py-2" routerLink="/my-profile">
+                <i class="feather icon-user me-3 fs-5 align-middle"></i> {{ 'MY_ACCOUNT' | translate }}
+              </a>
+              <a class="dropdown-item py-2" routerLink="/reservations" *ngIf="user()?.role !== 'ADMIN'">
+                <i class="feather icon-briefcase me-3 fs-5 align-middle"></i> {{ 'RESERVATIONS' | translate }}
+              </a>
+              <a class="dropdown-item py-2" routerLink="/annonces" *ngIf="isBailleur()">
+                <i class="feather icon-home me-3 fs-5 align-middle"></i> {{ 'MY_ANNONCES' | translate }}
+              </a>
+              <a class="dropdown-item py-2" routerLink="/messages" *ngIf="user()?.role !== 'ADMIN'">
+                <i class="feather icon-message-circle me-3 fs-5 align-middle"></i> {{ 'MESSAGES' | translate }}
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item py-2 text-danger" (click)="logout()" style="cursor: pointer;">
+                <i class="feather icon-log-out me-3 fs-5 align-middle"></i> {{ 'LOGOUT' | translate }}
+              </a>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- Language Switcher -->
+        <div class="dropdown ms-2" ngbDropdown>
+          <button class="btn btn-primary dropdown-toggle d-flex align-items-center shadow-sm" ngbDropdownToggle style="border-radius: 50px; font-size: 0.82rem; font-weight: 600; padding: 6px 16px; background-color: #000080; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 10px rgba(0,0,0,0.12); color: #ffffff !important;">
+            <i class="feather icon-globe me-2" style="font-size: 0.95rem;"></i>
+            <span>{{ currentLang() }}</span>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')" style="width: 100%; border: none; background: transparent;">
+              <span>en</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'en'"></i>
+            </button>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')" style="width: 100%; border: none; background: transparent;">
+              <span>fr</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'fr'"></i>
+            </button>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')" style="width: 100%; border: none; background: transparent;">
+              <span>ar</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'ar'"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div [class]="isAdmin() ? 'pc-content' : 'results-main'">
+    <div class="page-header" *ngIf="isAdmin()">
       <div class="page-block">
         <div class="row align-items-center">
           <div class="col-md-12">
@@ -16,13 +93,22 @@
       </div>
     </div>
 
-    @if (error()) {
-      <div class="alert alert-danger" role="alert">{{ error() }}</div>
-    }
+    <!-- For Bailleur, we can have a clean header/summary -->
+    <div class="container mb-4" *ngIf="!isAdmin()">
+      <div class="results-summary">
+        <h1>My Announcements</h1>
+        <p class="text-muted">Manage all your properties listed for rent or sale.</p>
+      </div>
+    </div>
 
-    <div class="row">
-      <div class="col-12">
-        <app-card cardTitle="Annonces">
+    <div [class]="isAdmin() ? '' : 'container'">
+      @if (error()) {
+        <div class="alert alert-danger" role="alert">{{ error() }}</div>
+      }
+
+      <div class="row">
+        <div class="col-12">
+          <app-card cardTitle="Annonces">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <div class="d-flex align-items-center gap-2">
               <div class="input-group">
@@ -46,6 +132,7 @@
                     <th>Titre</th>
                     <th>Prix</th>
                     <th>Localisation</th>
+                    <th>AI Score</th>
                     <th>Créée le</th>
                     <th>Statut</th>
                     <th class="text-end">Actions</th>
@@ -57,6 +144,20 @@
                       <td>{{ a.titre }} <br><small class="text-muted">par {{ a.userPrenom }} {{ a.userNom }}</small></td>
                       <td>{{ a.prix }}</td>
                       <td>{{ a.localisation }}</td>
+                      <td>
+                        @if ((a.riskScore ?? 0) >= 60) {
+                          <span class="badge bg-danger" [title]="a.flagReason">Risque {{a.riskScore}}%</span>
+                        } @else if ((a.riskScore ?? 0) >= 20) {
+                          <span class="badge bg-warning text-dark" [title]="a.flagReason || 'Quelques éléments suspects'">Risque {{a.riskScore}}%</span>
+                        } @else {
+                          <span class="badge bg-success" [title]="a.flagReason || 'Sûr'">Sûr {{a.riskScore}}%</span>
+                        }
+                        @if (a.signalsJson && parseSignals(a.signalsJson).length > 0) {
+                          <button class="btn btn-sm btn-link p-0 ms-2 text-info" (click)="openSignalsModal(a, signalsContent)" title="Voir les détails IA">
+                            <i class="feather icon-info" style="font-size: 1.1em;"></i>
+                          </button>
+                        }
+                      </td>
                       <td>{{ a.createdAt | date:'shortDate' }}</td>
                       <td>
                         <span [class]="getStatusBadgeClass(a.statut)">{{ a.statut }}</span>
@@ -91,6 +192,8 @@
       </div>
     </div>
   </div>
+  </div>
+  <app-public-footer *ngIf="!isAdmin()"></app-public-footer>
 </div>
 
 <ng-template #editTpl let-modal>
@@ -114,9 +217,35 @@
           <label class="form-label">Prix</label>
           <input class="form-control" type="number" [(ngModel)]="m.prix" name="edPrix" />
         </div>
-        <div class="col-md-6">
-          <label class="form-label">Localisation</label>
-          <input class="form-control" [(ngModel)]="m.localisation" name="edLoc" />
+        <div class="col-md-6 position-relative">
+          <label class="form-label w-100 d-flex justify-content-between align-items-center">
+            <span>Localisation</span>
+            <button type="button" class="btn btn-sm btn-link p-0 text-primary" (click)="useCurrentLocation(m)">
+              <i class="feather icon-map-pin"></i> Ma position
+            </button>
+          </label>
+          <input class="form-control" [(ngModel)]="m.localisation" name="edLoc" (ngModelChange)="onLocationInput($event)" autocomplete="off" />
+          @if (locationSearchResults().length > 0) {
+            <div class="list-group position-absolute w-100 shadow mt-1" style="z-index: 1050; max-height: 200px; overflow-y: auto;">
+              @for (loc of locationSearchResults(); track loc.place_id) {
+                <button type="button" class="list-group-item list-group-item-action text-truncate" (click)="selectLocation(loc, m)" [title]="loc.display_name">
+                  <small>{{ loc.display_name }}</small>
+                </button>
+              }
+            </div>
+          }
+        </div>
+        <div class="col-md-12 mt-2">
+          <label class="form-label">Images</label>
+          <input type="file" multiple class="form-control" accept="image/*" (change)="onImagePicked($event, m)">
+          <div class="d-flex flex-wrap gap-2 mt-2">
+            @for (img of m.images; track $index) {
+              <div class="position-relative" style="width: 80px; height: 80px;">
+                <img [src]="img" class="img-thumbnail w-100 h-100" style="object-fit: cover;">
+                <button class="btn btn-sm btn-danger position-absolute top-0 end-0 rounded-circle" style="transform: translate(30%, -30%); padding: 0.1rem 0.3rem;" (click)="removeImage(m, $index)"><i class="feather icon-x"></i></button>
+              </div>
+            }
+          </div>
         </div>
       </div>
     </div>
@@ -156,10 +285,42 @@
           <p class="mb-1 text-muted">Créée le</p>
           <h6 class="mb-0">{{ s.createdAt | date:'medium' || '—' }}</h6>
         </div>
-        <div class="col-sm-12 mt-4">
+        <div class="col-sm-12 mt-3">
+          <div class="p-3 rounded border" [class.border-danger]="s.flagged" [class.bg-light]="!s.flagged" [style.background]="s.flagged ? '#fff5f5' : '#f4f9f4'">
+             <h6 class="mb-1 text-dark"><i class="feather icon-shield"></i> Modération IA</h6>
+             <p class="mb-0 text-dark"><strong>Score de risque:</strong> {{s.riskScore}}% 
+               @if (s.flagged) { <span class="badge bg-danger ms-2">Signalé</span> }
+               @else { <span class="badge bg-success ms-2">Sûr</span> }
+             </p>
+             @if (s.flagReason) {
+               <p class="mb-0 mt-1 text-muted"><small>Raison: {{ s.flagReason }}</small></p>
+             }
+             @if (s.signalsJson) {
+               <div class="mt-2" *ngIf="parseSignals(s.signalsJson).length > 0">
+                 <strong>Détails :</strong>
+                 <ul class="mb-0">
+                   <li *ngFor="let sig of parseSignals(s.signalsJson)">
+                     <small>{{ sig.signal }} (Poids: +{{ sig.weight }})</small>
+                   </li>
+                 </ul>
+               </div>
+             }
+          </div>
+        </div>
+        <div class="col-sm-12 mt-3">
           <p class="mb-1 text-muted">Emplacement sur la carte</p>
           <div id="showMap" style="height: 250px; width: 100%; border-radius: 8px; z-index: 1;"></div>
         </div>
+        @if (s.images && s.images.length > 0) {
+          <div class="col-sm-12 mt-3">
+            <p class="mb-1 text-muted">Images</p>
+            <div class="d-flex gap-2 flex-wrap">
+              @for (img of s.images; track $index) {
+                <img [src]="img" class="img-thumbnail rounded" style="width: 100px; height: 100px; object-fit: cover;">
+              }
+            </div>
+          </div>
+        }
       </div>
     </div>
   }
@@ -197,9 +358,23 @@
         <label class="form-label">Prix</label>
         <input class="form-control" type="number" [(ngModel)]="addModel.prix" />
       </div>
-      <div class="col-md-6">
-        <label class="form-label">Localisation (Texte)</label>
-        <input class="form-control" [(ngModel)]="addModel.localisation" />
+      <div class="col-md-6 position-relative">
+        <label class="form-label w-100 d-flex justify-content-between align-items-center">
+          <span>Localisation (Texte)</span>
+          <button type="button" class="btn btn-sm btn-link p-0 text-primary" (click)="useCurrentLocation(addModel)">
+            <i class="feather icon-map-pin"></i> Ma position
+          </button>
+        </label>
+        <input class="form-control" [(ngModel)]="addModel.localisation" (ngModelChange)="onLocationInput($event)" autocomplete="off" />
+        @if (locationSearchResults().length > 0) {
+          <div class="list-group position-absolute w-100 shadow mt-1" style="z-index: 1050; max-height: 200px; overflow-y: auto;">
+            @for (loc of locationSearchResults(); track loc.place_id) {
+              <button type="button" class="list-group-item list-group-item-action text-truncate" (click)="selectLocation(loc, addModel)" [title]="loc.display_name">
+                <small>{{ loc.display_name }}</small>
+              </button>
+            }
+          </div>
+        }
       </div>
       <div class="col-md-12">
         <label class="form-label">Position sur la carte (Cliquez pour placer le marqueur)</label>
@@ -209,10 +384,47 @@
           <small class="text-muted">Lng: {{ addModel.longitude | number:'1.2-6' }}</small>
         </div>
       </div>
+      <div class="col-md-12 mt-2">
+        <label class="form-label">Images</label>
+        <input type="file" multiple class="form-control" accept="image/*" (change)="onImagePicked($event, addModel)">
+        <div class="d-flex flex-wrap gap-2 mt-2">
+          @for (img of addModel.images; track $index) {
+            <div class="position-relative" style="width: 80px; height: 80px;">
+              <img [src]="img" class="img-thumbnail w-100 h-100" style="object-fit: cover;">
+              <button class="btn btn-sm btn-danger position-absolute top-0 end-0 rounded-circle" style="transform: translate(30%, -30%); padding: 0.1rem 0.3rem;" (click)="removeImage(addModel, $index)"><i class="feather icon-x"></i></button>
+            </div>
+          }
+        </div>
+      </div>
     </div>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
     <button type="button" class="btn btn-primary" (click)="submitAdd()">Create</button>
+  </div>
+</ng-template>
+
+<!-- Signals Details Modal -->
+<ng-template #signalsContent let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title"><i class="feather icon-shield text-primary"></i> Détails de l'analyse IA</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <p class="mb-2"><strong>Score de risque :</strong> {{ selectedAnnonce?.riskScore }}%</p>
+    <p class="mb-3 text-muted" *ngIf="selectedAnnonce?.flagReason"><small>Raison : {{ selectedAnnonce?.flagReason }}</small></p>
+    
+    <div>
+      <strong class="mb-2 d-block">Signaux détectés :</strong>
+      <ul class="list-group list-group-flush border rounded">
+        <li class="list-group-item d-flex justify-content-between align-items-center py-2" *ngFor="let sig of parseSignals(selectedAnnonce?.signalsJson)">
+          <span>{{ sig.signal }}</span>
+          <span class="badge bg-danger rounded-pill">+{{ sig.weight }}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Fermer</button>
   </div>
 </ng-template>

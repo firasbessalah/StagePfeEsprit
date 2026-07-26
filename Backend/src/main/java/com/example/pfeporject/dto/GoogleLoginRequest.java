@@ -11,4 +11,7 @@ public class GoogleLoginRequest {
 
     /** Optional role for first Google login account creation (LOCATAIRE|BAILLEUR). */
     private String role;
+
+    /** Telephone number required for non-admin Google users. */
+    private String telephone;
 }

@@ -123,6 +123,7 @@ public class ReservationService {
             dto.setUserNom(r.getUser().getNom());
             dto.setUserPrenom(r.getUser().getPrenom());
             dto.setUserEmail(r.getUser().getEmail());
+            dto.setUserTelephone(r.getUser().getTelephone());
         }
         if (r.getAnnonce() != null) {
             dto.setAnnonceId(r.getAnnonce().getId());

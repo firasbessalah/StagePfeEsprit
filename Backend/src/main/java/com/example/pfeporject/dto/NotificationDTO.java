@@ -12,4 +12,5 @@ public class NotificationDTO {
     private String type;
     private LocalDateTime createdAt;
     private Long userId;
+    private Long relatedEntityId;
 }

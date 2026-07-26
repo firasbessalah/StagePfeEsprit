@@ -24,6 +24,8 @@ public class Notification {
     @Enumerated(EnumType.STRING)
     private TypeNotification type;
 
+    private Long relatedEntityId;
+
     @Column(updatable = false)
     private LocalDateTime createdAt;
 

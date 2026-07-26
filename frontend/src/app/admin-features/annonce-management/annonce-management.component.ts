@@ -1,14 +1,19 @@
 import { Component, OnInit, TemplateRef, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-
+import { RouterModule, Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { NgbModal, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { Subject, of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { AnnonceAdminService, AnnonceDTO } from '../annonce-admin.service';
 import { UserAdminService } from '../user-admin.service';
 import { UserDTO } from 'src/app/core/auth/auth.models';
 import { AuthService } from 'src/app/core/auth/auth.service';
+import { TranslationService, Language } from 'src/app/core/services/translation.service';
+import { TranslatePipe } from 'src/app/core/pipes/translate.pipe';
+import { PublicFooterComponent } from 'src/app/demo/shared/public-footer/public-footer.component';
 import * as L from 'leaflet';
 
 const iconRetinaUrl = 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png';
@@ -29,17 +34,48 @@ L.Marker.prototype.options.icon = iconDefault;
 @Component({
   selector: 'app-annonce-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, SharedModule],
-  templateUrl: './annonce-management.component.html'
+  imports: [CommonModule, FormsModule, RouterModule, SharedModule, NgbDropdownModule, TranslatePipe, PublicFooterComponent],
+  templateUrl: './annonce-management.component.html',
+  styleUrls: ['./annonce-management.component.scss']
 })
 export class AnnonceManagementComponent implements OnInit {
   private annonceAdmin = inject(AnnonceAdminService);
   private userAdmin = inject(UserAdminService);
   private modal = inject(NgbModal);
   private auth = inject(AuthService);
+  private router = inject(Router);
+  private translationService = inject(TranslationService);
+  private http = inject(HttpClient);
 
   usersList = signal<UserDTO[]>([]);
   isAdmin = computed(() => this.auth.user()?.role === 'ADMIN');
+  isAuthenticated = computed(() => this.auth.isAuthenticated());
+  isBailleur = computed(() => this.auth.user()?.role === 'BAILLEUR');
+  currentLang = computed(() => this.translationService.currentLang());
+  homeLink = computed(() => {
+    const role = this.auth.user()?.role;
+    if (role === 'LOCATAIRE' || role === 'BAILLEUR') return '/browse';
+    return '/';
+  });
+
+  setLang(lang: Language): void {
+    this.translationService.setLanguage(lang);
+  }
+
+  onAddAnnonce(): void {
+    if (this.isAuthenticated()) {
+      this.router.navigate(['/annonces']);
+    } else {
+      this.router.navigate(['/login']);
+    }
+  }
+
+  logout(): void {
+    this.auth.logout();
+    this.router.navigate(['/login']);
+  }
+
+  user = computed(() => this.auth.user());
 
   annonces = signal<AnnonceDTO[]>([]);
   searchTerm = signal('');
@@ -60,6 +96,7 @@ export class AnnonceManagementComponent implements OnInit {
   addModel: AnnonceDTO = {};
   editModel: AnnonceDTO | null = null;
   showModel: AnnonceDTO | null = null;
+  selectedAnnonce: AnnonceDTO | null = null;
   selectedUserId: number | null = null;
   
   private map: L.Map | undefined;
@@ -67,11 +104,27 @@ export class AnnonceManagementComponent implements OnInit {
 
   private showMapInstance: L.Map | undefined;
 
+  locationSearchResults = signal<any[]>([]);
+  locationSearchSubject = new Subject<string>();
+
   ngOnInit(): void {
     this.reload();
     if (this.isAdmin()) {
       this.loadUsers();
     }
+    
+    this.locationSearchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap(query => {
+        if (!query || query.length < 3) return of([]);
+        return this.http.get<any[]>(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`).pipe(
+          catchError(() => of([]))
+        );
+      })
+    ).subscribe(results => {
+      this.locationSearchResults.set(results);
+    });
   }
 
   loadUsers(): void {
@@ -157,6 +210,56 @@ export class AnnonceManagementComponent implements OnInit {
     }, 100);
   }
 
+  onLocationInput(event: any): void {
+    const val = event?.target?.value || event;
+    this.locationSearchSubject.next(val);
+  }
+
+  selectLocation(loc: any, model: AnnonceDTO): void {
+    model.localisation = loc.display_name;
+    model.latitude = parseFloat(loc.lat);
+    model.longitude = parseFloat(loc.lon);
+    this.locationSearchResults.set([]);
+    
+    // update marker if map exists
+    if (this.marker && this.map && model === this.addModel) {
+      const latlng = new L.LatLng(model.latitude, model.longitude);
+      this.marker.setLatLng(latlng);
+      this.map.setView(latlng, 13);
+    }
+  }
+
+  useCurrentLocation(model: AnnonceDTO): void {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        model.latitude = position.coords.latitude;
+        model.longitude = position.coords.longitude;
+        
+        // update map if applicable
+        if (this.marker && this.map && model === this.addModel) {
+          const latlng = new L.LatLng(model.latitude, model.longitude);
+          this.marker.setLatLng(latlng);
+          this.map.setView(latlng, 13);
+        }
+
+        // Reverse geocoding to get location text
+        this.http.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${model.latitude}&lon=${model.longitude}`)
+          .subscribe({
+            next: (res: any) => {
+              if (res && res.display_name) {
+                model.localisation = res.display_name;
+              }
+            },
+            error: (err) => console.warn('Reverse geocoding failed', err)
+          });
+      }, (error) => {
+        console.warn('Geolocation error:', error);
+      });
+    } else {
+      alert("La géolocalisation n'est pas supportée par votre navigateur.");
+    }
+  }
+
   submitAdd(): void {
     if (!this.selectedUserId) {
       this.error.set('Veuillez sélectionner un utilisateur.');
@@ -175,6 +278,11 @@ export class AnnonceManagementComponent implements OnInit {
   openEdit(annonce: AnnonceDTO, content: TemplateRef<unknown>): void {
     this.editModel = { ...annonce };
     this.modal.open(content, { size: 'lg', backdrop: 'static' });
+  }
+
+  openSignalsModal(annonce: AnnonceDTO, content: TemplateRef<unknown>): void {
+    this.selectedAnnonce = annonce;
+    this.modal.open(content, { size: 'md', centered: true });
   }
 
   submitEdit(): void {
@@ -220,6 +328,33 @@ export class AnnonceManagementComponent implements OnInit {
     setTimeout(() => {
       this.showMapInstance?.invalidateSize();
     }, 100);
+  }
+
+  onImagePicked(event: any, model: AnnonceDTO): void {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      let currentImages = model.images ? [...model.images] : [];
+      let loadedCount = 0;
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          currentImages.push(e.target.result);
+          loadedCount++;
+          if (loadedCount === files.length) {
+            model.images = [...currentImages];
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  }
+
+  removeImage(model: AnnonceDTO, index: number): void {
+    if (model.images) {
+      model.images.splice(index, 1);
+    }
   }
 
   deleteAnnonce(a: AnnonceDTO): void {
@@ -272,5 +407,14 @@ export class AnnonceManagementComponent implements OnInit {
       return (e.error as { message: string }).message;
     }
     return e?.message || 'Request failed';
+  }
+
+  parseSignals(json: string | undefined): any[] {
+    if (!json) return [];
+    try {
+      return JSON.parse(json) as any[];
+    } catch {
+      return [];
+    }
   }
 }

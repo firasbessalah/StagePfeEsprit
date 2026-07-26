@@ -1,7 +1,7 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core'; 
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslationService, Language } from 'src/app/core/services/translation.service';
@@ -10,11 +10,13 @@ import { TranslatePipe } from 'src/app/core/pipes/translate.pipe';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { UserAdminService } from 'src/app/admin-features/user-admin.service';
 import { UserDTO } from 'src/app/core/auth/auth.models';
+import { PublicFooterComponent } from '../shared/public-footer/public-footer.component';
+import { NotificationDropdownComponent } from '../shared/notification-dropdown/notification-dropdown.component';
 
 @Component({
   selector: 'app-public-profile',
   standalone: true,
-  imports: [CommonModule, RouterModule, SharedModule, ReactiveFormsModule, NgbDropdownModule, TranslatePipe],
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, SharedModule, NgbDropdownModule, TranslatePipe, PublicFooterComponent, NotificationDropdownComponent],
   templateUrl: './public-profile.component.html',
   styleUrls: ['./public-profile.component.scss']
 })
@@ -29,21 +31,15 @@ export class PublicProfileComponent implements OnInit {
   isAuthenticated = computed(() => this.auth.isAuthenticated());
 
   currentLang = computed(() => this.translationService.currentLang());
-  activeLangName = computed(() => {
-    const l = this.currentLang();
-    if (l === 'en') return 'English';
-    if (l === 'fr') return 'Français';
-    return 'العربية';
-  });
 
   setLang(lang: Language): void {
     this.translationService.setLanguage(lang);
   }
 
-  profileMessage = signal('');
-  successMessage = signal('');
-  passwordMessage = signal('');
-  passwordSuccessMessage = signal('');
+  profileMessageKey = signal('');
+  successMessageKey = signal('');
+  passwordMessageKey = signal('');
+  passwordSuccessMessageKey = signal('');
   
   profileForm!: FormGroup;
   passwordForm!: FormGroup;
@@ -69,6 +65,15 @@ export class PublicProfileComponent implements OnInit {
       ? null : { mismatch: true };
   }
 
+  getRoleLabel(role: string | undefined): string {
+    if (!role) return '';
+    return this.translationService.translate(role);
+  }
+
+  hasPhoto(photo?: string | null): boolean {
+    return !!photo;
+  }
+
   onSaveProfile(): void {
     if (this.profileForm.invalid) return;
     
@@ -89,12 +94,12 @@ export class PublicProfileComponent implements OnInit {
     this.usersApi.updateUser(u.id, dto).subscribe({
       next: (updated) => {
         this.auth.updateSessionUser(updated);
-        this.successMessage.set('Profile information updated successfully!');
-        this.profileMessage.set('');
+        this.successMessageKey.set('PROFILE_UPDATED_SUCCESS');
+        this.profileMessageKey.set('');
       },
       error: (err) => {
-        this.profileMessage.set(this.errMsg(err));
-        this.successMessage.set('');
+        this.profileMessageKey.set(this.errMsg(err));
+        this.successMessageKey.set('');
       }
     });
   }
@@ -113,13 +118,13 @@ export class PublicProfileComponent implements OnInit {
     
     this.usersApi.changePassword(u.id, req).subscribe({
       next: () => {
-        this.passwordSuccessMessage.set('Password changed successfully!');
-        this.passwordMessage.set('');
+        this.passwordSuccessMessageKey.set('PASSWORD_CHANGED_SUCCESS');
+        this.passwordMessageKey.set('');
         this.passwordForm.reset();
       },
       error: (err) => {
-        this.passwordMessage.set(this.errMsg(err));
-        this.passwordSuccessMessage.set('');
+        this.passwordMessageKey.set(this.errMsg(err));
+        this.passwordSuccessMessageKey.set('');
       }
     });
   }
@@ -131,11 +136,11 @@ export class PublicProfileComponent implements OnInit {
     const file = input.files?.[0];
     if (!file) return;
     if (!file.type.startsWith('image/')) {
-      this.profileMessage.set('Please choose an image file.');
+      this.profileMessageKey.set('CHOOSE_IMAGE_FILE');
       return;
     }
     if (file.size > 800_000) {
-      this.profileMessage.set('Image too large (max ~800KB).');
+      this.profileMessageKey.set('IMAGE_TOO_LARGE');
       return;
     }
     const reader = new FileReader();
@@ -153,13 +158,13 @@ export class PublicProfileComponent implements OnInit {
       this.usersApi.updateUser(u.id, dto).subscribe({
         next: (updated) => {
           this.auth.updateSessionUser(updated);
-          this.successMessage.set('Profile photo saved successfully.');
-          this.profileMessage.set('');
+          this.successMessageKey.set('PROFILE_PHOTO_SAVED');
+          this.profileMessageKey.set('');
           input.value = '';
         },
         error: (err) => {
-          this.profileMessage.set(this.errMsg(err));
-          this.successMessage.set('');
+          this.profileMessageKey.set(this.errMsg(err));
+          this.successMessageKey.set('');
         }
       });
     };
@@ -172,12 +177,12 @@ export class PublicProfileComponent implements OnInit {
     if (e?.error && typeof (e.error as { message?: string }).message === 'string') {
       return (e.error as { message: string }).message;
     }
-    return e?.message || 'Request failed';
+    return e?.message || 'REQUEST_FAILED';
   }
 
   onAddAnnonce() {
     if (this.isAuthenticated()) {
-      this.router.navigate(['/home']);
+      this.router.navigate(['/annonces']);
     } else {
       this.router.navigate(['/login']);
     }

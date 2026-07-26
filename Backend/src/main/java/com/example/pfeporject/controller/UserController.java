@@ -63,7 +63,7 @@ public class UserController {
 
     @PostMapping("/google")
     public ResponseEntity<AuthResponse> googleLogin(@Valid @RequestBody GoogleLoginRequest request) {
-        AuthResponse response = userService.loginWithGoogle(request.getCredential(), request.getRole());
+        AuthResponse response = userService.loginWithGoogle(request.getCredential(), request.getRole(), request.getTelephone());
         return ResponseEntity.ok(response);
     }
 

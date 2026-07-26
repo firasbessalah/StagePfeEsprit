@@ -1,8 +1,9 @@
 // Booking.com inspired colors
-$primary-blue: #003b95;
-$dark-blue: #00224f;
+$primary-blue: #000080;
+$dark-blue: #FFD700;
 $light-blue: #ebf3ff;
 $bg-gray: #f5f5f5;
+$gold: #febb02;
 
 .booking-layout {
   min-height: 100vh;
@@ -14,44 +15,45 @@ $bg-gray: #f5f5f5;
 .booking-header {
   background-color: $bg-gray;
   color: #333;
-  padding: 1rem 0;
+  padding: 0.75rem 0;
 
   .header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding-left: 0.75rem;
+    padding-right: 1rem;
   }
 
-  .logo a {
-    color: $primary-blue;
-    font-size: 1.5rem;
-    font-weight: 700;
-    text-decoration: none;
+  .logo {
+    margin-left: 0;
+    padding-left: 0;
+
+    a {
+      color: $primary-blue;
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-decoration: none;
+    }
   }
 
   .header-actions {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 1.25rem;
 
-    .btn-light {
-      background-color: $primary-blue;
-      color: white !important;
-      font-weight: 600;
-      border: none;
-      
-      &:hover {
-        background-color: $dark-blue;
-      }
-    }
-
-    .btn-outline-light {
-      border: 1px solid $primary-blue;
+    .header-nav-link {
       color: $primary-blue;
-      font-weight: 500;
-      
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: color 0.2s;
+
       &:hover {
-        background-color: rgba(0, 59, 149, 0.1);
+        color: $dark-blue;
+        text-decoration: underline;
       }
     }
   }
@@ -59,6 +61,16 @@ $bg-gray: #f5f5f5;
 
 .bg-gray {
   background-color: $bg-gray;
+  
+  .breadcrumb-item a {
+    color: #000000 !important;
+    text-decoration: none;
+    font-weight: 500;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 
 .bg-light-blue {
@@ -86,13 +98,27 @@ $bg-gray: #f5f5f5;
 
 // Footer
 .booking-footer {
-  background-color: $dark-blue;
-  color: white;
+  background-color: $gold;
+  color: #000080;
+
+  h5, h6, .text-white {
+    color: #000080 !important;
+  }
   
-  a.text-white-50 {
+  p, span, a, .text-white-50, .text-muted {
+    color: rgba(0, 34, 79, 0.75) !important;
+  }
+
+  hr {
+    border-color: rgba(0, 34, 79, 0.15) !important;
+  }
+
+  a {
     transition: color 0.2s;
+
     &:hover {
-      color: white !important;
+      color: #000 !important;
+      text-decoration: underline !important;
     }
   }
 }

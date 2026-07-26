@@ -13,6 +13,7 @@ export interface AvisDTO {
   userNom?: string;
   userPrenom?: string;
   annonceId?: number;
+  sentiment?: string;
 }
 
 @Injectable({
@@ -42,5 +43,10 @@ export class AvisService {
   // Delete a review
   supprimer(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
+
+  // Admin: get all reviews from all properties
+  getAllAvis(): Observable<AvisDTO[]> {
+    return this.http.get<AvisDTO[]>(`${this.baseUrl}/admin/all`);
   }
 }

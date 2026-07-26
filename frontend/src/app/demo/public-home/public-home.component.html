@@ -1,48 +1,43 @@
 <div class="booking-layout">
   <!-- Header -->
-  <header class="booking-header">
-    <div class="container header-container">
+  <header class="booking-header" [class.is-scrolled]="searchCompact()">
+    <div class="container-fluid header-container">
       <div class="logo">
-        <a routerLink="/">BookingPFE</a>
+        <a routerLink="/">Lofina</a>
       </div>
-      <div class="header-actions d-flex align-items-center">
-        <!-- Language Switcher -->
-        <div class="dropdown me-3" ngbDropdown>
-          <button class="btn btn-primary dropdown-toggle d-flex align-items-center shadow-sm" ngbDropdownToggle style="border-radius: 50px; font-size: 0.82rem; font-weight: 600; padding: 6px 16px; background-color: #006ce4; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 10px rgba(0,0,0,0.12);">
-            <i class="feather icon-globe me-2" style="font-size: 0.95rem;"></i>
-            <span>{{ activeLangName() }}</span>
-          </button>
-          <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu>
-            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')" style="width: 100%; border: none; background: transparent;">
-              <span>English</span>
-              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'en'"></i>
-            </button>
-            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')" style="width: 100%; border: none; background: transparent;">
-              <span>Français</span>
-              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'fr'"></i>
-            </button>
-            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')" style="width: 100%; border: none; background: transparent;">
-              <span>العربية</span>
-              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'ar'"></i>
-            </button>
-          </div>
-        </div>
 
+      <div class="header-compact-search" [class.is-visible]="searchCompact()">
+        <div class="airbnb-search-bar airbnb-search-bar--header">
+          <button type="button" class="search-compact-summary" (click)="scrollToHeroSearch()" aria-label="{{ 'SEARCH' | translate }}">
+            <span class="compact-item">{{ localisation || ('ANYWHERE' | translate) }}</span>
+            <span class="compact-dot"></span>
+            <span class="compact-item">{{ checkIn || checkOut ? (checkIn + ' → ' + checkOut) : ('ANY_WEEK' | translate) }}</span>
+          </button>
+          <button type="button" class="search-submit search-submit--icon" (click)="onSearch()" aria-label="{{ 'SEARCH' | translate }}">
+            <i class="feather icon-search"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="header-actions d-flex align-items-center">
         <!-- Unauthenticated -->
         <ng-container *ngIf="!isAuthenticated()">
-          <button class="btn btn-outline-light me-2" (click)="onAddAnnonce()">{{ 'LIST_PROPERTY' | translate }}</button>
-          <a routerLink="/register" class="btn btn-light me-2 text-primary">{{ 'REGISTER' | translate }}</a>
-          <a routerLink="/login" class="btn btn-light text-primary">{{ 'SIGN_IN' | translate }}</a>
+          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()">{{ 'LIST_PROPERTY' | translate }}</a>
+          <a routerLink="/register" class="header-nav-link">{{ 'REGISTER' | translate }}</a>
+          <a routerLink="/login" class="header-nav-link">{{ 'SIGN_IN' | translate }}</a>
         </ng-container>
         <!-- Authenticated -->
         <ng-container *ngIf="isAuthenticated()">
-          <button class="btn btn-outline-light me-2" (click)="onAddAnnonce()" *ngIf="user()?.role !== 'LOCATAIRE'">{{ 'LIST_PROPERTY' | translate }}</button>
+          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()" *ngIf="user()?.role !== 'LOCATAIRE'">{{ 'LIST_PROPERTY' | translate }}</a>
+          
+          <!-- Notifications Dropdown -->
+          <app-notification-dropdown></app-notification-dropdown>
+
           <div class="user-dropdown dropdown" ngbDropdown>
             <button class="btn btn-transparent dropdown-toggle text-dark d-flex align-items-center" ngbDropdownToggle style="border: none; background: transparent; padding: 0;">
               <img [src]="user()?.photoProfil || 'assets/images/user/avatar-1.jpg'" alt="User Avatar" class="rounded-circle me-2" width="40" height="40" style="object-fit: cover; border: 2px solid #febb02;">
               <div class="text-start me-2">
                 <div class="fw-bold" style="line-height: 1.2;">{{ user()?.nom }} {{ user()?.prenom }}</div>
-                <div class="small text-muted" style="font-size: 0.75rem; color: #febb02 !important; font-weight: 600;">Level 1 Member</div>
               </div>
             </button>
             <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu style="min-width: 250px;">
@@ -58,6 +53,12 @@
               <a class="dropdown-item py-2" routerLink="/reservations" *ngIf="user()?.role !== 'ADMIN'">
                 <i class="feather icon-briefcase me-3 fs-5 align-middle"></i> {{ 'RESERVATIONS' | translate }}
               </a>
+              <a class="dropdown-item py-2" routerLink="/favoris" *ngIf="user()?.role === 'LOCATAIRE'">
+                <i class="feather icon-heart me-3 fs-5 align-middle"></i> Mes Favoris
+              </a>
+              <a class="dropdown-item py-2" routerLink="/alertes" *ngIf="user()?.role === 'LOCATAIRE'">
+                <i class="feather icon-bell me-3 fs-5 align-middle"></i> Mes Alertes
+              </a>
               <a class="dropdown-item py-2" routerLink="/messages" *ngIf="user()?.role !== 'ADMIN'">
                 <i class="feather icon-message-circle me-3 fs-5 align-middle"></i> {{ 'MESSAGES' | translate }}
               </a>
@@ -69,6 +70,28 @@
             </div>
           </div>
         </ng-container>
+
+        <!-- Language Switcher -->
+        <div class="dropdown ms-2" ngbDropdown>
+          <button class="btn btn-primary dropdown-toggle d-flex align-items-center shadow-sm" ngbDropdownToggle style="border-radius: 50px; font-size: 0.82rem; font-weight: 600; padding: 6px 16px; background-color: #000080; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 10px rgba(0,0,0,0.12); color: #ffffff !important;">
+            <i class="feather icon-globe me-2" style="font-size: 0.95rem;"></i>
+            <span>{{ currentLang() }}</span>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')" style="width: 100%; border: none; background: transparent;">
+              <span>en</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'en'"></i>
+            </button>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')" style="width: 100%; border: none; background: transparent;">
+              <span>fr</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'fr'"></i>
+            </button>
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')" style="width: 100%; border: none; background: transparent;">
+              <span>ar</span>
+              <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'ar'"></i>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </header>
@@ -78,113 +101,106 @@
     <div class="container hero-content">
       <h1 class="hero-title">{{ 'FIND_STAY' | translate }}</h1>
       <p class="hero-subtitle">{{ 'HERO_SUBTITLE' | translate }}</p>
-      
-      <!-- Search Bar -->
-      <div class="search-bar shadow-lg">
-        <div class="search-input">
-          <i class="feather icon-map-pin"></i>
-          <input type="text" [placeholder]="'WHERE_GOING' | translate">
+
+      <div class="search-tabs d-flex justify-content-center gap-3 mb-4">
+        <button type="button" 
+                class="search-tab-btn" 
+                [class.active]="searchMode() === 'classic'" 
+                (click)="searchMode.set('classic')">
+          <i class="feather icon-search me-2"></i>Recherche Classique
+        </button>
+        <button type="button" 
+                class="search-tab-btn search-tab-btn--ai" 
+                [class.active]="searchMode() === 'ai'" 
+                (click)="searchMode.set('ai')">
+          <i class="feather icon-cpu me-2"></i>Recherche IA ✨
+        </button>
+      </div>
+
+      <form class="search-anchor" #heroSearchAnchor (ngSubmit)="onSearch()">
+        <div class="airbnb-search-shell">
+          <!-- Classic Search Bar -->
+          <div class="airbnb-search-bar shadow" *ngIf="searchMode() === 'classic'">
+            <div class="search-expanded">
+              <div class="search-field search-field--where">
+                <label>{{ 'WHERE_GOING' | translate }}</label>
+                <input type="text" [(ngModel)]="localisation" name="localisation" [placeholder]="'SEARCH_DESTINATIONS' | translate">
+              </div>
+              <div class="search-field search-field--checkin">
+                <label>{{ 'CHECK_IN' | translate }}</label>
+                <input type="date" [(ngModel)]="checkIn" name="checkIn">
+              </div>
+              <div class="search-field search-field--checkout">
+                <label>{{ 'CHECK_OUT' | translate }}</label>
+                <input type="date" [(ngModel)]="checkOut" name="checkOut">
+              </div>
+            </div>
+            <button type="submit" class="search-submit" aria-label="{{ 'SEARCH' | translate }}">
+              <i class="feather icon-search"></i>
+              <span class="search-submit-text">{{ 'SEARCH' | translate }}</span>
+            </button>
+          </div>
+
+          <!-- AI Search Bar -->
+          <div class="airbnb-search-bar airbnb-search-bar--ai shadow" *ngIf="searchMode() === 'ai'">
+            <div class="search-expanded px-4 py-2 w-100">
+              <div class="d-flex align-items-center w-100">
+                <i class="feather icon-cpu text-primary fs-4 me-3"></i>
+                <input type="text" 
+                       [(ngModel)]="aiQuery" 
+                       name="aiQuery" 
+                       class="form-control border-0 bg-transparent fs-5 text-dark w-100" 
+                       placeholder="Ex: étudiant cherche chambre simple à Bizerte moins de 300 DT pour 3 mois..."
+                       style="outline: none; box-shadow: none;">
+              </div>
+            </div>
+            <button type="submit" class="search-submit search-submit--ai" aria-label="AI Search">
+              <i class="feather icon-zap"></i>
+              <span class="search-submit-text">Recherche IA</span>
+            </button>
+          </div>
         </div>
-        <div class="search-input">
-          <i class="feather icon-calendar"></i>
-          <input type="text" [placeholder]="'CHECK_IN_OUT' | translate">
+      </form>
+
+      <!-- Quick Access Categories -->
+      <div class="quick-categories d-flex justify-content-center gap-4 mt-5">
+        <div class="category-card" (click)="searchByCategory('ETUDIANT')">
+          <div class="category-icon bg-light-primary text-primary">
+            <i class="feather icon-book"></i>
+          </div>
+          <span>Logements Étudiants</span>
         </div>
-        <div class="search-input">
-          <i class="feather icon-users"></i>
-          <input type="text" placeholder="2 adults · 0 children · 1 room">
+        <div class="category-card" (click)="searchByCategory('VACANCES')">
+          <div class="category-icon bg-light-success text-success">
+            <i class="feather icon-umbrella"></i>
+          </div>
+          <span>Locations de Vacances</span>
         </div>
-        <button class="btn btn-primary search-btn">{{ 'SEARCH' | translate }}</button>
+        <div class="category-card" (click)="searchByCategory('MAISON_HOTE_HOTEL')">
+          <div class="category-icon bg-light-warning text-warning">
+            <i class="feather icon-home"></i>
+          </div>
+          <span>Maisons d'hôtes / Hôtels</span>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Main Content -->
-  <main class="booking-main bg-gray">
-    <div class="container">
-      <h3 class="section-title mb-4">{{ 'LATEST_PROP' | translate }}</h3>
-      
-      <div *ngIf="loading()" class="text-center py-5">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-      </div>
-      
-      <div *ngIf="error()" class="alert alert-danger text-center">
-        {{ error() }}
-      </div>
+  <!-- Wave: white hero → blue description -->
+  <app-wave-separator topColor="#ffffff" bottomColor="#000080" shape="curve"></app-wave-separator>
 
-      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" *ngIf="!loading() && annonces().length > 0">
-        <div class="col" *ngFor="let annonce of annonces()">
-          <div class="card property-card h-100 shadow-sm border-0">
-            <div class="property-image-container" (click)="viewDetails(annonce.id!)" style="cursor: pointer;">
-              <!-- Placeholder image for the property, ideally we would use annonce.imageUrl -->
-              <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80&w=800" class="card-img-top property-image" alt="Property Image">
-              <span class="badge bg-primary location-badge"><i class="feather icon-map-pin"></i> {{ annonce.localisation }}</span>
-            </div>
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title text-truncate mb-0" [title]="annonce.titre" (click)="viewDetails(annonce.id!)" style="cursor: pointer;">{{ annonce.titre }}</h5>
-              </div>
-              <p class="card-text text-muted small description-text">{{ annonce.description }}</p>
-              
-              <div class="mt-auto d-flex justify-content-between align-items-end">
-                <div>
-                  <span class="text-muted small">{{ 'PRICE' | translate }}</span>
-                  <div class="price-tag fw-bold text-dark fs-5">{{ annonce.prix }} TND <span class="fs-6 fw-normal text-muted">/ {{ 'MONTH' | translate }}</span></div>
-                </div>
-                <button class="btn btn-primary btn-reserve shadow-sm" (click)="onReserve(annonce)">{{ 'RESERVE' | translate }}</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+  <!-- Description block (blue) under search bar -->
+  <app-site-description></app-site-description>
 
-      <div *ngIf="!loading() && annonces().length === 0" class="text-center py-5">
-        <i class="feather icon-home fs-1 text-white-50 mb-3 d-block"></i>
-        <h4 class="text-white">No properties found.</h4>
-        <p class="text-white-50">Be the first to list your property!</p>
-        <button class="btn btn-light text-primary fw-bold mt-2" (click)="onAddAnnonce()" *ngIf="!isAuthenticated() || user()?.role !== 'LOCATAIRE'">List your property</button>
-      </div>
-    </div>
-  </main>
+  <!-- New Slideshow Block -->
+  <app-home-slideshow></app-home-slideshow>
 
-  <!-- Footer -->
-  <footer class="booking-footer">
-    <div class="container py-5">
-      <div class="row g-4">
-        <div class="col-md-3">
-          <h5 class="text-white mb-3">BookingPFE</h5>
-          <p class="text-white-50 small">Your trusted platform for finding the best stays and apartments in Tunisia.</p>
-        </div>
-        <div class="col-md-3">
-          <h6 class="text-white mb-3">Quick Links</h6>
-          <ul class="list-unstyled">
-            <li><a routerLink="/" class="text-white-50 text-decoration-none">Home</a></li>
-            <li><a href="javascript:void(0)" (click)="onAddAnnonce()" class="text-white-50 text-decoration-none">List your property</a></li>
-            <li><a href="javascript:void(0)" class="text-white-50 text-decoration-none">About Us</a></li>
-          </ul>
-        </div>
-        <div class="col-md-3">
-          <h6 class="text-white mb-3">Support</h6>
-          <ul class="list-unstyled">
-            <li><a href="javascript:void(0)" class="text-white-50 text-decoration-none">Help Center</a></li>
-            <li><a href="javascript:void(0)" class="text-white-50 text-decoration-none">Terms of Service</a></li>
-            <li><a href="javascript:void(0)" class="text-white-50 text-decoration-none">Privacy Policy</a></li>
-          </ul>
-        </div>
-        <div class="col-md-3">
-          <h6 class="text-white mb-3">Contact</h6>
-          <ul class="list-unstyled">
-            <li class="text-white-50 mb-2"><i class="feather icon-mail me-2"></i> support@bookingpfe.com</li>
-            <li class="text-white-50 mb-2"><i class="feather icon-phone me-2"></i> +216 71 123 456</li>
-            <li class="text-white-50"><i class="feather icon-map-pin me-2"></i> Tunis, Tunisia</li>
-          </ul>
-        </div>
-      </div>
-      <hr class="border-secondary my-4">
-      <div class="text-center text-white-50 small">
-        &copy; 2026 BookingPFE. All rights reserved.
-      </div>
-    </div>
-  </footer>
+
+  <!-- Extra info blocks: white, yellow, blue -->
+  <app-home-info-blocks></app-home-info-blocks>
+
+  <!-- Wave: blue block → white footer -->
+  <app-wave-separator topColor="#000080" bottomColor="#ffffff"></app-wave-separator>
+
+  <app-public-footer></app-public-footer>
 </div>

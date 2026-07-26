@@ -1,0 +1,18 @@
+@import '../public-home/public-home.component.scss';
+
+.user-browse-layout {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.user-browse-hero {
+  padding: 3rem 0 4rem;
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .hero-content {
+    width: 100%;
+  }
+}

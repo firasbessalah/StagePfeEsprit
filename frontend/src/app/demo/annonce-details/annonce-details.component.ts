@@ -12,11 +12,14 @@ import { ReservationService, ReservationDTO } from 'src/app/demo/reservations/re
 import { AvisService, AvisDTO } from 'src/app/demo/avis/avis.service';
 import { TranslationService, Language } from 'src/app/core/services/translation.service';
 import { TranslatePipe } from 'src/app/core/pipes/translate.pipe';
+import { PublicFooterComponent } from '../shared/public-footer/public-footer.component';
+import { FavoriService } from '../../core/services/favori.service';
+import { NotificationDropdownComponent } from '../shared/notification-dropdown/notification-dropdown.component';
 
 @Component({
   selector: 'app-annonce-details',
   standalone: true,
-  imports: [CommonModule, RouterModule, SharedModule, NgbDropdownModule, ReactiveFormsModule, TranslatePipe],
+  imports: [CommonModule, RouterModule, SharedModule, NgbDropdownModule, ReactiveFormsModule, TranslatePipe, PublicFooterComponent, NotificationDropdownComponent],
   templateUrl: './annonce-details.component.html',
   styleUrls: ['./annonce-details.component.scss']
 })
@@ -27,17 +30,12 @@ export class AnnonceDetailsComponent implements OnInit {
   private auth = inject(AuthService);
   private avisService = inject(AvisService);
   private translationService = inject(TranslationService);
+  public favoriService = inject(FavoriService);
 
   user = computed(() => this.auth.user());
   isAuthenticated = computed(() => this.auth.isAuthenticated());
 
   currentLang = computed(() => this.translationService.currentLang());
-  activeLangName = computed(() => {
-    const l = this.currentLang();
-    if (l === 'en') return 'English';
-    if (l === 'fr') return 'Français';
-    return 'العربية';
-  });
 
   setLang(lang: Language): void {
     this.translationService.setLanguage(lang);
@@ -71,15 +69,25 @@ export class AnnonceDetailsComponent implements OnInit {
       dateFin: ['', Validators.required],
       message: ['']
     });
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.fetchAnnonceDetails(id);
-      this.loadReviews(+id);
-      this.loadAverageRating(+id);
-    } else {
-      this.error.set('Invalid announcement ID');
-      this.loading.set(false);
-    }
+
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.fetchAnnonceDetails(id);
+        this.loadReviews(+id);
+        this.loadAverageRating(+id);
+        this.incrementViews(+id);
+      } else {
+        this.error.set('Invalid announcement ID');
+        this.loading.set(false);
+      }
+    });
+  }
+
+  incrementViews(id: number) {
+    this.http.post(`${environment.apiBaseUrl}/api/annonces/${id}/view`, {}).subscribe({
+      error: () => console.error('Failed to increment views')
+    });
   }
 
   fetchAnnonceDetails(id: string) {
@@ -94,6 +102,23 @@ export class AnnonceDetailsComponent implements OnInit {
         this.loading.set(false);
       }
     });
+
+    if (this.isAuthenticated()) {
+      this.favoriService.loadMyFavoris().subscribe();
+    }
+  }
+
+  toggleFavori(annonceId: number) {
+    if (!this.isAuthenticated()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    
+    if (this.favoriService.isFavori(annonceId)) {
+      this.favoriService.removeFavori(annonceId).subscribe();
+    } else {
+      this.favoriService.addFavori(annonceId).subscribe();
+    }
   }
 
   loadReviews(annonceId: number) {
@@ -198,7 +223,7 @@ export class AnnonceDetailsComponent implements OnInit {
 
   onAddAnnonce() {
     if (this.isAuthenticated()) {
-      this.router.navigate(['/home']);
+      this.router.navigate(['/annonces']);
     } else {
       this.router.navigate(['/login']);
     }

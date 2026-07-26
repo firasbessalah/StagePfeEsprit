@@ -46,22 +46,31 @@ public class AnnonceController {
         return ResponseEntity.ok(annonceService.getAnnoncesByUser(userId));
     }
 
+    // GET /api/annonces/recherche?localisation=Tunis&prixMax=500&categorie=ETUDIANT&duree=6
+    @GetMapping("/recherche")
+    public ResponseEntity<List<AnnonceDTO>> rechercher(
+            @RequestParam(required = false) String localisation,
+            @RequestParam(required = false) BigDecimal prixMax,
+            @RequestParam(required = false) String categorie,
+            @RequestParam(required = false) Integer duree) {
+        return ResponseEntity.ok(annonceService.rechercher(localisation, prixMax, categorie, duree));
+    }
+
+    // GET /api/annonces/ai-recherche?query=student%20room%20in%20bizerte
+    @GetMapping("/ai-recherche")
+    public ResponseEntity<com.example.pfeporject.dto.AISearchResponseDTO> aiRechercher(
+            @RequestParam String query) {
+        return ResponseEntity.ok(annonceService.aiRechercher(query));
+    }
+
     // GET /api/annonces/1
-    @GetMapping("/{id}")
+    @GetMapping("/{id:\\d+}")
     public ResponseEntity<AnnonceDTO> getAnnonceById(@PathVariable Long id) {
         return ResponseEntity.ok(annonceService.getAnnonceById(id));
     }
 
-    // GET /api/annonces/recherche?localisation=Tunis&prixMax=500
-    @GetMapping("/recherche")
-    public ResponseEntity<List<AnnonceDTO>> rechercher(
-            @RequestParam(required = false) String localisation,
-            @RequestParam(required = false) BigDecimal prixMax) {
-        return ResponseEntity.ok(annonceService.rechercher(localisation, prixMax));
-    }
-
     // PUT /api/annonces/1
-    @PutMapping("/{id}")
+    @PutMapping("/{id:\\d+}")
     public ResponseEntity<AnnonceDTO> modifier(
             @PathVariable Long id,
             @RequestBody AnnonceDTO dto) {
@@ -69,27 +78,34 @@ public class AnnonceController {
     }
 
     // PUT /api/annonces/1/valider
-    @PutMapping("/{id}/valider")
+    @PutMapping("/{id:\\d+}/valider")
     public ResponseEntity<AnnonceDTO> valider(@PathVariable Long id) {
         return ResponseEntity.ok(annonceService.valider(id));
     }
 
     // PUT /api/annonces/1/rejeter
-    @PutMapping("/{id}/rejeter")
+    @PutMapping("/{id:\\d+}/rejeter")
     public ResponseEntity<AnnonceDTO> rejeter(@PathVariable Long id) {
         return ResponseEntity.ok(annonceService.rejeter(id));
     }
 
     // PUT /api/annonces/1/archiver
-    @PutMapping("/{id}/archiver")
+    @PutMapping("/{id:\\d+}/archiver")
     public ResponseEntity<AnnonceDTO> archiver(@PathVariable Long id) {
         return ResponseEntity.ok(annonceService.archiver(id));
     }
 
     // DELETE /api/annonces/1
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id:\\d+}")
     public ResponseEntity<Void> supprimer(@PathVariable Long id) {
         annonceService.supprimer(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // POST /api/annonces/1/view
+    @PostMapping("/{id:\\d+}/view")
+    public ResponseEntity<Void> incrementerViews(@PathVariable Long id) {
+        annonceService.incrementerViews(id);
+        return ResponseEntity.ok().build();
     }
 }

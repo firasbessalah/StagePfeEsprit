@@ -11,7 +11,6 @@
             alt="Profile"
           />
           <h5 class="mb-1">{{ u.prenom }} {{ u.nom }}</h5>
-          <p class="mb-3"><span class="badge bg-primary">{{ u.role }}</span></p>
           
           <div class="text-start">
             <label class="form-label">Change Profile Photo</label>
@@ -62,7 +61,7 @@
         </div>
         
         <div class="text-end">
-          <button type="submit" class="btn btn-primary" [disabled]="profileForm.invalid">Save Changes</button>
+          <button type="submit" class="btn btn-warning" [disabled]="profileForm.invalid">Save Changes</button>
         </div>
       </form>
     </app-card>
