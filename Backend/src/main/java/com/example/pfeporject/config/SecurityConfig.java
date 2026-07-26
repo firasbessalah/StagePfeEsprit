@@ -39,7 +39,9 @@ public class SecurityConfig {
     public org.springframework.boot.web.servlet.FilterRegistrationBean<org.springframework.web.filter.CorsFilter> corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOriginPatterns(List.of(
-                "http://localhost:4200",
+                "http://localhost",           // Docker frontend (port 80)
+                "http://localhost:80",
+                "http://localhost:4200",      // Angular dev server
                 "http://127.0.0.1:4200"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));

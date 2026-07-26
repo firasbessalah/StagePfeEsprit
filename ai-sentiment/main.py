@@ -10,7 +10,7 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import google.generativeai as genai
+from google import genai
 from dotenv import load_dotenv
 
 from local_fraud_detector import LocalFraudDetector
@@ -21,6 +21,17 @@ load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 
 app = FastAPI(title="AI Content Analysis Service", version="2.0.0")
+
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+import sys
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request, exc):
+    print(f"Validation Error: {exc.errors()}", file=sys.stderr, flush=True)
+    body = await request.body()
+    print(f"Body: {body}", file=sys.stderr, flush=True)
+    return JSONResponse(status_code=422, content={"detail": exc.errors()})
 
 # Allow calls from Spring Boot backend (port 8080)
 app.add_middleware(
@@ -95,8 +106,7 @@ def analyze_sentiment(request: SentimentRequest) -> SentimentResponse:
         return _local_fallback_sentiment(text)
 
     try:
-        genai.configure(api_key=GEMINI_API_KEY)
-        model = genai.GenerativeModel("gemini-2.5-flash")
+        client = genai.Client(api_key=GEMINI_API_KEY)
 
         prompt = f"""You are a sentiment analysis system for property listing reviews in Tunisia.
 Analyze the following review comment and return ONLY a JSON object (no markdown, no backticks) in this exact format:
@@ -117,7 +127,10 @@ Review comment: "{text}"
 
 Return ONLY the raw JSON object:"""
 
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=prompt,
+        )
         raw = response.text.strip()
 
         # Strip markdown if present
@@ -172,9 +185,9 @@ def _local_fallback_sentiment(text: str) -> SentimentResponse:
         "worst", "hate", "hated", "disgusting", "poor", "unacceptable", "ugly"
     ]
 
-    # Use regex \b to match whole words only (avoiding "beau" inside "beaucoup")
-    pos_score = sum(1 for word in positive_keywords if re.search(r'\b' + re.escape(word) + r'\b', text_lower))
-    neg_score = sum(1 for word in negative_keywords if re.search(r'\b' + re.escape(word) + r'\b', text_lower))
+    # Do not use strict \b boundaries so we can catch plurals and derivations (e.g., problèmes, catastrophique)
+    pos_score = sum(1 for word in positive_keywords if word in text_lower)
+    neg_score = sum(1 for word in negative_keywords if word in text_lower)
 
     if pos_score > neg_score:
         return SentimentResponse(
@@ -210,8 +223,7 @@ def moderate_content(request: ModerationRequest) -> ModerationResponse:
     if not GEMINI_API_KEY:
         return _local_fallback_moderation(text, request.content_type)
     try:
-        genai.configure(api_key=GEMINI_API_KEY)
-        model = genai.GenerativeModel("gemini-2.5-flash")
+        client = genai.Client(api_key=GEMINI_API_KEY)
         prompt = f"""You are a content moderation AI for a Tunisian property rental platform (Lofina).
 Analyze the following {request.content_type} content for inappropriate, fraudulent, spam, or scam indicators.
 
@@ -237,7 +249,10 @@ Content to analyze:
 "{text}"
 
 Return ONLY the raw JSON:"""
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=prompt,
+        )
         return _parse_moderation_response(response.text.strip())
     except Exception as e:
         print(f"[Gemini Moderation Error] {e}")

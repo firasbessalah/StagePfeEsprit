@@ -1,4 +1,9 @@
 fastapi==0.115.0
 uvicorn[standard]==0.30.6
-google-generativeai==0.7.2
+google-genai==0.6.0
 python-dotenv==1.0.1
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.1.2+cpu
+transformers==4.37.2
+imagehash==4.3.1
+Pillow==10.2.0

@@ -71,15 +71,13 @@ public class AiModerationService {
         try {
             Map<String, String> body = Map.of("text", text);
             String json = mapper.writeValueAsString(body);
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(aiServiceUrl + "/analyze"))
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(json))
-                    .timeout(Duration.ofSeconds(10))
-                    .build();
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() == 200) {
-                JsonNode node = mapper.readTree(response.body());
+            org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+            headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
+            org.springframework.http.HttpEntity<String> request = new org.springframework.http.HttpEntity<>(json, headers);
+            org.springframework.http.ResponseEntity<String> response = restTemplate.postForEntity(aiServiceUrl + "/analyze", request, String.class);
+            
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                JsonNode node = mapper.readTree(response.getBody());
                 String sentiment = node.path("sentiment").asText("NEUTRE");
                 if (sentiment.matches("POSITIF|NEGATIF|NEUTRE")) {
                     return sentiment;
@@ -91,18 +89,19 @@ public class AiModerationService {
         return "NEUTRE";
     }
 
+    private final org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
+
     private ModerationResultDTO post(String path, Object body) {
         try {
             String json = mapper.writeValueAsString(body);
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(aiServiceUrl + path))
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(json))
-                    .timeout(Duration.ofSeconds(15))
-                    .build();
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() == 200) {
-                return parseModerationResponse(mapper.readTree(response.body()));
+            log.info("[AI] Sending request to {}: {}", path, json);
+            org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+            headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
+            org.springframework.http.HttpEntity<String> request = new org.springframework.http.HttpEntity<>(json, headers);
+            org.springframework.http.ResponseEntity<String> response = restTemplate.postForEntity(aiServiceUrl + path, request, String.class);
+            
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                return parseModerationResponse(mapper.readTree(response.getBody()));
             }
         } catch (Exception e) {
             log.warn("[AI] Moderation service unavailable ({}): {}", path, e.getMessage());

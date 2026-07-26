@@ -1,0 +1,107 @@
+# =============================================================================
+# docker-compose.yml – Full stack: PostgreSQL + FastAPI + Spring Boot + Angular
+# =============================================================================
+# Usage:
+#   1. cp .env.example .env  and fill in real values
+#   2. docker compose up --build
+# =============================================================================
+
+services:
+
+  # ── PostgreSQL Database ───────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    container_name: pfe_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - pfe_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # ── AI Sentiment / Moderation Microservice (FastAPI) ─────────────────────
+  ai-service:
+    build:
+      context: ./ai-sentiment
+      dockerfile: Dockerfile
+    container_name: pfe_ai_service
+    restart: unless-stopped
+    environment:
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+    networks:
+      - pfe_network
+    # Port 8000 is intentionally NOT published to the host — only backend needs it
+    expose:
+      - "8000"
+    volumes:
+      - ai_models:/app/models
+
+  # ── Spring Boot Backend ───────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: pfe_backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      ai-service:
+        condition: service_started
+    environment:
+      # ── DataSource ──────────────────────────────────────────────────────
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      # ── JWT ─────────────────────────────────────────────────────────────
+      JWT_SECRET: ${JWT_SECRET}
+      # ── Mail ────────────────────────────────────────────────────────────
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      # ── AI Microservice ──────────────────────────────────────────────────
+      AI_SERVICE_URL: http://ai-service:8000
+      # ── Google OAuth ────────────────────────────────────────────────────
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+    ports:
+      - "8080:8080"
+    networks:
+      - pfe_network
+
+  # ── Angular Frontend (nginx) ──────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: pfe_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    networks:
+      - pfe_network
+
+# =============================================================================
+# Volumes
+# =============================================================================
+volumes:
+  postgres_data:
+    driver: local
+  ai_models:
+    driver: local
+
+# =============================================================================
+# Networks
+# =============================================================================
+networks:
+  pfe_network:
+    driver: bridge
