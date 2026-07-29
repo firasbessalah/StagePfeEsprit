@@ -369,7 +369,7 @@ def _local_fallback_annonce(request: AnnonceModerationRequest) -> ModerationResp
     fraud_signals = ["western union", "crypto", "virement avant", "whatsapp", "gratuit", "http"]
     for sig in fraud_signals:
         if sig in combined:
-            risk += 25
+            risk += 35
             if "SCAM" not in categories:
                 categories.append("SCAM")
 
