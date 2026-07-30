@@ -80,9 +80,25 @@
 
   <section class="booking-hero user-browse-hero">
     <div class="container hero-content">
+      <div class="search-tabs d-flex justify-content-center gap-3 mb-4">
+        <button type="button" 
+                class="search-tab-btn" 
+                [class.active]="searchMode() === 'classic'" 
+                (click)="searchMode.set('classic')">
+          <i class="feather icon-search me-2"></i>Recherche Classique
+        </button>
+        <button type="button" 
+                class="search-tab-btn search-tab-btn--ai" 
+                [class.active]="searchMode() === 'ai'" 
+                (click)="searchMode.set('ai')">
+          <i class="feather icon-cpu me-2"></i>Recherche IA ✨
+        </button>
+      </div>
+
       <form class="search-anchor" #heroSearchAnchor (ngSubmit)="onSearch()">
         <div class="airbnb-search-shell">
-          <div class="airbnb-search-bar shadow">
+          <!-- Classic Search Bar -->
+          <div class="airbnb-search-bar shadow" *ngIf="searchMode() === 'classic'">
             <div class="search-expanded">
               <div class="search-field search-field--where">
                 <label>{{ 'WHERE_GOING' | translate }}</label>
@@ -102,8 +118,49 @@
               <span class="search-submit-text">{{ 'SEARCH' | translate }}</span>
             </button>
           </div>
+
+          <!-- AI Search Bar -->
+          <div class="airbnb-search-bar airbnb-search-bar--ai shadow" *ngIf="searchMode() === 'ai'">
+            <div class="search-expanded px-4 py-2 w-100">
+              <div class="d-flex align-items-center w-100">
+                <i class="feather icon-cpu text-primary fs-4 me-3"></i>
+                <input type="text" 
+                       [(ngModel)]="aiQuery" 
+                       name="aiQuery" 
+                       class="form-control border-0 bg-transparent fs-5 text-dark w-100" 
+                       placeholder="Ex: étudiant cherche chambre simple à Bizerte moins de 300 DT pour 3 mois..."
+                       style="outline: none; box-shadow: none;">
+              </div>
+            </div>
+            <button type="submit" class="search-submit search-submit--ai" aria-label="AI Search">
+              <i class="feather icon-zap"></i>
+              <span class="search-submit-text">Recherche IA</span>
+            </button>
+          </div>
         </div>
       </form>
+
+      <!-- Quick Access Categories -->
+      <div class="quick-categories d-flex justify-content-center gap-4 mt-5">
+        <div class="category-card" (click)="searchByCategory('ETUDIANT')">
+          <div class="category-icon bg-light-primary text-primary">
+            <i class="feather icon-book"></i>
+          </div>
+          <span>Logements Étudiants</span>
+        </div>
+        <div class="category-card" (click)="searchByCategory('VACANCES')">
+          <div class="category-icon bg-light-success text-success">
+            <i class="feather icon-umbrella"></i>
+          </div>
+          <span>Locations de Vacances</span>
+        </div>
+        <div class="category-card" (click)="searchByCategory('MAISON_HOTE_HOTEL')">
+          <div class="category-icon bg-light-warning text-warning">
+            <i class="feather icon-home"></i>
+          </div>
+          <span>Maisons d'hôtes / Hôtels</span>
+        </div>
+      </div>
     </div>
   </section>
 

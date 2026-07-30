@@ -31,11 +31,13 @@ export class UserBrowseComponent implements OnInit, AfterViewInit, OnDestroy {
   isBailleur = computed(() => this.user()?.role === 'BAILLEUR');
   currentLang = computed(() => this.translationService.currentLang());
   searchCompact = signal(false);
+  searchMode = signal<'classic' | 'ai'>('classic');
 
   localisation = '';
   checkIn = '';
   checkOut = '';
   guests = '';
+  aiQuery = '';
 
   ngOnInit(): void {
     const c = this.searchService.criteria();
@@ -65,12 +67,20 @@ export class UserBrowseComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onSearch(): void {
-    this.searchService.navigateToResults(this.router, {
-      localisation: this.localisation,
-      checkIn: this.checkIn,
-      checkOut: this.checkOut,
-      guests: this.guests
-    });
+    if (this.searchMode() === 'ai' && this.aiQuery.trim()) {
+      this.router.navigate(['/search'], { queryParams: { aiQuery: this.aiQuery.trim() } });
+    } else {
+      this.searchService.navigateToResults(this.router, {
+        localisation: this.localisation,
+        checkIn: this.checkIn,
+        checkOut: this.checkOut,
+        guests: this.guests
+      });
+    }
+  }
+
+  searchByCategory(category: string): void {
+    this.router.navigate(['/search'], { queryParams: { categorie: category } });
   }
 
   scrollToHeroSearch(): void {
