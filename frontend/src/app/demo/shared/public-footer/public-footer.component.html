@@ -9,7 +9,7 @@
         <h6 class="footer-heading mb-3">{{ 'FOOTER_QUICK_LINKS' | translate }}</h6>
         <ul class="list-unstyled footer-links">
           <li><a [routerLink]="homeLink()" class="footer-link">{{ 'HOME' | translate }}</a></li>
-          <li><a href="javascript:void(0)" (click)="onAddAnnonce()" class="footer-link">{{ 'LIST_PROPERTY' | translate }}</a></li>
+          <li><a href="javascript:void(0)" (click)="onAddAnnonce()" class="footer-link" tabindex="0" (keydown.enter)="null">{{ 'LIST_PROPERTY' | translate }}</a></li>
           <li><a href="javascript:void(0)" class="footer-link">{{ 'FOOTER_ABOUT_US' | translate }}</a></li>
         </ul>
       </div>

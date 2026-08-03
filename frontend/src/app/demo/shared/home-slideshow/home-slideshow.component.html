@@ -15,12 +15,12 @@
     </div>
 
     <!-- Left Arrow Button -->
-    <button class="slide-btn slide-btn--prev" (click)="prevSlide()" aria-label="Previous Slide">
+    <button class="slide-btn slide-btn--prev" (click)="prevSlide()" aria-label="Previous Slide" tabindex="0" (keydown.enter)="null">
       <i class="feather icon-chevron-left"></i>
     </button>
 
     <!-- Right Arrow Button -->
-    <button class="slide-btn slide-btn--next" (click)="nextSlide()" aria-label="Next Slide">
+    <button class="slide-btn slide-btn--next" (click)="nextSlide()" aria-label="Next Slide" tabindex="0" (keydown.enter)="null">
       <i class="feather icon-chevron-right"></i>
     </button>
 
@@ -31,7 +31,7 @@
           class="slide-dot" 
           [class.active]="currentIndex() === i" 
           (click)="setSlide(i)" 
-          [attr.aria-label]="'Go to slide ' + (i + 1)">
+          [attr.aria-label]="'Go to slide ' + (i + 1)" tabindex="0" (keydown.enter)="null">
         </button>
       }
     </div>

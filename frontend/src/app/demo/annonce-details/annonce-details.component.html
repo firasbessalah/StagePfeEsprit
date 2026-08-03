@@ -8,13 +8,13 @@
       <div class="header-actions d-flex align-items-center">
         <!-- Unauthenticated -->
         <ng-container *ngIf="!isAuthenticated()">
-          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()">{{ 'LIST_PROPERTY' | translate }}</a>
+          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()" tabindex="0" (keydown.enter)="null">{{ 'LIST_PROPERTY' | translate }}</a>
           <a routerLink="/register" class="header-nav-link">{{ 'REGISTER' | translate }}</a>
           <a routerLink="/login" class="header-nav-link">{{ 'SIGN_IN' | translate }}</a>
         </ng-container>
         <!-- Authenticated -->
         <ng-container *ngIf="isAuthenticated()">
-          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()" *ngIf="user()?.role !== 'LOCATAIRE'">{{ 'LIST_PROPERTY' | translate }}</a>
+          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()" *ngIf="user()?.role !== 'LOCATAIRE'" tabindex="0" (keydown.enter)="null">{{ 'LIST_PROPERTY' | translate }}</a>
           <app-notification-dropdown></app-notification-dropdown>
           <div class="user-dropdown dropdown" ngbDropdown>
             <button class="btn btn-transparent dropdown-toggle text-dark d-flex align-items-center" ngbDropdownToggle style="border: none; background: transparent; padding: 0;">
@@ -47,7 +47,7 @@
               </a>
 
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item py-2 text-danger" (click)="logout()" style="cursor: pointer;">
+              <a class="dropdown-item py-2 text-danger" (click)="logout()" style="cursor: pointer;" tabindex="0" (keydown.enter)="null">
                 <i class="feather icon-log-out me-3 fs-5 align-middle"></i> {{ 'LOGOUT' | translate }}
               </a>
             </div>
@@ -61,15 +61,15 @@
             <span>{{ currentLang() }}</span>
           </button>
           <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu>
-            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')" style="width: 100%; border: none; background: transparent;">
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')" style="width: 100%; border: none; background: transparent;" tabindex="0" (keydown.enter)="null">
               <span>en</span>
               <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'en'"></i>
             </button>
-            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')" style="width: 100%; border: none; background: transparent;">
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')" style="width: 100%; border: none; background: transparent;" tabindex="0" (keydown.enter)="null">
               <span>fr</span>
               <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'fr'"></i>
             </button>
-            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')" style="width: 100%; border: none; background: transparent;">
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')" style="width: 100%; border: none; background: transparent;" tabindex="0" (keydown.enter)="null">
               <span>ar</span>
               <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'ar'"></i>
             </button>
@@ -132,10 +132,10 @@
                       [ngClass]="favoriService.isFavori(annonce()!.id!) ? 'btn-danger' : 'btn-outline-danger'"
                       *ngIf="user()?.role === 'LOCATAIRE'"
                       (click)="toggleFavori(annonce()!.id!)" 
-                      [title]="favoriService.isFavori(annonce()!.id!) ? 'Remove from favorites' : 'Add to favorites'">
+                      [title]="favoriService.isFavori(annonce()!.id!) ? 'Remove from favorites' : 'Add to favorites'" tabindex="0" (keydown.enter)="null">
                 <i [class]="favoriService.isFavori(annonce()!.id!) ? 'feather icon-heart-on' : 'feather icon-heart'"></i>
               </button>
-              <button class="btn btn-primary btn-lg shadow-sm" (click)="onReserve(reservationModal)">{{ 'RESERVE' | translate }}</button>
+              <button class="btn btn-primary btn-lg shadow-sm" (click)="onReserve(reservationModal)" tabindex="0" (keydown.enter)="null">{{ 'RESERVE' | translate }}</button>
             </div>
           </div>
         </div>
@@ -195,7 +195,7 @@
                 <hr>
                 
                 <div class="d-grid mt-4">
-                  <button class="btn btn-primary btn-lg fw-bold" (click)="onReserve(reservationModal)">{{ 'RESERVE' | translate }}</button>
+                  <button class="btn btn-primary btn-lg fw-bold" (click)="onReserve(reservationModal)" tabindex="0" (keydown.enter)="null">{{ 'RESERVE' | translate }}</button>
                 </div>
                 <p class="text-center small mt-2 text-muted">You won't be charged yet</p>
               </div>
@@ -265,7 +265,7 @@
                 <button 
                   class="btn btn-primary w-100" 
                   [disabled]="submittingReview()" 
-                  (click)="submitReview()">
+                  (click)="submitReview()" tabindex="0" (keydown.enter)="null">
                   <span *ngIf="submittingReview()" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                   {{ 'SUBMIT' | translate }}
                 </button>
@@ -327,7 +327,7 @@
 <ng-template #reservationModal let-modal>
   <div class="modal-header bg-light">
     <h4 class="modal-title fw-bold text-dark" id="modal-basic-title">Request Reservation</h4>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')" tabindex="0" (keydown.enter)="null"></button>
   </div>
   <div class="modal-body">
     <div *ngIf="reservationSuccess()" class="alert alert-success">
@@ -341,14 +341,14 @@
       <div class="row">
         <div class="col-md-6 mb-3">
           <label class="form-label text-muted small">Check-in Date</label>
-          <input type="date" class="form-control" formControlName="dateDebut" />
+          <input type="date" class="form-control" formControlName="dateDebut" / aria-label=\"input\">
           <small class="text-danger" *ngIf="reservationForm.get('dateDebut')?.invalid && reservationForm.get('dateDebut')?.touched">
             Check-in date is required
           </small>
         </div>
         <div class="col-md-6 mb-3">
           <label class="form-label text-muted small">Check-out Date</label>
-          <input type="date" class="form-control" formControlName="dateFin" />
+          <input type="date" class="form-control" formControlName="dateFin" / aria-label=\"input\">
           <small class="text-danger" *ngIf="reservationForm.get('dateFin')?.invalid && reservationForm.get('dateFin')?.touched">
             Check-out date is required
           </small>

@@ -6,15 +6,15 @@
       <span>{{ currentLang() }}</span>
     </button>
     <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu>
-      <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')" style="width: 100%; border: none; background: transparent;">
+      <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')" style="width: 100%; border: none; background: transparent;" tabindex="0" (keydown.enter)="null">
         <span>en</span>
         <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'en'"></i>
       </button>
-      <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')" style="width: 100%; border: none; background: transparent;">
+      <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')" style="width: 100%; border: none; background: transparent;" tabindex="0" (keydown.enter)="null">
         <span>fr</span>
         <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'fr'"></i>
       </button>
-      <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')" style="width: 100%; border: none; background: transparent;">
+      <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')" style="width: 100%; border: none; background: transparent;" tabindex="0" (keydown.enter)="null">
         <span>ar</span>
         <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'ar'"></i>
       </button>
@@ -51,7 +51,7 @@
               [class.is-invalid]="submitted() && loginForm.email().invalid()"
               placeholder="{{ 'EMAIL_ADDRESS' | translate }}"
               [field]="loginForm.email"
-            />
+            / aria-label=\"input\">
             @if (submitted() && loginForm.email().invalid()) {
               <div class="invalid-feedback">
                 @for (error of loginForm.email().errors(); track error.kind) {
@@ -67,7 +67,7 @@
                 id="password"
                 class="form-control"
                 [field]="loginForm.password"
-                [class.is-invalid]="submitted() && loginForm.password().errors().length > 0"
+                [class.is-invalid]="submitted() && loginForm.password().errors().length  aria-label=\"input\"> 0"
                 placeholder="{{ 'PASSWORD_MIN_8' | translate }}"
               />
             } @else {
@@ -76,7 +76,7 @@
                 id="password"
                 class="form-control"
                 [field]="loginForm.password"
-                [class.is-invalid]="submitted() && loginForm.password().errors().length > 0"
+                [class.is-invalid]="submitted() && loginForm.password().errors().length  aria-label=\"input\"> 0"
                 placeholder="{{ 'PASSWORD_MIN_8' | translate }}"
               />
             }
@@ -84,7 +84,7 @@
               [ngClass]="showPassword() ? 'feather icon-eye' : 'feather icon-eye-off'"
               id="togglePassword"
               (click)="togglePasswordVisibility()"
-            ></i>
+             tabindex="0" (keydown.enter)="null"></i>
             @if (submitted() && loginForm.password().errors().length > 0) {
               <div class="invalid-feedback">
                 @for (error of loginForm.password().errors(); track error.kind) {
@@ -100,7 +100,7 @@
           }
           <div class="form-group text-start">
             <div class="checkbox checkbox-fill d-inline">
-              <input type="checkbox" name="checkbox-fill-1" id="checkbox-fill-a1" checked="" />
+              <input type="checkbox" name="checkbox-fill-1" id="checkbox-fill-a1" checked="" / aria-label=\"input\">
               <label for="checkbox-fill-a1" class="cr">{{ 'SAVE_DETAILS' | translate }}</label>
             </div>
           </div>
@@ -128,7 +128,7 @@
                   class="role-btn"
                   [class.active]="selectedGoogleRole() === 'LOCATAIRE'"
                   (click)="selectGoogleRole('LOCATAIRE')"
-                >
+                 tabindex="0" (keydown.enter)="null">
                   {{ 'LOCATAIRE' | translate }}
                 </button>
                 <button
@@ -136,7 +136,7 @@
                   class="role-btn"
                   [class.active]="selectedGoogleRole() === 'BAILLEUR'"
                   (click)="selectGoogleRole('BAILLEUR')"
-                >
+                 tabindex="0" (keydown.enter)="null">
                   {{ 'BAILLEUR' | translate }}
                 </button>
               </div>
@@ -148,7 +148,7 @@
                 placeholder="{{ 'PHONE_NUMBER' | translate }}"
                 [value]="googleTelephone()"
                 (input)="googleTelephone.set($any($event.target).value)"
-              />
+              / aria-label=\"input\">
             </div>
             <div class="mb-4 d-flex justify-content-center">
               <div id="google-signin-container"></div>

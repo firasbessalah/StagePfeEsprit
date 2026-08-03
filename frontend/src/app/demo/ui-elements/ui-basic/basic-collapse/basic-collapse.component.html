@@ -22,7 +22,7 @@
           (click)="isCollapsed = !isCollapsed"
           [attr.aria-expanded]="!isCollapsed"
           aria-controls="collapseExample"
-        >
+         tabindex="0" (keydown.enter)="null">
           Toggle with Two Way Binding
         </button>
       </div>
@@ -45,7 +45,7 @@
           (click)="multiCollapsed1 = !multiCollapsed1"
           [attr.aria-expanded]="!multiCollapsed1"
           aria-controls="multiCollapseExample1"
-        >
+         tabindex="0" (keydown.enter)="null">
           Toggle first element
         </a>
         <button
@@ -54,7 +54,7 @@
           [attr.aria-expanded]="!multiCollapsed2"
           type="button"
           aria-controls="multiCollapseExample2"
-        >
+         tabindex="0" (keydown.enter)="null">
           Toggle second element
         </button>
         <button
@@ -62,7 +62,7 @@
           type="button"
           (click)="multiCollapsed1 = !multiCollapsed1; multiCollapsed2 = !multiCollapsed2"
           aria-controls="multiCollapseExample1 multiCollapseExample2"
-        >
+         tabindex="0" (keydown.enter)="null">
           Toggle both elements
         </button>
       </div>
@@ -175,10 +175,10 @@
 
       <hr />
 
-      <button class="btn btn-sm btn-outline-primary me-2" (click)="accordion.toggle('first')">Toggle first</button>
-      <button class="btn btn-sm btn-outline-primary me-2" (click)="accordion.toggle('second')">Toggle second</button>
-      <button class="btn btn-sm btn-outline-primary me-2" (click)="accordion.expandAll()">Expand all</button>
-      <button class="btn btn-sm btn-outline-primary me-2" (click)="accordion.collapseAll()">Collapse all</button>
+      <button class="btn btn-sm btn-outline-primary me-2" (click)="accordion.toggle('first')" tabindex="0" (keydown.enter)="null">Toggle first</button>
+      <button class="btn btn-sm btn-outline-primary me-2" (click)="accordion.toggle('second')" tabindex="0" (keydown.enter)="null">Toggle second</button>
+      <button class="btn btn-sm btn-outline-primary me-2" (click)="accordion.expandAll()" tabindex="0" (keydown.enter)="null">Expand all</button>
+      <button class="btn btn-sm btn-outline-primary me-2" (click)="accordion.collapseAll()" tabindex="0" (keydown.enter)="null">Collapse all</button>
     </app-card>
   </div>
   <!-- [ accordion-collapse ] end -->

@@ -8,7 +8,7 @@
       <div class="header-actions d-flex align-items-center">
         <!-- Authenticated -->
         <ng-container *ngIf="isAuthenticated()">
-          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()" *ngIf="user()?.role !== 'LOCATAIRE'">{{ 'LIST_PROPERTY' | translate }}</a>
+          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()" *ngIf="user()?.role !== 'LOCATAIRE'" tabindex="0" (keydown.enter)="null">{{ 'LIST_PROPERTY' | translate }}</a>
           <app-notification-dropdown></app-notification-dropdown>
           <div class="user-dropdown dropdown" ngbDropdown>
             <button class="btn btn-transparent dropdown-toggle text-dark d-flex align-items-center" ngbDropdownToggle style="border: none; background: transparent; padding: 0;">
@@ -43,7 +43,7 @@
                 <i class="feather icon-message-circle me-3 fs-5 align-middle"></i> {{ 'MESSAGES' | translate }}
               </a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item py-2 text-danger" (click)="logout()" style="cursor: pointer;">
+              <a class="dropdown-item py-2 text-danger" (click)="logout()" style="cursor: pointer;" tabindex="0" (keydown.enter)="null">
                 <i class="feather icon-log-out me-3 fs-5 align-middle"></i> {{ 'LOGOUT' | translate }}
               </a>
             </div>
@@ -57,15 +57,15 @@
             <span>{{ currentLang() }}</span>
           </button>
           <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu>
-            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')" style="width: 100%; border: none; background: transparent;">
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')" style="width: 100%; border: none; background: transparent;" tabindex="0" (keydown.enter)="null">
               <span>en</span>
               <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'en'"></i>
             </button>
-            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')" style="width: 100%; border: none; background: transparent;">
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')" style="width: 100%; border: none; background: transparent;" tabindex="0" (keydown.enter)="null">
               <span>fr</span>
               <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'fr'"></i>
             </button>
-            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')" style="width: 100%; border: none; background: transparent;">
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')" style="width: 100%; border: none; background: transparent;" tabindex="0" (keydown.enter)="null">
               <span>ar</span>
               <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'ar'"></i>
             </button>
@@ -117,7 +117,7 @@
                   
                   <div class="text-start">
                     <label class="form-label text-muted small">{{ 'CHANGE_PROFILE_PHOTO' | translate }}</label>
-                    <input type="file" accept="image/*" class="form-control form-control-sm" (change)="onProfilePhotoSelected($event)" />
+                    <input type="file" accept="image/*" class="form-control form-control-sm" (change)="onProfilePhotoSelected($event)" / aria-label=\"input\">
                   </div>
                 </div>
               }
@@ -140,7 +140,7 @@
                 <div class="row">
                   <div class="col-md-6 mb-3">
                     <label class="form-label text-muted small">{{ 'FIRST_NAME' | translate }}</label>
-                    <input type="text" class="form-control" formControlName="prenom" />
+                    <input type="text" class="form-control" formControlName="prenom" / aria-label=\"input\">
                     @if (profileForm.get('prenom')?.invalid && profileForm.get('prenom')?.touched) {
                       <small class="text-danger">{{ 'FIRST_NAME_REQUIRED' | translate }}</small>
                     }
@@ -148,7 +148,7 @@
                   
                   <div class="col-md-6 mb-3">
                     <label class="form-label text-muted small">{{ 'LAST_NAME' | translate }}</label>
-                    <input type="text" class="form-control" formControlName="nom" />
+                    <input type="text" class="form-control" formControlName="nom" / aria-label=\"input\">
                     @if (profileForm.get('nom')?.invalid && profileForm.get('nom')?.touched) {
                       <small class="text-danger">{{ 'LAST_NAME_REQUIRED' | translate }}</small>
                     }
@@ -156,13 +156,13 @@
                   
                   <div class="col-md-6 mb-3">
                     <label class="form-label text-muted small">{{ 'EMAIL_ADDRESS' | translate }}</label>
-                    <input type="email" class="form-control" formControlName="email" />
+                    <input type="email" class="form-control" formControlName="email" / aria-label=\"input\">
                     <small class="text-muted" style="font-size: 0.8rem;">{{ 'EMAIL_CANT_CHANGE' | translate }}</small>
                   </div>
                   
                   <div class="col-md-6 mb-3">
                     <label class="form-label text-muted small">{{ 'PHONE_NUMBER' | translate }}</label>
-                    <input type="text" class="form-control" formControlName="telephone" />
+                    <input type="text" class="form-control" formControlName="telephone" / aria-label=\"input\">
                   </div>
                 </div>
                 
@@ -187,7 +187,7 @@
                 <div class="row">
                   <div class="col-md-12 mb-3">
                     <label class="form-label text-muted small">{{ 'CURRENT_PASSWORD' | translate }}</label>
-                    <input type="password" class="form-control" formControlName="currentPassword" />
+                    <input type="password" class="form-control" formControlName="currentPassword" / aria-label=\"input\">
                     @if (passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched) {
                       <small class="text-danger">{{ 'CURRENT_PASSWORD_REQUIRED' | translate }}</small>
                     }
@@ -195,7 +195,7 @@
                   
                   <div class="col-md-6 mb-3">
                     <label class="form-label text-muted small">{{ 'NEW_PASSWORD' | translate }}</label>
-                    <input type="password" class="form-control" formControlName="newPassword" />
+                    <input type="password" class="form-control" formControlName="newPassword" / aria-label=\"input\">
                     @if (passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched) {
                       <small class="text-danger">{{ 'NEW_PASSWORD_MIN_6' | translate }}</small>
                     }
@@ -203,7 +203,7 @@
                   
                   <div class="col-md-6 mb-3">
                     <label class="form-label text-muted small">{{ 'CONFIRM_NEW_PASSWORD' | translate }}</label>
-                    <input type="password" class="form-control" formControlName="confirmPassword" />
+                    <input type="password" class="form-control" formControlName="confirmPassword" / aria-label=\"input\">
                     @if (passwordForm.hasError('mismatch') && passwordForm.get('confirmPassword')?.touched) {
                       <small class="text-danger">{{ 'PASSWORDS_DONT_MATCH' | translate }}</small>
                     }

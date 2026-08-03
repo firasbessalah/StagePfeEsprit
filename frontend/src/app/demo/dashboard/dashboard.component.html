@@ -17,7 +17,7 @@
   <!-- ─── Header & Actions ───────────────────────────────────── -->
   <div class="d-flex justify-content-between align-items-center mb-4 mt-2">
     <h2 class="mb-0 text-dark" style="font-weight: 700; color: #0f172a;">Tableau de Bord</h2>
-    <button class="btn shadow-sm d-flex align-items-center gap-2" (click)="exportExcel()" style="border-radius: 8px; background-color: #000080; color: #ffffff;">
+    <button class="btn shadow-sm d-flex align-items-center gap-2" (click)="exportExcel()" style="border-radius: 8px; background-color: #000080; color: #ffffff;" tabindex="0" (keydown.enter)="null">
       <i class="feather icon-download"></i> Exporter en Excel
     </button>
   </div>
@@ -182,9 +182,9 @@
       <div class="chart-header">
         <h3 class="chart-title">{{ 'USER_ACTIVITY_OVER_TIME' | translate }}</h3>
         <div class="period-toggle">
-          <button [class.active]="activityPeriod() === '7d'" (click)="setActivityPeriod('7d')">{{ 'DAYS_7' | translate }}</button>
-          <button [class.active]="activityPeriod() === '30d'" (click)="setActivityPeriod('30d')">{{ 'DAYS_30' | translate }}</button>
-          <button [class.active]="activityPeriod() === '12m'" (click)="setActivityPeriod('12m')">{{ 'MONTHS_12' | translate }}</button>
+          <button [class.active]="activityPeriod() === '7d'" (click)="setActivityPeriod('7d')" tabindex="0" (keydown.enter)="null">{{ 'DAYS_7' | translate }}</button>
+          <button [class.active]="activityPeriod() === '30d'" (click)="setActivityPeriod('30d')" tabindex="0" (keydown.enter)="null">{{ 'DAYS_30' | translate }}</button>
+          <button [class.active]="activityPeriod() === '12m'" (click)="setActivityPeriod('12m')" tabindex="0" (keydown.enter)="null">{{ 'MONTHS_12' | translate }}</button>
         </div>
       </div>
       @if (activityChart()) {
@@ -361,28 +361,28 @@
 
     <!-- Sentiment KPI counters -->
     <div class="sentiment-kpis d-flex gap-3 flex-wrap mb-4">
-      <div class="sentiment-kpi sentiment-kpi--positif" (click)="sentimentFilter.set('POSITIF')" [class.active]="sentimentFilter() === 'POSITIF'">
+      <div class="sentiment-kpi sentiment-kpi--positif" (click)="sentimentFilter.set('POSITIF')" [class.active]="sentimentFilter() === 'POSITIF'" tabindex="0" (keydown.enter)="null">
         <i class="feather icon-thumbs-up"></i>
         <div>
           <span class="kpi-value">{{ sentimentCounts().positif }}</span>
           <span class="kpi-label">Positifs</span>
         </div>
       </div>
-      <div class="sentiment-kpi sentiment-kpi--negatif" (click)="sentimentFilter.set('NEGATIF')" [class.active]="sentimentFilter() === 'NEGATIF'">
+      <div class="sentiment-kpi sentiment-kpi--negatif" (click)="sentimentFilter.set('NEGATIF')" [class.active]="sentimentFilter() === 'NEGATIF'" tabindex="0" (keydown.enter)="null">
         <i class="feather icon-thumbs-down"></i>
         <div>
           <span class="kpi-value">{{ sentimentCounts().negatif }}</span>
           <span class="kpi-label">Négatifs</span>
         </div>
       </div>
-      <div class="sentiment-kpi sentiment-kpi--neutre" (click)="sentimentFilter.set('NEUTRE')" [class.active]="sentimentFilter() === 'NEUTRE'">
+      <div class="sentiment-kpi sentiment-kpi--neutre" (click)="sentimentFilter.set('NEUTRE')" [class.active]="sentimentFilter() === 'NEUTRE'" tabindex="0" (keydown.enter)="null">
         <i class="feather icon-minus-circle"></i>
         <div>
           <span class="kpi-value">{{ sentimentCounts().neutre }}</span>
           <span class="kpi-label">Neutres</span>
         </div>
       </div>
-      <div class="sentiment-kpi sentiment-kpi--all" (click)="sentimentFilter.set('ALL')" [class.active]="sentimentFilter() === 'ALL'">
+      <div class="sentiment-kpi sentiment-kpi--all" (click)="sentimentFilter.set('ALL')" [class.active]="sentimentFilter() === 'ALL'" tabindex="0" (keydown.enter)="null">
         <i class="feather icon-list"></i>
         <div>
           <span class="kpi-value">{{ sentimentCounts().total }}</span>

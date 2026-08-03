@@ -9,7 +9,7 @@
     <div class="p-3 border-bottom bg-light d-flex justify-content-between align-items-center">
       <h6 class="m-0 fw-bold">{{ 'NOTIFICATIONS' | translate }}</h6>
       <div class="d-flex gap-2">
-        <a href="javascript:void(0)" class="text-decoration-none small" (click)="clearAll()">{{ 'MARK_AS_READ' | translate }}</a>
+        <a href="javascript:void(0)" class="text-decoration-none small" (click)="clearAll()" tabindex="0" (keydown.enter)="null">{{ 'MARK_AS_READ' | translate }}</a>
       </div>
     </div>
     <ul class="list-unstyled mb-0" style="max-height: 350px; overflow-y: auto;">
@@ -25,7 +25,7 @@
           class="p-3 border-bottom notification-item" 
           [class.bg-light]="!n.lu"
           style="cursor: pointer; transition: background 0.2s;"
-          (click)="markAsRead(n)">
+          (click)="markAsRead(n)" tabindex="0" (keydown.enter)="null">
           <div class="d-flex align-items-start gap-3">
             <div class="rounded-circle d-flex align-items-center justify-content-center bg-white shadow-sm" style="width: 40px; height: 40px; flex-shrink: 0;">
               <i [class]="getNotificationIcon(n.type)" style="font-size: 1.2rem;"></i>

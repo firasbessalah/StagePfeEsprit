@@ -12,14 +12,14 @@
       <div class="header-actions d-flex align-items-center">
         <!-- Unauthenticated -->
         <ng-container *ngIf="!isAuthenticated()">
-          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()">{{ 'LIST_PROPERTY' | translate }}</a>
+          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()" tabindex="0" (keydown.enter)="null">{{ 'LIST_PROPERTY' | translate }}</a>
           <a routerLink="/register" class="header-nav-link">{{ 'REGISTER' | translate }}</a>
           <a routerLink="/login" class="header-nav-link">{{ 'SIGN_IN' | translate }}</a>
         </ng-container>
 
         <!-- Authenticated -->
         <ng-container *ngIf="isAuthenticated()">
-          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()" *ngIf="user()?.role !== 'LOCATAIRE'">{{ 'LIST_PROPERTY' | translate }}</a>
+          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()" *ngIf="user()?.role !== 'LOCATAIRE'" tabindex="0" (keydown.enter)="null">{{ 'LIST_PROPERTY' | translate }}</a>
           <div class="user-dropdown dropdown" ngbDropdown>
             <button class="btn btn-transparent dropdown-toggle text-dark d-flex align-items-center" ngbDropdownToggle style="border: none; background: transparent; padding: 0;">
               <img [src]="(user()?.photoProfil && user()?.photoProfil !== 'null' && user()?.photoProfil!.trim().length > 0) ? user()?.photoProfil : 'assets/images/user/avatar-1.jpg'" alt="User Avatar" class="rounded-circle me-2" width="40" height="40" style="object-fit: cover; border: 2px solid #febb02;">
@@ -44,7 +44,7 @@
                 <i class="feather icon-message-circle me-3 fs-5 align-middle"></i> {{ 'MESSAGES' | translate }}
               </a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item py-2 text-danger" (click)="logout()" style="cursor: pointer;">
+              <a class="dropdown-item py-2 text-danger" (click)="logout()" style="cursor: pointer;" tabindex="0" (keydown.enter)="null">
                 <i class="feather icon-log-out me-3 fs-5 align-middle"></i> {{ 'LOGOUT' | translate }}
               </a>
             </div>
@@ -58,15 +58,15 @@
             <span>{{ currentLang() }}</span>
           </button>
           <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu>
-            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')" style="width: 100%; border: none; background: transparent;">
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')" style="width: 100%; border: none; background: transparent;" tabindex="0" (keydown.enter)="null">
               <span>en</span>
               <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'en'"></i>
             </button>
-            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')" style="width: 100%; border: none; background: transparent;">
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')" style="width: 100%; border: none; background: transparent;" tabindex="0" (keydown.enter)="null">
               <span>fr</span>
               <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'fr'"></i>
             </button>
-            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')" style="width: 100%; border: none; background: transparent;">
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')" style="width: 100%; border: none; background: transparent;" tabindex="0" (keydown.enter)="null">
               <span>ar</span>
               <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'ar'"></i>
             </button>
@@ -113,12 +113,12 @@
             <div class="d-flex align-items-center gap-2">
               <div class="input-group">
                 <span class="input-group-text"><i class="feather icon-search"></i></span>
-                <input type="text" class="form-control" placeholder="Search annonce..." [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" />
+                <input type="text" class="form-control" placeholder="Search annonce..." [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" / aria-label=\"input\">
               </div>
             </div>
             <div>
-              <button type="button" class="btn btn-primary me-2" (click)="openAdd(addTpl)"><i class="feather icon-plus"></i> Add annonce</button>
-              <button type="button" class="btn btn-outline-secondary" (click)="reload()" [disabled]="loading()"><i class="feather icon-refresh-cw"></i></button>
+              <button type="button" class="btn btn-primary me-2" (click)="openAdd(addTpl)" tabindex="0" (keydown.enter)="null"><i class="feather icon-plus"></i> Add annonce</button>
+              <button type="button" class="btn btn-outline-secondary" (click)="reload()" [disabled]="loading()" tabindex="0" (keydown.enter)="null"><i class="feather icon-refresh-cw"></i></button>
             </div>
           </div>
 
@@ -153,7 +153,7 @@
                           <span class="badge bg-success" [title]="a.flagReason || 'Sûr'">Sûr {{a.riskScore}}%</span>
                         }
                         @if (a.signalsJson && parseSignals(a.signalsJson).length > 0) {
-                          <button class="btn btn-sm btn-link p-0 ms-2 text-info" (click)="openSignalsModal(a, signalsContent)" title="Voir les détails IA">
+                          <button class="btn btn-sm btn-link p-0 ms-2 text-info" (click)="openSignalsModal(a, signalsContent)" title="Voir les détails IA" tabindex="0" (keydown.enter)="null">
                             <i class="feather icon-info" style="font-size: 1.1em;"></i>
                           </button>
                         }
@@ -163,24 +163,24 @@
                         <span [class]="getStatusBadgeClass(a.statut)">{{ a.statut }}</span>
                       </td>
                       <td class="text-end">
-                        <button type="button" class="btn btn-icon btn-sm btn-outline-info me-1" (click)="openShow(a, showTpl)" title="Show Info"><i class="feather icon-eye"></i></button>
+                        <button type="button" class="btn btn-icon btn-sm btn-outline-info me-1" (click)="openShow(a, showTpl)" title="Show Info" tabindex="0" (keydown.enter)="null"><i class="feather icon-eye"></i></button>
                         
                         @if (isAdmin()) {
                           @if (a.statut === 'EN_ATTENTE' || a.statut === 'REJETEE' || a.statut === 'ARCHIVEE') {
-                            <button type="button" class="btn btn-icon btn-sm btn-outline-success me-1" (click)="validerAnnonce(a)" title="Approve"><i class="feather icon-check"></i></button>
+                            <button type="button" class="btn btn-icon btn-sm btn-outline-success me-1" (click)="validerAnnonce(a)" title="Approve" tabindex="0" (keydown.enter)="null"><i class="feather icon-check"></i></button>
                           }
                           
                           @if (a.statut === 'EN_ATTENTE' || a.statut === 'VALIDEE') {
-                            <button type="button" class="btn btn-icon btn-sm btn-outline-warning me-1" (click)="rejeterAnnonce(a)" title="Reject"><i class="feather icon-x"></i></button>
+                            <button type="button" class="btn btn-icon btn-sm btn-outline-warning me-1" (click)="rejeterAnnonce(a)" title="Reject" tabindex="0" (keydown.enter)="null"><i class="feather icon-x"></i></button>
                           }
                           
                           @if (a.statut === 'VALIDEE' || a.statut === 'REJETEE' || a.statut === 'SUSPENDUE') {
-                            <button type="button" class="btn btn-icon btn-sm btn-outline-secondary me-1" (click)="archiverAnnonce(a)" title="Archive"><i class="feather icon-archive"></i></button>
+                            <button type="button" class="btn btn-icon btn-sm btn-outline-secondary me-1" (click)="archiverAnnonce(a)" title="Archive" tabindex="0" (keydown.enter)="null"><i class="feather icon-archive"></i></button>
                           }
                         }
 
-                        <button type="button" class="btn btn-icon btn-sm btn-outline-primary me-1" (click)="openEdit(a, editTpl)" title="Edit"><i class="feather icon-edit"></i></button>
-                        <button type="button" class="btn btn-icon btn-sm btn-outline-danger" (click)="deleteAnnonce(a)" title="Delete"><i class="feather icon-trash-2"></i></button>
+                        <button type="button" class="btn btn-icon btn-sm btn-outline-primary me-1" (click)="openEdit(a, editTpl)" title="Edit" tabindex="0" (keydown.enter)="null"><i class="feather icon-edit"></i></button>
+                        <button type="button" class="btn btn-icon btn-sm btn-outline-danger" (click)="deleteAnnonce(a)" title="Delete" tabindex="0" (keydown.enter)="null"><i class="feather icon-trash-2"></i></button>
                       </td>
                     </tr>
                   }
@@ -199,7 +199,7 @@
 <ng-template #editTpl let-modal>
   <div class="modal-header">
     <h5 class="modal-title">Edit Annonce</h5>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()" tabindex="0" (keydown.enter)="null"></button>
   </div>
   @if (editModel) {
     @let m = editModel;
@@ -207,7 +207,7 @@
       <div class="row g-2">
         <div class="col-md-12">
           <label class="form-label">Titre</label>
-          <input class="form-control" [(ngModel)]="m.titre" name="edTitre" />
+          <input class="form-control" [(ngModel)]="m.titre" name="edTitre" / aria-label=\"input\">
         </div>
         <div class="col-md-12">
           <label class="form-label">Description</label>
@@ -215,20 +215,20 @@
         </div>
         <div class="col-md-6">
           <label class="form-label">Prix</label>
-          <input class="form-control" type="number" [(ngModel)]="m.prix" name="edPrix" />
+          <input class="form-control" type="number" [(ngModel)]="m.prix" name="edPrix" / aria-label=\"input\">
         </div>
         <div class="col-md-6 position-relative">
           <label class="form-label w-100 d-flex justify-content-between align-items-center">
             <span>Localisation</span>
-            <button type="button" class="btn btn-sm btn-link p-0 text-primary" (click)="useCurrentLocation(m)">
+            <button type="button" class="btn btn-sm btn-link p-0 text-primary" (click)="useCurrentLocation(m)" tabindex="0" (keydown.enter)="null">
               <i class="feather icon-map-pin"></i> Ma position
             </button>
           </label>
-          <input class="form-control" [(ngModel)]="m.localisation" name="edLoc" (ngModelChange)="onLocationInput($event)" autocomplete="off" />
+          <input class="form-control" [(ngModel)]="m.localisation" name="edLoc" (ngModelChange)="onLocationInput($event)" autocomplete="off" / aria-label=\"input\">
           @if (locationSearchResults().length > 0) {
             <div class="list-group position-absolute w-100 shadow mt-1" style="z-index: 1050; max-height: 200px; overflow-y: auto;">
               @for (loc of locationSearchResults(); track loc.place_id) {
-                <button type="button" class="list-group-item list-group-item-action text-truncate" (click)="selectLocation(loc, m)" [title]="loc.display_name">
+                <button type="button" class="list-group-item list-group-item-action text-truncate" (click)="selectLocation(loc, m)" [title]="loc.display_name" tabindex="0" (keydown.enter)="null">
                   <small>{{ loc.display_name }}</small>
                 </button>
               }
@@ -237,12 +237,12 @@
         </div>
         <div class="col-md-12 mt-2">
           <label class="form-label">Images</label>
-          <input type="file" multiple class="form-control" accept="image/*" (change)="onImagePicked($event, m)">
+          <input type="file" multiple class="form-control" accept="image/*" (change)="onImagePicked($event, m)" aria-label=\"input\">
           <div class="d-flex flex-wrap gap-2 mt-2">
             @for (img of m.images; track $index) {
               <div class="position-relative" style="width: 80px; height: 80px;">
                 <img [src]="img" class="img-thumbnail w-100 h-100" style="object-fit: cover;">
-                <button class="btn btn-sm btn-danger position-absolute top-0 end-0 rounded-circle" style="transform: translate(30%, -30%); padding: 0.1rem 0.3rem;" (click)="removeImage(m, $index)"><i class="feather icon-x"></i></button>
+                <button class="btn btn-sm btn-danger position-absolute top-0 end-0 rounded-circle" style="transform: translate(30%, -30%); padding: 0.1rem 0.3rem;" (click)="removeImage(m, $index)" tabindex="0" (keydown.enter)="null"><i class="feather icon-x"></i></button>
               </div>
             }
           </div>
@@ -251,15 +251,15 @@
     </div>
   }
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
-    <button type="button" class="btn btn-primary" (click)="submitEdit()">Save</button>
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()" tabindex="0" (keydown.enter)="null">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="submitEdit()" tabindex="0" (keydown.enter)="null">Save</button>
   </div>
 </ng-template>
 
 <ng-template #showTpl let-modal>
   <div class="modal-header">
     <h5 class="modal-title">Annonce Information</h5>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()" tabindex="0" (keydown.enter)="null"></button>
   </div>
   @if (showModel) {
     @let s = showModel;
@@ -325,14 +325,14 @@
     </div>
   }
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Close</button>
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()" tabindex="0" (keydown.enter)="null">Close</button>
   </div>
 </ng-template>
 
 <ng-template #addTpl let-modal>
   <div class="modal-header">
     <h5 class="modal-title">Add Annonce</h5>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()" tabindex="0" (keydown.enter)="null"></button>
   </div>
   <div class="modal-body">
     <div class="row g-3">
@@ -348,7 +348,7 @@
       }
       <div class="col-md-12">
         <label class="form-label">Titre</label>
-        <input class="form-control" [(ngModel)]="addModel.titre" />
+        <input class="form-control" [(ngModel)]="addModel.titre" / aria-label=\"input\">
       </div>
       <div class="col-md-12">
         <label class="form-label">Description</label>
@@ -356,20 +356,20 @@
       </div>
       <div class="col-md-6">
         <label class="form-label">Prix</label>
-        <input class="form-control" type="number" [(ngModel)]="addModel.prix" />
+        <input class="form-control" type="number" [(ngModel)]="addModel.prix" / aria-label=\"input\">
       </div>
       <div class="col-md-6 position-relative">
         <label class="form-label w-100 d-flex justify-content-between align-items-center">
           <span>Localisation (Texte)</span>
-          <button type="button" class="btn btn-sm btn-link p-0 text-primary" (click)="useCurrentLocation(addModel)">
+          <button type="button" class="btn btn-sm btn-link p-0 text-primary" (click)="useCurrentLocation(addModel)" tabindex="0" (keydown.enter)="null">
             <i class="feather icon-map-pin"></i> Ma position
           </button>
         </label>
-        <input class="form-control" [(ngModel)]="addModel.localisation" (ngModelChange)="onLocationInput($event)" autocomplete="off" />
+        <input class="form-control" [(ngModel)]="addModel.localisation" (ngModelChange)="onLocationInput($event)" autocomplete="off" / aria-label=\"input\">
         @if (locationSearchResults().length > 0) {
           <div class="list-group position-absolute w-100 shadow mt-1" style="z-index: 1050; max-height: 200px; overflow-y: auto;">
             @for (loc of locationSearchResults(); track loc.place_id) {
-              <button type="button" class="list-group-item list-group-item-action text-truncate" (click)="selectLocation(loc, addModel)" [title]="loc.display_name">
+              <button type="button" class="list-group-item list-group-item-action text-truncate" (click)="selectLocation(loc, addModel)" [title]="loc.display_name" tabindex="0" (keydown.enter)="null">
                 <small>{{ loc.display_name }}</small>
               </button>
             }
@@ -386,12 +386,12 @@
       </div>
       <div class="col-md-12 mt-2">
         <label class="form-label">Images</label>
-        <input type="file" multiple class="form-control" accept="image/*" (change)="onImagePicked($event, addModel)">
+        <input type="file" multiple class="form-control" accept="image/*" (change)="onImagePicked($event, addModel)" aria-label=\"input\">
         <div class="d-flex flex-wrap gap-2 mt-2">
           @for (img of addModel.images; track $index) {
             <div class="position-relative" style="width: 80px; height: 80px;">
               <img [src]="img" class="img-thumbnail w-100 h-100" style="object-fit: cover;">
-              <button class="btn btn-sm btn-danger position-absolute top-0 end-0 rounded-circle" style="transform: translate(30%, -30%); padding: 0.1rem 0.3rem;" (click)="removeImage(addModel, $index)"><i class="feather icon-x"></i></button>
+              <button class="btn btn-sm btn-danger position-absolute top-0 end-0 rounded-circle" style="transform: translate(30%, -30%); padding: 0.1rem 0.3rem;" (click)="removeImage(addModel, $index)" tabindex="0" (keydown.enter)="null"><i class="feather icon-x"></i></button>
             </div>
           }
         </div>
@@ -399,8 +399,8 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
-    <button type="button" class="btn btn-primary" (click)="submitAdd()">Create</button>
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()" tabindex="0" (keydown.enter)="null">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="submitAdd()" tabindex="0" (keydown.enter)="null">Create</button>
   </div>
 </ng-template>
 
@@ -408,7 +408,7 @@
 <ng-template #signalsContent let-modal>
   <div class="modal-header">
     <h5 class="modal-title"><i class="feather icon-shield text-primary"></i> Détails de l'analyse IA</h5>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()" tabindex="0" (keydown.enter)="null"></button>
   </div>
   <div class="modal-body">
     <p class="mb-2"><strong>Score de risque :</strong> {{ selectedAnnonce?.riskScore }}%</p>
@@ -425,6 +425,6 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Fermer</button>
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()" tabindex="0" (keydown.enter)="null">Fermer</button>
   </div>
 </ng-template>

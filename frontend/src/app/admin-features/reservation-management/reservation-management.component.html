@@ -12,14 +12,14 @@
       <div class="header-actions d-flex align-items-center">
         <!-- Unauthenticated -->
         <ng-container *ngIf="!isAuthenticated()">
-          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()">{{ 'LIST_PROPERTY' | translate }}</a>
+          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()" tabindex="0" (keydown.enter)="null">{{ 'LIST_PROPERTY' | translate }}</a>
           <a routerLink="/register" class="header-nav-link">{{ 'REGISTER' | translate }}</a>
           <a routerLink="/login" class="header-nav-link">{{ 'SIGN_IN' | translate }}</a>
         </ng-container>
 
         <!-- Authenticated -->
         <ng-container *ngIf="isAuthenticated()">
-          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()" *ngIf="user()?.role !== 'LOCATAIRE'">{{ 'LIST_PROPERTY' | translate }}</a>
+          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()" *ngIf="user()?.role !== 'LOCATAIRE'" tabindex="0" (keydown.enter)="null">{{ 'LIST_PROPERTY' | translate }}</a>
           <app-notification-dropdown></app-notification-dropdown>
           <div class="user-dropdown dropdown" ngbDropdown>
             <button class="btn btn-transparent dropdown-toggle text-dark d-flex align-items-center" ngbDropdownToggle style="border: none; background: transparent; padding: 0;">
@@ -48,7 +48,7 @@
                 <i class="feather icon-message-circle me-3 fs-5 align-middle"></i> {{ 'MESSAGES' | translate }}
               </a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item py-2 text-danger" (click)="logout()" style="cursor: pointer;">
+              <a class="dropdown-item py-2 text-danger" (click)="logout()" style="cursor: pointer;" tabindex="0" (keydown.enter)="null">
                 <i class="feather icon-log-out me-3 fs-5 align-middle"></i> {{ 'LOGOUT' | translate }}
               </a>
             </div>
@@ -62,15 +62,15 @@
             <span>{{ currentLang() }}</span>
           </button>
           <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu>
-            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')" style="width: 100%; border: none; background: transparent;">
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')" style="width: 100%; border: none; background: transparent;" tabindex="0" (keydown.enter)="null">
               <span>en</span>
               <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'en'"></i>
             </button>
-            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')" style="width: 100%; border: none; background: transparent;">
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')" style="width: 100%; border: none; background: transparent;" tabindex="0" (keydown.enter)="null">
               <span>fr</span>
               <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'fr'"></i>
             </button>
-            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')" style="width: 100%; border: none; background: transparent;">
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')" style="width: 100%; border: none; background: transparent;" tabindex="0" (keydown.enter)="null">
               <span>ar</span>
               <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'ar'"></i>
             </button>
@@ -143,10 +143,10 @@
                   </td>
                   <td class="text-end pe-4">
                     <div class="btn-group btn-group-sm" *ngIf="res.statut === 'EN_ATTENTE' && user()?.role !== 'LOCATAIRE'">
-                      <button type="button" class="btn btn-success" (click)="acceptReservation(res.id!)" title="Accept">
+                      <button type="button" class="btn btn-success" (click)="acceptReservation(res.id!)" title="Accept" tabindex="0" (keydown.enter)="null">
                         <i class="feather icon-check"></i>
                       </button>
-                      <button type="button" class="btn btn-danger" (click)="refuseReservation(res.id!)" title="Refuse">
+                      <button type="button" class="btn btn-danger" (click)="refuseReservation(res.id!)" title="Refuse" tabindex="0" (keydown.enter)="null">
                         <i class="feather icon-x"></i>
                       </button>
                     </div>

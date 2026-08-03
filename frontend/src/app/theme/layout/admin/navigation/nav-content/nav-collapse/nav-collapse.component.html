@@ -1,5 +1,5 @@
 <li data-username="Datta Able Angular Admin Template" class="nav-item pcoded-hasmenu" [routerLinkActive]="['active']">
-  <a [routerLinkActive]="['active']" href="javascript:void(0)" class="nav-link" (click)="navCollapse($event)">
+  <a [routerLinkActive]="['active']" href="javascript:void(0)" class="nav-link" (click)="navCollapse($event)" tabindex="0" (keydown.enter)="null">
     @if (item().icon) {
       <span class="pcoded-micon">
         <i class="{{ item().icon }}"></i>

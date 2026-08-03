@@ -8,15 +8,15 @@
       <form class="results-search-bar" (ngSubmit)="onSearch()">
         <div class="search-field">
           <label>{{ 'WHERE_GOING' | translate }}</label>
-          <input type="text" [(ngModel)]="localisation" name="localisation" [placeholder]="'SEARCH_DESTINATIONS' | translate">
+          <input type="text" [(ngModel)]="localisation" name="localisation" [placeholder]="'SEARCH_DESTINATIONS' | translate" aria-label=\"input\">
         </div>
         <div class="search-field">
           <label>{{ 'CHECK_IN' | translate }}</label>
-          <input type="date" [(ngModel)]="checkIn" name="checkIn">
+          <input type="date" [(ngModel)]="checkIn" name="checkIn" aria-label=\"input\">
         </div>
         <div class="search-field">
           <label>{{ 'CHECK_OUT' | translate }}</label>
-          <input type="date" [(ngModel)]="checkOut" name="checkOut">
+          <input type="date" [(ngModel)]="checkOut" name="checkOut" aria-label=\"input\">
         </div>
         <button type="submit" class="search-submit">
           <i class="feather icon-search"></i>
@@ -28,14 +28,14 @@
       <div class="header-actions d-flex align-items-center">
         <!-- Unauthenticated -->
         <ng-container *ngIf="!isAuthenticated()">
-          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()">{{ 'LIST_PROPERTY' | translate }}</a>
+          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()" tabindex="0" (keydown.enter)="null">{{ 'LIST_PROPERTY' | translate }}</a>
           <a routerLink="/register" class="header-nav-link">{{ 'REGISTER' | translate }}</a>
           <a routerLink="/login" class="header-nav-link">{{ 'SIGN_IN' | translate }}</a>
         </ng-container>
 
         <!-- Authenticated -->
         <ng-container *ngIf="isAuthenticated()">
-          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()" *ngIf="user()?.role !== 'LOCATAIRE'">{{ 'LIST_PROPERTY' | translate }}</a>
+          <a href="javascript:void(0)" class="header-nav-link" (click)="onAddAnnonce()" *ngIf="user()?.role !== 'LOCATAIRE'" tabindex="0" (keydown.enter)="null">{{ 'LIST_PROPERTY' | translate }}</a>
           <app-notification-dropdown></app-notification-dropdown>
           <div class="user-dropdown dropdown" ngbDropdown>
             <button class="btn btn-transparent dropdown-toggle text-dark d-flex align-items-center" ngbDropdownToggle style="border: none; background: transparent; padding: 0;">
@@ -64,7 +64,7 @@
                 <i class="feather icon-message-circle me-3 fs-5 align-middle"></i> {{ 'MESSAGES' | translate }}
               </a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item py-2 text-danger" (click)="logout()" style="cursor: pointer;">
+              <a class="dropdown-item py-2 text-danger" (click)="logout()" style="cursor: pointer;" tabindex="0" (keydown.enter)="null">
                 <i class="feather icon-log-out me-3 fs-5 align-middle"></i> {{ 'LOGOUT' | translate }}
               </a>
             </div>
@@ -78,15 +78,15 @@
             <span>{{ currentLang() }}</span>
           </button>
           <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu>
-            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')" style="width: 100%; border: none; background: transparent;">
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')" style="width: 100%; border: none; background: transparent;" tabindex="0" (keydown.enter)="null">
               <span>en</span>
               <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'en'"></i>
             </button>
-            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')" style="width: 100%; border: none; background: transparent;">
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')" style="width: 100%; border: none; background: transparent;" tabindex="0" (keydown.enter)="null">
               <span>fr</span>
               <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'fr'"></i>
             </button>
-            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')" style="width: 100%; border: none; background: transparent;">
+            <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')" style="width: 100%; border: none; background: transparent;" tabindex="0" (keydown.enter)="null">
               <span>ar</span>
               <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'ar'"></i>
             </button>
@@ -125,7 +125,7 @@
           class="btn btn-outline-primary"
           *ngIf="canCreateAlert()"
           [disabled]="creatingAlert()"
-          (click)="createAlertFromSearch()">
+          (click)="createAlertFromSearch()" tabindex="0" (keydown.enter)="null">
           <i class="feather icon-bell me-1"></i>
           {{ creatingAlert() ? 'Création...' : 'Créer une alerte' }}
         </button>
@@ -139,7 +139,7 @@
           class="btn btn-outline-primary"
           *ngIf="canCreateAlert()"
           [disabled]="creatingAlert()"
-          (click)="createAlertFromSearch()">
+          (click)="createAlertFromSearch()" tabindex="0" (keydown.enter)="null">
           <i class="feather icon-bell me-1"></i>
           {{ creatingAlert() ? 'Création...' : 'Créer une alerte' }}
         </button>
@@ -174,7 +174,7 @@
                 <span class="fw-bold"><i class="feather icon-sliders me-1 text-primary"></i> Budget Max:</span>
                 <span class="text-primary fw-bold">{{ maxPrice() }} TND</span>
               </label>
-              <input type="range" class="form-range" min="100" max="5000" step="50" [ngModel]="maxPrice()" (ngModelChange)="maxPrice.set($event); fetchResults()" name="maxPrice">
+              <input type="range" class="form-range" min="100" max="5000" step="50" [ngModel]="maxPrice()" (ngModelChange)="maxPrice.set($event); fetchResults()" name="maxPrice" aria-label=\"input\">
             </div>
             
             <!-- Distance Slider -->
@@ -183,7 +183,7 @@
                 <span class="fw-bold"><i class="feather icon-map-pin me-1 text-success"></i> Distance Max:</span>
                 <span class="text-success fw-bold">{{ maxDistance() }} km</span>
               </label>
-              <input type="range" class="form-range" min="1" max="100" step="1" [ngModel]="maxDistance()" (ngModelChange)="maxDistance.set($event)" name="maxDistance">
+              <input type="range" class="form-range" min="1" max="100" step="1" [ngModel]="maxDistance()" (ngModelChange)="maxDistance.set($event)" name="maxDistance" aria-label=\"input\">
             </div>
 
             <!-- Duration Slider -->
@@ -192,7 +192,7 @@
                 <span class="fw-bold"><i class="feather icon-clock me-1 text-info"></i> Durée Max:</span>
                 <span class="text-info fw-bold">{{ maxDuree() }} mois</span>
               </label>
-              <input type="range" class="form-range" min="1" max="12" step="1" [ngModel]="maxDuree()" (ngModelChange)="maxDuree.set($event); fetchResults()" name="maxDuree">
+              <input type="range" class="form-range" min="1" max="12" step="1" [ngModel]="maxDuree()" (ngModelChange)="maxDuree.set($event); fetchResults()" name="maxDuree" aria-label=\"input\">
             </div>
 
             <!-- Category Selector -->
@@ -205,7 +205,7 @@
                   <option value="VACANCES">Vacances</option>
                   <option value="MAISON_HOTE_HOTEL">Maisons d'hôtes / Hôtels</option>
                 </select>
-                <button class="btn btn-outline-secondary btn-sm px-2" (click)="resetInteractiveFilters()" title="Reset Filters">
+                <button class="btn btn-outline-secondary btn-sm px-2" (click)="resetInteractiveFilters()" title="Reset Filters" tabindex="0" (keydown.enter)="null">
                   <i class="feather icon-refresh-cw"></i>
                 </button>
               </div>
@@ -225,13 +225,13 @@
       <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" *ngIf="!loading() && displayedAnnonces().length > 0">
         <div class="col" *ngFor="let annonce of displayedAnnonces()">
           <div class="card property-card h-100 shadow-sm border-0">
-            <div class="property-image-container" (click)="viewDetails(annonce.id!)" style="cursor: pointer;">
+            <div class="property-image-container" (click)="viewDetails(annonce.id!)" style="cursor: pointer;" tabindex="0" (keydown.enter)="null">
               <img [src]="(annonce.images && annonce.images.length > 0) ? annonce.images[0] : 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80&w=800'" class="card-img-top property-image" alt="Property Image">
               <button class="btn position-absolute top-0 end-0 m-2 p-1 rounded-circle favori-btn" 
                       *ngIf="user()?.role === 'LOCATAIRE'"
                       style="z-index: 10; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.2); background-color: rgba(255,255,255,0.9);"
                       (click)="toggleFavori(annonce.id!, $event)"
-                      [title]="favoriService.isFavori(annonce.id!) ? 'Remove from favorites' : 'Add to favorites'">
+                      [title]="favoriService.isFavori(annonce.id!) ? 'Remove from favorites' : 'Add to favorites'" tabindex="0" (keydown.enter)="null">
                 <i [class]="favoriService.isFavori(annonce.id!) ? 'feather icon-heart-on text-danger' : 'feather icon-heart text-muted'" 
                    style="font-size: 1.5rem;"></i>
               </button>
@@ -243,7 +243,7 @@
               </span>
             </div>
             <div class="card-body">
-              <h5 class="card-title text-truncate mb-2" [title]="annonce.titre" (click)="viewDetails(annonce.id!)" style="cursor: pointer;">
+              <h5 class="card-title text-truncate mb-2" [title]="annonce.titre" (click)="viewDetails(annonce.id!)" style="cursor: pointer;" tabindex="0" (keydown.enter)="null">
                 {{ annonce.titre }}
               </h5>
               <p class="card-text text-muted small description-text">{{ annonce.description }}</p>
@@ -254,7 +254,7 @@
                     {{ annonce.prix }} TND <span class="fs-6 fw-normal text-muted">/ {{ 'MONTH' | translate }}</span>
                   </div>
                 </div>
-                <button class="btn btn-primary btn-view" (click)="viewDetails(annonce.id!)">
+                <button class="btn btn-primary btn-view" (click)="viewDetails(annonce.id!)" tabindex="0" (keydown.enter)="null">
                   {{ (isBailleur() ? 'VIEW_DETAILS' : 'RESERVE') | translate }}
                 </button>
               </div>

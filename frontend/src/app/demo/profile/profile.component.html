@@ -14,7 +14,7 @@
           
           <div class="text-start">
             <label class="form-label">Change Profile Photo</label>
-            <input type="file" accept="image/*" class="form-control form-control-sm" (change)="onProfilePhotoSelected($event)" />
+            <input type="file" accept="image/*" class="form-control form-control-sm" (change)="onProfilePhotoSelected($event)" / aria-label=\"input\">
           </div>
         </div>
       }
@@ -34,7 +34,7 @@
         <div class="row">
           <div class="col-md-6 mb-3">
             <label class="form-label">First Name (Prénom)</label>
-            <input type="text" class="form-control" formControlName="prenom" />
+            <input type="text" class="form-control" formControlName="prenom" / aria-label=\"input\">
             @if (profileForm.get('prenom')?.invalid && profileForm.get('prenom')?.touched) {
               <small class="text-danger">First name is required</small>
             }
@@ -42,7 +42,7 @@
           
           <div class="col-md-6 mb-3">
             <label class="form-label">Last Name (Nom)</label>
-            <input type="text" class="form-control" formControlName="nom" />
+            <input type="text" class="form-control" formControlName="nom" / aria-label=\"input\">
             @if (profileForm.get('nom')?.invalid && profileForm.get('nom')?.touched) {
               <small class="text-danger">Last name is required</small>
             }
@@ -50,13 +50,13 @@
           
           <div class="col-md-6 mb-3">
             <label class="form-label">Email</label>
-            <input type="email" class="form-control" formControlName="email" />
+            <input type="email" class="form-control" formControlName="email" / aria-label=\"input\">
             <small class="text-muted">Email cannot be changed.</small>
           </div>
           
           <div class="col-md-6 mb-3">
             <label class="form-label">Phone Number</label>
-            <input type="text" class="form-control" formControlName="telephone" />
+            <input type="text" class="form-control" formControlName="telephone" / aria-label=\"input\">
           </div>
         </div>
         
@@ -78,7 +78,7 @@
         <div class="row">
           <div class="col-md-12 mb-3">
             <label class="form-label">Current Password</label>
-            <input type="password" class="form-control" formControlName="currentPassword" />
+            <input type="password" class="form-control" formControlName="currentPassword" / aria-label=\"input\">
             @if (passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched) {
               <small class="text-danger">Current password is required</small>
             }
@@ -86,7 +86,7 @@
           
           <div class="col-md-6 mb-3">
             <label class="form-label">New Password</label>
-            <input type="password" class="form-control" formControlName="newPassword" />
+            <input type="password" class="form-control" formControlName="newPassword" / aria-label=\"input\">
             @if (passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched) {
               <small class="text-danger">New password must be at least 6 characters</small>
             }
@@ -94,7 +94,7 @@
           
           <div class="col-md-6 mb-3">
             <label class="form-label">Confirm New Password</label>
-            <input type="password" class="form-control" formControlName="confirmPassword" />
+            <input type="password" class="form-control" formControlName="confirmPassword" / aria-label=\"input\">
             @if (passwordForm.hasError('mismatch') && passwordForm.get('confirmPassword')?.touched) {
               <small class="text-danger">Passwords do not match</small>
             }

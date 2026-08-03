@@ -1,6 +1,6 @@
 <ul class="navbar-nav">
   <li>
-    <a href="javascript:void(0)" class="full-screen" (click)="toggleFullscreen()">
+    <a href="javascript:void(0)" class="full-screen" (click)="toggleFullscreen()" tabindex="0" (keydown.enter)="null">
       <i class="feather" [ngClass]="screenFull ? 'icon-minimize' : 'icon-maximize'"></i>
     </a>
   </li>

@@ -27,12 +27,12 @@
             <div class="d-flex align-items-center gap-2">
               <div class="input-group">
                 <span class="input-group-text"><i class="feather icon-search"></i></span>
-                <input type="text" class="form-control" placeholder="Search user..." [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" />
+                <input type="text" class="form-control" placeholder="Search user..." [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" / aria-label=\"input\">
               </div>
             </div>
             <div>
-              <button type="button" class="btn btn-primary me-2" (click)="openAdd(addTpl)"><i class="feather icon-plus"></i> Add user</button>
-              <button type="button" class="btn btn-outline-secondary" (click)="reload()" [disabled]="loading()"><i class="feather icon-refresh-cw"></i></button>
+              <button type="button" class="btn btn-primary me-2" (click)="openAdd(addTpl)" tabindex="0" (keydown.enter)="null"><i class="feather icon-plus"></i> Add user</button>
+              <button type="button" class="btn btn-outline-secondary" (click)="reload()" [disabled]="loading()" tabindex="0" (keydown.enter)="null"><i class="feather icon-refresh-cw"></i></button>
             </div>
           </div>
 
@@ -69,9 +69,9 @@
                       <td>{{ u.telephone || '—' }}</td>
                       <td>{{ u.createdAt | date:'shortDate' }}</td>
                       <td class="text-end">
-                        <button type="button" class="btn btn-icon btn-sm btn-outline-info me-1" (click)="openShow(u, showTpl)" title="Show Info"><i class="feather icon-eye"></i></button>
-                        <button type="button" class="btn btn-icon btn-sm btn-outline-primary me-1" (click)="openEdit(u, editTpl)" title="Edit"><i class="feather icon-edit"></i></button>
-                        <button type="button" class="btn btn-icon btn-sm btn-outline-danger" (click)="deleteUser(u)" title="Delete"><i class="feather icon-trash-2"></i></button>
+                        <button type="button" class="btn btn-icon btn-sm btn-outline-info me-1" (click)="openShow(u, showTpl)" title="Show Info" tabindex="0" (keydown.enter)="null"><i class="feather icon-eye"></i></button>
+                        <button type="button" class="btn btn-icon btn-sm btn-outline-primary me-1" (click)="openEdit(u, editTpl)" title="Edit" tabindex="0" (keydown.enter)="null"><i class="feather icon-edit"></i></button>
+                        <button type="button" class="btn btn-icon btn-sm btn-outline-danger" (click)="deleteUser(u)" title="Delete" tabindex="0" (keydown.enter)="null"><i class="feather icon-trash-2"></i></button>
                       </td>
                     </tr>
                   }
@@ -88,25 +88,25 @@
 <ng-template #addTpl let-modal>
   <div class="modal-header">
     <h5 class="modal-title">Add user</h5>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()" tabindex="0" (keydown.enter)="null"></button>
   </div>
   <div class="modal-body">
     <div class="row g-2">
       <div class="col-md-6">
         <label class="form-label">Prenom</label>
-        <input class="form-control" [(ngModel)]="addModel.prenom" name="addPrenom" />
+        <input class="form-control" [(ngModel)]="addModel.prenom" name="addPrenom" / aria-label=\"input\">
       </div>
       <div class="col-md-6">
         <label class="form-label">Nom</label>
-        <input class="form-control" [(ngModel)]="addModel.nom" name="addNom" />
+        <input class="form-control" [(ngModel)]="addModel.nom" name="addNom" / aria-label=\"input\">
       </div>
       <div class="col-md-6">
         <label class="form-label">Email</label>
-        <input class="form-control" type="email" [(ngModel)]="addModel.email" name="addEmail" />
+        <input class="form-control" type="email" [(ngModel)]="addModel.email" name="addEmail" / aria-label=\"input\">
       </div>
       <div class="col-md-6">
         <label class="form-label">Password</label>
-        <input class="form-control" type="password" [(ngModel)]="addModel.password" name="addPassword" />
+        <input class="form-control" type="password" [(ngModel)]="addModel.password" name="addPassword" / aria-label=\"input\">
       </div>
       <div class="col-md-6">
         <label class="form-label">Role</label>
@@ -118,20 +118,20 @@
       </div>
       <div class="col-md-6">
         <label class="form-label">Telephone</label>
-        <input class="form-control" [(ngModel)]="addModel.telephone" name="addTel" />
+        <input class="form-control" [(ngModel)]="addModel.telephone" name="addTel" / aria-label=\"input\">
       </div>
     </div>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
-    <button type="button" class="btn btn-primary" (click)="submitAdd()">Create</button>
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()" tabindex="0" (keydown.enter)="null">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="submitAdd()" tabindex="0" (keydown.enter)="null">Create</button>
   </div>
 </ng-template>
 
 <ng-template #editTpl let-modal>
   <div class="modal-header">
     <h5 class="modal-title">Edit user</h5>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()" tabindex="0" (keydown.enter)="null"></button>
   </div>
   @if (editModel) {
     @let m = editModel;
@@ -145,42 +145,42 @@
             alt=""
           />
           <div class="mt-2">
-            <input type="file" accept="image/*" class="form-control form-control-sm" (change)="onEditPhotoSelected($event)" />
+            <input type="file" accept="image/*" class="form-control form-control-sm" (change)="onEditPhotoSelected($event)" / aria-label=\"input\">
           </div>
         </div>
         <div class="col-md-6">
           <label class="form-label">Prenom</label>
-          <input class="form-control" [(ngModel)]="m.prenom" name="edPrenom" />
+          <input class="form-control" [(ngModel)]="m.prenom" name="edPrenom" / aria-label=\"input\">
         </div>
         <div class="col-md-6">
           <label class="form-label">Nom</label>
-          <input class="form-control" [(ngModel)]="m.nom" name="edNom" />
+          <input class="form-control" [(ngModel)]="m.nom" name="edNom" / aria-label=\"input\">
         </div>
         <div class="col-12">
           <label class="form-label">Email (read-only)</label>
-          <input class="form-control" [ngModel]="m.email" name="edEmail" disabled />
+          <input class="form-control" [ngModel]="m.email" name="edEmail" disabled / aria-label=\"input\">
         </div>
         <div class="col-md-6">
           <label class="form-label">Telephone</label>
-          <input class="form-control" [(ngModel)]="m.telephone" name="edTel" />
+          <input class="form-control" [(ngModel)]="m.telephone" name="edTel" / aria-label=\"input\">
         </div>
         <div class="col-md-6">
           <label class="form-label">Role (read-only)</label>
-          <input class="form-control" [ngModel]="m.role" name="edRole" disabled />
+          <input class="form-control" [ngModel]="m.role" name="edRole" disabled / aria-label=\"input\">
         </div>
       </div>
     </div>
   }
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
-    <button type="button" class="btn btn-primary" (click)="submitEdit()">Save</button>
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()" tabindex="0" (keydown.enter)="null">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="submitEdit()" tabindex="0" (keydown.enter)="null">Save</button>
   </div>
 </ng-template>
 
 <ng-template #showTpl let-modal>
   <div class="modal-header">
     <h5 class="modal-title">User Information</h5>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()" tabindex="0" (keydown.enter)="null"></button>
   </div>
   @if (showModel) {
     @let s = showModel;
@@ -212,6 +212,6 @@
     </div>
   }
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Close</button>
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()" tabindex="0" (keydown.enter)="null">Close</button>
   </div>
 </ng-template>

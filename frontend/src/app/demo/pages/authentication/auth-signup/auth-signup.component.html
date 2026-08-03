@@ -6,15 +6,15 @@
       <span>{{ currentLang() }}</span>
     </button>
     <div class="dropdown-menu dropdown-menu-end shadow border-0" ngbDropdownMenu>
-      <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')" style="width: 100%; border: none; background: transparent;">
+      <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('en')" style="width: 100%; border: none; background: transparent;" tabindex="0" (keydown.enter)="null">
         <span>en</span>
         <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'en'"></i>
       </button>
-      <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')" style="width: 100%; border: none; background: transparent;">
+      <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('fr')" style="width: 100%; border: none; background: transparent;" tabindex="0" (keydown.enter)="null">
         <span>fr</span>
         <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'fr'"></i>
       </button>
-      <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')" style="width: 100%; border: none; background: transparent;">
+      <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="setLang('ar')" style="width: 100%; border: none; background: transparent;" tabindex="0" (keydown.enter)="null">
         <span>ar</span>
         <i class="feather icon-check text-primary ms-2" *ngIf="currentLang() === 'ar'"></i>
       </button>
@@ -44,7 +44,7 @@
                 class="form-control"
                 placeholder="{{ 'FIRST_NAME' | translate }}"
                 [field]="registerForm.prenom"
-                [class.is-invalid]="submitted() && registerForm.prenom().errors().length > 0"
+                [class.is-invalid]="submitted() && registerForm.prenom().errors().length  aria-label=\"input\"> 0"
               />
               @if (submitted() && registerForm.prenom().errors().length > 0) {
                 <div class="invalid-feedback">
@@ -61,7 +61,7 @@
                 class="form-control"
                 placeholder="{{ 'LAST_NAME' | translate }}"
                 [field]="registerForm.nom"
-                [class.is-invalid]="submitted() && registerForm.nom().errors().length > 0"
+                [class.is-invalid]="submitted() && registerForm.nom().errors().length  aria-label=\"input\"> 0"
               />
               @if (submitted() && registerForm.nom().errors().length > 0) {
                 <div class="invalid-feedback">
@@ -78,7 +78,7 @@
                 class="form-control"
                 placeholder="{{ 'PHONE_NUMBER' | translate }}"
                 [field]="registerForm.telephone"
-                [class.is-invalid]="submitted() && registerForm.telephone().errors().length > 0"
+                [class.is-invalid]="submitted() && registerForm.telephone().errors().length  aria-label=\"input\"> 0"
               />
               @if (submitted() && registerForm.telephone().errors().length > 0) {
                 <div class="invalid-feedback">
@@ -96,7 +96,7 @@
                 [class.is-invalid]="submitted() && registerForm.email().invalid()"
                 placeholder="{{ 'EMAIL_ADDRESS' | translate }}"
                 [field]="registerForm.email"
-              />
+              / aria-label=\"input\">
               @if (submitted() && registerForm.email().invalid()) {
                 <div class="invalid-feedback">
                   @for (error of registerForm.email().errors(); track error.kind) {
@@ -112,7 +112,7 @@
                   id="password"
                   class="form-control"
                   [field]="registerForm.password"
-                  [class.is-invalid]="submitted() && registerForm.password().errors().length > 0"
+                  [class.is-invalid]="submitted() && registerForm.password().errors().length  aria-label=\"input\"> 0"
                   placeholder="{{ 'PASSWORD_MIN_8' | translate }}"
                 />
               } @else {
@@ -121,7 +121,7 @@
                   id="password"
                   class="form-control"
                   [field]="registerForm.password"
-                  [class.is-invalid]="submitted() && registerForm.password().errors().length > 0"
+                  [class.is-invalid]="submitted() && registerForm.password().errors().length  aria-label=\"input\"> 0"
                   placeholder="{{ 'PASSWORD_MIN_8' | translate }}"
                 />
               }
@@ -129,7 +129,7 @@
                 [ngClass]="showPassword() ? 'feather icon-eye' : 'feather icon-eye-off'"
                 id="togglePassword"
                 (click)="togglePasswordVisibility()"
-              ></i>
+               tabindex="0" (keydown.enter)="null"></i>
               @if (submitted() && registerForm.password().errors().length > 0) {
                 <div class="invalid-feedback">
                   @for (error of registerForm.password().errors(); track error.kind) {
@@ -147,7 +147,7 @@
                   class="role-card"
                   [class.active]="selectedRole() === 'LOCATAIRE'"
                   (click)="selectRole('LOCATAIRE')"
-                >
+                 tabindex="0" (keydown.enter)="null">
                   <i class="feather icon-search"></i>
                   <span>{{ 'LOCATAIRE' | translate }}</span>
                 </div>
@@ -155,7 +155,7 @@
                   class="role-card"
                   [class.active]="selectedRole() === 'BAILLEUR'"
                   (click)="selectRole('BAILLEUR')"
-                >
+                 tabindex="0" (keydown.enter)="null">
                   <i class="feather icon-home"></i>
                   <span>{{ 'BAILLEUR' | translate }}</span>
                 </div>
