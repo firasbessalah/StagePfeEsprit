@@ -1,4 +1,4 @@
-module.exports = function (config) {
+module.exports = function karmaConfig(config) {
   config.set({
     basePath: '',
     frameworks: ['jasmine', '@angular-devkit/build-angular'],
@@ -20,7 +20,7 @@ module.exports = function (config) {
       suppressAll: true // removes the duplicated traces
     },
     coverageReporter: {
-      dir: require('path').join(__dirname, './coverage'),
+      dir: require('node:path').join(__dirname, './coverage'),
       subdir: '.',
       reporters: [
         { type: 'html' },

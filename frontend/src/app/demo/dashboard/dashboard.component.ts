@@ -113,18 +113,22 @@ export class DashboardComponent implements OnInit {
 
   // ─── Chart Builders ───────────────────────────────────
 
-  private buildMonthlyUsersChart(data: MonthlyCount[]): void {
-    this.monthlyUsersChart.set({
-      series: [{ name: this.translationService.translate('MONTHLY_NEW_USERS'), data: data.map(d => d.count) }],
+  private buildBarChartConfig(nameKey: string, data: MonthlyCount[], color: string): any {
+    return {
+      series: [{ name: this.translationService.translate(nameKey), data: data.map(d => d.count) }],
       chart: { type: 'bar', height: 300, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
       plotOptions: { bar: { borderRadius: 6, columnWidth: '55%' } },
       dataLabels: { enabled: false },
       xaxis: { categories: data.map(d => d.label), labels: { style: { colors: '#64748b' } } },
       yaxis: { labels: { style: { colors: '#64748b' } } },
-      colors: ['#0a1045'],
+      colors: [color],
       grid: { borderColor: '#e2e8f0', strokeDashArray: 4 },
       tooltip: { theme: 'light' }
-    });
+    };
+  }
+
+  private buildMonthlyUsersChart(data: MonthlyCount[]): void {
+    this.monthlyUsersChart.set(this.buildBarChartConfig('MONTHLY_NEW_USERS', data, '#0a1045'));
   }
 
   private buildPeakHoursChart(hours: number[]): void {
@@ -173,31 +177,11 @@ export class DashboardComponent implements OnInit {
   }
 
   private buildReservationsChart(data: MonthlyCount[]): void {
-    this.reservationsChart.set({
-      series: [{ name: this.translationService.translate('RESERVATIONS'), data: data.map(d => d.count) }],
-      chart: { type: 'bar', height: 300, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
-      plotOptions: { bar: { borderRadius: 6, columnWidth: '55%' } },
-      dataLabels: { enabled: false },
-      xaxis: { categories: data.map(d => d.label), labels: { style: { colors: '#64748b' } } },
-      yaxis: { labels: { style: { colors: '#64748b' } } },
-      colors: ['#f4b400'],
-      grid: { borderColor: '#e2e8f0', strokeDashArray: 4 },
-      tooltip: { theme: 'light' }
-    });
+    this.reservationsChart.set(this.buildBarChartConfig('RESERVATIONS', data, '#f4b400'));
   }
 
   private buildAnnoncesChart(data: MonthlyCount[]): void {
-    this.annoncesChart.set({
-      series: [{ name: this.translationService.translate('ANNONCES'), data: data.map(d => d.count) }],
-      chart: { type: 'bar', height: 300, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
-      plotOptions: { bar: { borderRadius: 6, columnWidth: '55%' } },
-      dataLabels: { enabled: false },
-      xaxis: { categories: data.map(d => d.label), labels: { style: { colors: '#64748b' } } },
-      yaxis: { labels: { style: { colors: '#64748b' } } },
-      colors: ['#0a1045'],
-      grid: { borderColor: '#e2e8f0', strokeDashArray: 4 },
-      tooltip: { theme: 'light' }
-    });
+    this.annoncesChart.set(this.buildBarChartConfig('ANNONCES', data, '#0a1045'));
   }
 
   private buildUsersWithReservationsChart(d: DashboardAnalytics): void {
