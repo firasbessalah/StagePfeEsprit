@@ -1,0 +1,8 @@
+:host ::ng-deep .lang-toggle {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+
+  &::after {
+    content: none !important;
+  }
+}

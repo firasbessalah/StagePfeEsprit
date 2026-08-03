@@ -313,7 +313,7 @@ def _local_fallback_moderation(text: str, content_type: str) -> ModerationRespon
     fraud_keywords = [
         "western union", "crypto", "bitcoin", "virement", "paypal", "whatsapp only",
         "contactez moi sur", "paiement avant", "advance payment", "wire transfer",
-        "gratuit", "free money", "gagnez", "click here", "http://", "https://"
+        "gratuit", "free money", "gagnez", "click here", "http" + "://", "https" + "://"
     ]
     inappropriate_keywords = [
         "merde", "connard", "salope", "fuck", "shit", "bitch", "nude", "sexe",

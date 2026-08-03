@@ -31,6 +31,8 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # angular.json: "outputPath": "dist"  →  files land in /app/dist/ (flat, no sub-folder)
 COPY --from=builder /app/dist /usr/share/nginx/html
 
+USER nginx
+
 EXPOSE 80
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \

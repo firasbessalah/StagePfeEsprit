@@ -1069,7 +1069,7 @@
       &:focus,
       &:hover {
         > a {
-          color: #1dc4e9;
+          color: $menu-active-color;
         }
       }
 
@@ -1079,7 +1079,7 @@
         &:hover {
           > a {
             &:before {
-              background: #1dc4e9;
+              background: $menu-active-color;
             }
           }
         }
@@ -1091,7 +1091,7 @@
       &.pcoded-trigger {
         &:after {
           content: '';
-          background-color: #1dc4e9;
+          background-color: $menu-active-color;
           z-index: 1027;
           position: absolute;
           left: 0;
@@ -1101,7 +1101,7 @@
         }
 
         > a {
-          background: darken($menu-dark-background, 6%);
+          background: rgba(244, 180, 0, 0.15);
           color: $white;
         }
       }

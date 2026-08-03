@@ -90,6 +90,26 @@ services:
     networks:
       - pfe_network
 
+  # ── SonarQube (self-hosted, Community Build) ─────────────────────────────
+  # Fully optional — start independently with: docker compose up -d sonarqube
+  # Uses the embedded H2 database (fine for local / single-user analysis).
+  sonarqube:
+    image: sonarqube:community
+    container_name: pfe_sonarqube
+    restart: unless-stopped
+    environment:
+      # Recommended JVM heap for small projects (default is 512m)
+      SONAR_CE_JAVAOPTS: "-Xmx512m -Xms128m"
+      SONAR_WEB_JAVAOPTS: "-Xmx512m -Xms128m"
+    ports:
+      - "9000:9000"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_logs:/opt/sonarqube/logs
+      - sonarqube_extensions:/opt/sonarqube/extensions
+    networks:
+      - pfe_network
+
 # =============================================================================
 # Volumes
 # =============================================================================
@@ -97,6 +117,12 @@ volumes:
   postgres_data:
     driver: local
   ai_models:
+    driver: local
+  sonarqube_data:
+    driver: local
+  sonarqube_logs:
+    driver: local
+  sonarqube_extensions:
     driver: local
 
 # =============================================================================

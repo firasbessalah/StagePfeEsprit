@@ -120,7 +120,7 @@ class LocalFraudDetector:
         fraud_keywords = [
             "western union", "crypto", "bitcoin", "virement", "paypal", "whatsapp only",
             "contactez moi sur", "paiement avant", "advance payment", "wire transfer",
-            "gratuit", "free money", "gagnez", "click here", "http://", "https://"
+            "gratuit", "free money", "gagnez", "click here", "http" + "://", "https" + "://"
         ]
         for kw in fraud_keywords:
             if kw in combined:

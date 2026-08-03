@@ -119,11 +119,11 @@ export class DashboardComponent implements OnInit {
       chart: { type: 'bar', height: 300, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
       plotOptions: { bar: { borderRadius: 6, columnWidth: '55%' } },
       dataLabels: { enabled: false },
-      xaxis: { categories: data.map(d => d.label), labels: { style: { colors: '#8899a6' } } },
-      yaxis: { labels: { style: { colors: '#8899a6' } } },
-      colors: ['#FFD700'],
-      grid: { borderColor: '#1e2d3d', strokeDashArray: 4 },
-      tooltip: { theme: 'dark' }
+      xaxis: { categories: data.map(d => d.label), labels: { style: { colors: '#64748b' } } },
+      yaxis: { labels: { style: { colors: '#64748b' } } },
+      colors: ['#0a1045'],
+      grid: { borderColor: '#e2e8f0', strokeDashArray: 4 },
+      tooltip: { theme: 'light' }
     });
   }
 
@@ -134,11 +134,11 @@ export class DashboardComponent implements OnInit {
       chart: { type: 'bar', height: 300, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
       plotOptions: { bar: { borderRadius: 4, columnWidth: '65%' } },
       dataLabels: { enabled: false },
-      xaxis: { categories: labels, labels: { style: { colors: '#8899a6', fontSize: '10px' }, rotate: -45 } },
-      yaxis: { labels: { style: { colors: '#8899a6' } } },
-      colors: ['#4fc3f7'],
-      grid: { borderColor: '#1e2d3d', strokeDashArray: 4 },
-      tooltip: { theme: 'dark' }
+      xaxis: { categories: labels, labels: { style: { colors: '#64748b', fontSize: '10px' }, rotate: -45 } },
+      yaxis: { labels: { style: { colors: '#64748b' } } },
+      colors: ['#f4b400'],
+      grid: { borderColor: '#e2e8f0', strokeDashArray: 4 },
+      tooltip: { theme: 'light' }
     });
   }
 
@@ -162,13 +162,13 @@ export class DashboardComponent implements OnInit {
       series: [{ name: this.translationService.translate('ACTIVE_USERS'), data: values }],
       chart: { type: 'area', height: 300, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
       dataLabels: { enabled: false },
-      stroke: { curve: 'smooth', width: 2 },
-      xaxis: { categories: labels, labels: { style: { colors: '#8899a6', fontSize: '10px' }, rotate: -45 } },
-      yaxis: { labels: { style: { colors: '#8899a6' } } },
-      colors: ['#66bb6a'],
-      fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.45, opacityTo: 0.05 } },
-      grid: { borderColor: '#1e2d3d', strokeDashArray: 4 },
-      tooltip: { theme: 'dark' }
+      stroke: { curve: 'smooth', width: 2.5 },
+      xaxis: { categories: labels, labels: { style: { colors: '#64748b', fontSize: '10px' }, rotate: -45 } },
+      yaxis: { labels: { style: { colors: '#64748b' } } },
+      colors: ['#0a1045'],
+      fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.35, opacityTo: 0.05 } },
+      grid: { borderColor: '#e2e8f0', strokeDashArray: 4 },
+      tooltip: { theme: 'light' }
     });
   }
 
@@ -178,11 +178,11 @@ export class DashboardComponent implements OnInit {
       chart: { type: 'bar', height: 300, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
       plotOptions: { bar: { borderRadius: 6, columnWidth: '55%' } },
       dataLabels: { enabled: false },
-      xaxis: { categories: data.map(d => d.label), labels: { style: { colors: '#8899a6' } } },
-      yaxis: { labels: { style: { colors: '#8899a6' } } },
-      colors: ['#ef5350'],
-      grid: { borderColor: '#1e2d3d', strokeDashArray: 4 },
-      tooltip: { theme: 'dark' }
+      xaxis: { categories: data.map(d => d.label), labels: { style: { colors: '#64748b' } } },
+      yaxis: { labels: { style: { colors: '#64748b' } } },
+      colors: ['#f4b400'],
+      grid: { borderColor: '#e2e8f0', strokeDashArray: 4 },
+      tooltip: { theme: 'light' }
     });
   }
 
@@ -192,11 +192,11 @@ export class DashboardComponent implements OnInit {
       chart: { type: 'bar', height: 300, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
       plotOptions: { bar: { borderRadius: 6, columnWidth: '55%' } },
       dataLabels: { enabled: false },
-      xaxis: { categories: data.map(d => d.label), labels: { style: { colors: '#8899a6' } } },
-      yaxis: { labels: { style: { colors: '#8899a6' } } },
-      colors: ['#ab47bc'],
-      grid: { borderColor: '#1e2d3d', strokeDashArray: 4 },
-      tooltip: { theme: 'dark' }
+      xaxis: { categories: data.map(d => d.label), labels: { style: { colors: '#64748b' } } },
+      yaxis: { labels: { style: { colors: '#64748b' } } },
+      colors: ['#0a1045'],
+      grid: { borderColor: '#e2e8f0', strokeDashArray: 4 },
+      tooltip: { theme: 'light' }
     });
   }
 
@@ -210,8 +210,8 @@ export class DashboardComponent implements OnInit {
         this.translationService.translate('WITH_RESERVATIONS'),
         this.translationService.translate('WITHOUT_RESERVATIONS')
       ],
-      colors: ['#FFD700', '#1e2d3d'],
-      legend: { position: 'bottom', labels: { colors: '#8899a6' } },
+      colors: ['#0a1045', '#f4b400'],
+      legend: { position: 'bottom', labels: { colors: '#64748b' } },
       dataLabels: { enabled: true, style: { fontSize: '14px' } },
       plotOptions: {
         pie: {
@@ -219,12 +219,12 @@ export class DashboardComponent implements OnInit {
             size: '65%',
             labels: {
               show: true,
-              total: { show: true, label: 'Total', color: '#8899a6' }
+              total: { show: true, label: 'Total', color: '#64748b' }
             }
           }
         }
       },
-      tooltip: { theme: 'dark' }
+      tooltip: { theme: 'light' }
     });
   }
 
@@ -243,13 +243,13 @@ export class DashboardComponent implements OnInit {
           this.translationService.translate('RESERVATIONS'),
           this.translationService.translate('ANNONCES')
         ],
-        labels: { style: { colors: '#8899a6' } }
+        labels: { style: { colors: '#64748b' } }
       },
-      yaxis: { labels: { style: { colors: '#8899a6' } } },
-      colors: ['#546e7a', '#FFD700'],
-      grid: { borderColor: '#1e2d3d', strokeDashArray: 4 },
-      legend: { position: 'top', labels: { colors: '#8899a6' } },
-      tooltip: { theme: 'dark' }
+      yaxis: { labels: { style: { colors: '#64748b' } } },
+      colors: ['#0a1045', '#f4b400'],
+      grid: { borderColor: '#e2e8f0', strokeDashArray: 4 },
+      legend: { position: 'top', labels: { colors: '#64748b' } },
+      tooltip: { theme: 'light' }
     });
   }
 
@@ -266,17 +266,17 @@ export class DashboardComponent implements OnInit {
         radialBar: {
           hollow: { size: '30%' },
           dataLabels: {
-            name: { fontSize: '14px', color: '#8899a6' },
-            value: { fontSize: '16px', color: '#ccc', formatter: (val: number) => `${val}%` },
-            total: { show: true, label: 'MAU', color: '#8899a6',
+            name: { fontSize: '14px', color: '#64748b' },
+            value: { fontSize: '16px', color: '#0f172a', formatter: (val: number) => `${val}%` },
+            total: { show: true, label: 'MAU', color: '#64748b',
               formatter: () => String(d.activeUsersMonth) }
           },
-          track: { background: '#1e2d3d' }
+          track: { background: '#f1f5f9' }
         }
       },
       labels: ['DAU', 'WAU', 'MAU'],
-      colors: ['#4fc3f7', '#FFD700', '#66bb6a'],
-      legend: { show: true, position: 'bottom', labels: { colors: '#8899a6' } }
+      colors: ['#0a1045', '#f4b400', '#3b82f6'],
+      legend: { show: true, position: 'bottom', labels: { colors: '#64748b' } }
     });
   }
 
@@ -298,10 +298,10 @@ export class DashboardComponent implements OnInit {
       chart: { type: 'donut', height: 220, background: 'transparent' },
       labels: ['Positif', 'Négatif', 'Neutre'],
       colors: ['#22c55e', '#ef4444', '#94a3b8'],
-      legend: { position: 'bottom', labels: { colors: '#8899a6' } },
+      legend: { position: 'bottom', labels: { colors: '#64748b' } },
       dataLabels: { enabled: true, style: { fontSize: '12px' } },
       plotOptions: { pie: { donut: { size: '65%' } } },
-      tooltip: { theme: 'dark' }
+      tooltip: { theme: 'light' }
     });
   }
 
