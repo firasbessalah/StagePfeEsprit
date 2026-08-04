@@ -59,7 +59,7 @@ public class AnnonceService {
         int userAnnonceCount = (int) annonceRepository.countByUserId(userId);
         Integer accountAgeDays = null;
         if (user.getCreatedAt() != null) {
-            accountAgeDays = (int) java.time.temporal.ChronoUnit.DAYS.between(user.getCreatedAt(), java.time.LocalDateTime.now());
+            accountAgeDays = (int) java.time.temporal.ChronoUnit.DAYS.between(user.getCreatedAt().toLocalDate(), java.time.LocalDate.now());
         }
         com.example.pfeporject.dto.ModerationResultDTO modResult = aiModerationService.moderateAnnonce(
                 dto.getTitre(), dto.getDescription(), dto.getPrix() != null ? dto.getPrix().doubleValue() : 0.0, 
@@ -169,7 +169,7 @@ public class AnnonceService {
         int userAnnonceCount = (int) annonceRepository.countByUserId(annonce.getUser().getId());
         Integer accountAgeDays = null;
         if (annonce.getUser().getCreatedAt() != null) {
-            accountAgeDays = (int) java.time.temporal.ChronoUnit.DAYS.between(annonce.getUser().getCreatedAt(), java.time.LocalDateTime.now());
+            accountAgeDays = (int) java.time.temporal.ChronoUnit.DAYS.between(annonce.getUser().getCreatedAt().toLocalDate(), java.time.LocalDate.now());
         }
         com.example.pfeporject.dto.ModerationResultDTO modResult = aiModerationService.moderateAnnonce(
                 dto.getTitre(), dto.getDescription(), dto.getPrix() != null ? dto.getPrix().doubleValue() : 0.0, 

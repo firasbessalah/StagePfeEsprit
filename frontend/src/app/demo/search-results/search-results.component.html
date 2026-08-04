@@ -199,7 +199,7 @@
             <div class="col-md-3">
               <label class="form-label fw-bold mb-1"><i class="feather icon-home me-1 text-warning"></i> Catégorie:</label>
               <div class="d-flex gap-1">
-                <select class="form-select" [ngModel]="selectedCategorie()" (ngModelChange)="selectedCategorie.set($event); fetchResults()" name="selectedCategorie">
+                <select class="form-select" [ngModel]="selectedCategorie()" (ngModelChange)="selectedCategorie.set($event); fetchResults()" name="selectedCategorie" aria-label=\"select\">
                   <option value="">Toutes</option>
                   <option value="ETUDIANT">Logements Étudiants</option>
                   <option value="VACANCES">Vacances</option>

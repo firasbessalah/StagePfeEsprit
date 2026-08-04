@@ -110,7 +110,7 @@
       </div>
       <div class="col-md-6">
         <label class="form-label">Role</label>
-        <select class="form-select" [(ngModel)]="addModel.role" name="addRole">
+        <select class="form-select" [(ngModel)]="addModel.role" name="addRole" aria-label=\"select\">
           @for (r of roles; track r) {
             <option [ngValue]="r">{{ r }}</option>
           }

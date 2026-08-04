@@ -211,7 +211,7 @@
         </div>
         <div class="col-md-12">
           <label class="form-label">Description</label>
-          <textarea class="form-control" [(ngModel)]="m.description" name="edDesc"></textarea>
+          <textarea class="form-control" [(ngModel)]="m.description" name="edDesc" aria-label=\"textarea\"></textarea>
         </div>
         <div class="col-md-6">
           <label class="form-label">Prix</label>
@@ -339,7 +339,7 @@
       @if (isAdmin()) {
         <div class="col-md-12">
           <label class="form-label">Auteur (Utilisateur)</label>
-          <select class="form-select" [(ngModel)]="selectedUserId">
+          <select class="form-select" [(ngModel)]="selectedUserId" aria-label=\"select\">
             @for (u of usersList(); track u.id) {
               <option [ngValue]="u.id">{{ u.prenom }} {{ u.nom }} ({{ u.email }})</option>
             }
@@ -352,7 +352,7 @@
       </div>
       <div class="col-md-12">
         <label class="form-label">Description</label>
-        <textarea class="form-control" [(ngModel)]="addModel.description"></textarea>
+        <textarea class="form-control" [(ngModel)]="addModel.description" aria-label=\"textarea\"></textarea>
       </div>
       <div class="col-md-6">
         <label class="form-label">Prix</label>
