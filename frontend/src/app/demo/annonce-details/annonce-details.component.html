@@ -241,11 +241,11 @@
                 <div class="mb-3">
                   <label class="form-label text-muted small d-block mb-1">{{ 'RATING' | translate }}</label>
                   <div class="d-flex gap-2" style="font-size: 1.5rem; cursor: pointer;">
-                    <i class="feather" [class.icon-star-on]="selectedNote() >= 1" [class.icon-star]="selectedNote() < 1" (click)="selectedNote.set(1)" style="color: #febb02;"></i>
-                    <i class="feather" [class.icon-star-on]="selectedNote() >= 2" [class.icon-star]="selectedNote() < 2" (click)="selectedNote.set(2)" style="color: #febb02;"></i>
-                    <i class="feather" [class.icon-star-on]="selectedNote() >= 3" [class.icon-star]="selectedNote() < 3" (click)="selectedNote.set(3)" style="color: #febb02;"></i>
-                    <i class="feather" [class.icon-star-on]="selectedNote() >= 4" [class.icon-star]="selectedNote() < 4" (click)="selectedNote.set(4)" style="color: #febb02;"></i>
-                    <i class="feather" [class.icon-star-on]="selectedNote() >= 5" [class.icon-star]="selectedNote() < 5" (click)="selectedNote.set(5)" style="color: #febb02;"></i>
+                    <i class="feather" [class.icon-star-on]="selectedNote() >= 1" [class.icon-star]="selectedNote() < 1" (click)="selectedNote.set(1)" tabindex="0" (keydown.enter)="selectedNote.set(1)" style="color: #febb02;"></i>
+                    <i class="feather" [class.icon-star-on]="selectedNote() >= 2" [class.icon-star]="selectedNote() < 2" (click)="selectedNote.set(2)" tabindex="0" (keydown.enter)="selectedNote.set(2)" style="color: #febb02;"></i>
+                    <i class="feather" [class.icon-star-on]="selectedNote() >= 3" [class.icon-star]="selectedNote() < 3" (click)="selectedNote.set(3)" tabindex="0" (keydown.enter)="selectedNote.set(3)" style="color: #febb02;"></i>
+                    <i class="feather" [class.icon-star-on]="selectedNote() >= 4" [class.icon-star]="selectedNote() < 4" (click)="selectedNote.set(4)" tabindex="0" (keydown.enter)="selectedNote.set(4)" style="color: #febb02;"></i>
+                    <i class="feather" [class.icon-star-on]="selectedNote() >= 5" [class.icon-star]="selectedNote() < 5" (click)="selectedNote.set(5)" tabindex="0" (keydown.enter)="selectedNote.set(5)" style="color: #febb02;"></i>
                   </div>
                 </div>
 
