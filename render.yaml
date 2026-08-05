@@ -44,10 +44,7 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: AI_SERVICE_URL
-        fromService:
-          type: web
-          name: pfe-ai-service
-          property: url
+        value: http://pfe-ai-service:8000
       - key: MAIL_USERNAME
         sync: false
       - key: MAIL_PASSWORD
