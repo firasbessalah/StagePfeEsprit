@@ -86,7 +86,11 @@ export class AuthSigninComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const emailInvalid = this.loginForm.email().invalid();
     const passwordInvalid = this.loginForm.password().errors().length > 0;
-    if (emailInvalid || passwordInvalid) {
+    if (emailInvalid || passwordInvalid || !this.captchaResolved()) {
+      if (!this.captchaResolved()) {
+        this.captchaInvalid.set(true);
+        this.error.set('Please verify you are not a robot.');
+      }
       this.cd.detectChanges();
       return;
     }
@@ -226,12 +230,8 @@ export class AuthSigninComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private handleCaptchaError(): void {
     this.captchaToken = '';
-    this.captchaResolved.set(true);
-    this.captchaInvalid.set(false);
-    const container = document.getElementById('recaptcha-container');
-    if (container) {
-      container.style.display = 'none';
-    }
+    this.captchaResolved.set(false);
+    this.captchaInvalid.set(true);
     this.cd.detectChanges();
   }
 
