@@ -29,8 +29,18 @@ services:
     dockerContext: ./Backend
     plan: free
     envVars:
-      - key: SPRING_DATASOURCE_URL
-        value: jdbc:postgresql://pfe-db:5432/pfe
+      - key: DB_HOST
+        fromDatabase:
+          name: pfe-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: pfe-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: pfe-db
+          property: database
       - key: SPRING_DATASOURCE_USERNAME
         fromDatabase:
           name: pfe-db
