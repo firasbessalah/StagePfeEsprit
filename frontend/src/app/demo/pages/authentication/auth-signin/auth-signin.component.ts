@@ -121,6 +121,10 @@ export class AuthSigninComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private loadRecaptcha(): void {
+    if (!environment.recaptchaSiteKey?.trim()) {
+      this.captchaResolved.set(true);
+      return;
+    }
     if (typeof grecaptcha === 'undefined') {
       const existing = document.querySelector('script[src*="google.com/recaptcha/api.js"]') as HTMLScriptElement | null;
       if (existing) {
@@ -224,6 +228,10 @@ export class AuthSigninComponent implements OnInit, AfterViewInit, OnDestroy {
     this.captchaToken = '';
     this.captchaResolved.set(true);
     this.captchaInvalid.set(false);
+    const container = document.getElementById('recaptcha-container');
+    if (container) {
+      container.style.display = 'none';
+    }
     this.cd.detectChanges();
   }
 
