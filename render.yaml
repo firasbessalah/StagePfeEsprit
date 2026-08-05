@@ -1,0 +1,64 @@
+# =============================================================================
+# Render Blueprint (render.yaml)
+# Full stack deployment: PostgreSQL + AI Service + Spring Boot + Angular
+# =============================================================================
+
+databases:
+  - name: pfe-db
+    databaseName: pfe
+    user: pfe_user
+    plan: free
+
+services:
+  # ── 1. AI Microservice (FastAPI) ──────────────────────────────────────────
+  - type: web
+    name: pfe-ai-service
+    runtime: docker
+    dockerfilePath: ./ai-sentiment/Dockerfile
+    dockerContext: ./ai-sentiment
+    plan: free
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+
+  # ── 2. Spring Boot Backend ──────────────────────────────────────────────────
+  - type: web
+    name: pfe-backend
+    runtime: docker
+    dockerfilePath: ./Backend/Dockerfile
+    dockerContext: ./Backend
+    plan: free
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: pfe-db
+          property: connectionString
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: pfe-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: pfe-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: AI_SERVICE_URL
+        fromService:
+          type: web
+          name: pfe-ai-service
+          property: url
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+
+  # ── 3. Angular Frontend (Nginx) ───────────────────────────────────────────
+  - type: web
+    name: pfe-frontend
+    runtime: docker
+    dockerfilePath: ./frontend/Dockerfile
+    dockerContext: ./frontend
+    plan: free
