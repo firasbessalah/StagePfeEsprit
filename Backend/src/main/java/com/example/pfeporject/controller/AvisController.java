@@ -13,7 +13,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/avis")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
 public class AvisController {
 
     private final AvisService avisService;
