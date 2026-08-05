@@ -27,7 +27,7 @@
             <div class="d-flex align-items-center gap-2">
               <div class="input-group">
                 <span class="input-group-text"><i class="feather icon-search"></i></span>
-                <input type="text" class="form-control" placeholder="Search user..." [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" / aria-label=\"input\">
+                <input type="text" class="form-control" placeholder="Search user..." [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" >
               </div>
             </div>
             <div>
@@ -94,23 +94,23 @@
     <div class="row g-2">
       <div class="col-md-6">
         <label class="form-label">Prenom</label>
-        <input class="form-control" [(ngModel)]="addModel.prenom" name="addPrenom" / aria-label=\"input\">
+        <input class="form-control" [(ngModel)]="addModel.prenom" name="addPrenom" >
       </div>
       <div class="col-md-6">
         <label class="form-label">Nom</label>
-        <input class="form-control" [(ngModel)]="addModel.nom" name="addNom" / aria-label=\"input\">
+        <input class="form-control" [(ngModel)]="addModel.nom" name="addNom" >
       </div>
       <div class="col-md-6">
         <label class="form-label">Email</label>
-        <input class="form-control" type="email" [(ngModel)]="addModel.email" name="addEmail" / aria-label=\"input\">
+        <input class="form-control" type="email" [(ngModel)]="addModel.email" name="addEmail" >
       </div>
       <div class="col-md-6">
         <label class="form-label">Password</label>
-        <input class="form-control" type="password" [(ngModel)]="addModel.password" name="addPassword" / aria-label=\"input\">
+        <input class="form-control" type="password" [(ngModel)]="addModel.password" name="addPassword" >
       </div>
       <div class="col-md-6">
         <label class="form-label">Role</label>
-        <select class="form-select" [(ngModel)]="addModel.role" name="addRole" aria-label=\"select\">
+        <select class="form-select" [(ngModel)]="addModel.role" name="addRole" >
           @for (r of roles; track r) {
             <option [ngValue]="r">{{ r }}</option>
           }
@@ -118,7 +118,7 @@
       </div>
       <div class="col-md-6">
         <label class="form-label">Telephone</label>
-        <input class="form-control" [(ngModel)]="addModel.telephone" name="addTel" / aria-label=\"input\">
+        <input class="form-control" [(ngModel)]="addModel.telephone" name="addTel" >
       </div>
     </div>
   </div>
@@ -145,28 +145,28 @@
             alt=""
           />
           <div class="mt-2">
-            <input type="file" accept="image/*" class="form-control form-control-sm" (change)="onEditPhotoSelected($event)" / aria-label=\"input\">
+            <input type="file" accept="image/*" class="form-control form-control-sm" (change)="onEditPhotoSelected($event)" >
           </div>
         </div>
         <div class="col-md-6">
           <label class="form-label">Prenom</label>
-          <input class="form-control" [(ngModel)]="m.prenom" name="edPrenom" / aria-label=\"input\">
+          <input class="form-control" [(ngModel)]="m.prenom" name="edPrenom" >
         </div>
         <div class="col-md-6">
           <label class="form-label">Nom</label>
-          <input class="form-control" [(ngModel)]="m.nom" name="edNom" / aria-label=\"input\">
+          <input class="form-control" [(ngModel)]="m.nom" name="edNom" >
         </div>
         <div class="col-12">
           <label class="form-label">Email (read-only)</label>
-          <input class="form-control" [ngModel]="m.email" name="edEmail" disabled / aria-label=\"input\">
+          <input class="form-control" [ngModel]="m.email" name="edEmail" disabled >
         </div>
         <div class="col-md-6">
           <label class="form-label">Telephone</label>
-          <input class="form-control" [(ngModel)]="m.telephone" name="edTel" / aria-label=\"input\">
+          <input class="form-control" [(ngModel)]="m.telephone" name="edTel" >
         </div>
         <div class="col-md-6">
           <label class="form-label">Role (read-only)</label>
-          <input class="form-control" [ngModel]="m.role" name="edRole" disabled / aria-label=\"input\">
+          <input class="form-control" [ngModel]="m.role" name="edRole" disabled >
         </div>
       </div>
     </div>

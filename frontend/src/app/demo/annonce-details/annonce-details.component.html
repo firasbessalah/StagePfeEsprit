@@ -257,7 +257,7 @@
                     rows="3" 
                     [placeholder]="'TYPE_MESSAGE' | translate"
                     [value]="reviewComment()"
-                    (input)="reviewComment.set($any($event.target).value)" aria-label=\"textarea\">
+                    (input)="reviewComment.set($any($event.target).value)" >
                   </textarea>
                 </div>
 
@@ -341,14 +341,14 @@
       <div class="row">
         <div class="col-md-6 mb-3">
           <label class="form-label text-muted small">Check-in Date</label>
-          <input type="date" class="form-control" formControlName="dateDebut" / aria-label=\"input\">
+          <input type="date" class="form-control" formControlName="dateDebut" >
           <small class="text-danger" *ngIf="reservationForm.get('dateDebut')?.invalid && reservationForm.get('dateDebut')?.touched">
             Check-in date is required
           </small>
         </div>
         <div class="col-md-6 mb-3">
           <label class="form-label text-muted small">Check-out Date</label>
-          <input type="date" class="form-control" formControlName="dateFin" / aria-label=\"input\">
+          <input type="date" class="form-control" formControlName="dateFin" >
           <small class="text-danger" *ngIf="reservationForm.get('dateFin')?.invalid && reservationForm.get('dateFin')?.touched">
             Check-out date is required
           </small>
@@ -356,7 +356,7 @@
       </div>
       <div class="mb-3">
         <label class="form-label text-muted small">Message to Admin (Optional)</label>
-        <textarea class="form-control" rows="3" formControlName="message" placeholder="Hello, I would like to reserve..." aria-label=\"textarea\"></textarea>
+        <textarea class="form-control" rows="3" formControlName="message" placeholder="Hello, I would like to reserve..." ></textarea>
       </div>
 
       <div class="bg-light p-3 rounded mb-3">

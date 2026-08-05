@@ -8,15 +8,15 @@
       <form class="results-search-bar" (ngSubmit)="onSearch()">
         <div class="search-field">
           <label>{{ 'WHERE_GOING' | translate }}</label>
-          <input type="text" [(ngModel)]="localisation" name="localisation" [placeholder]="'SEARCH_DESTINATIONS' | translate" aria-label=\"input\">
+          <input type="text" [(ngModel)]="localisation" name="localisation" [placeholder]="'SEARCH_DESTINATIONS' | translate" >
         </div>
         <div class="search-field">
           <label>{{ 'CHECK_IN' | translate }}</label>
-          <input type="date" [(ngModel)]="checkIn" name="checkIn" aria-label=\"input\">
+          <input type="date" [(ngModel)]="checkIn" name="checkIn" >
         </div>
         <div class="search-field">
           <label>{{ 'CHECK_OUT' | translate }}</label>
-          <input type="date" [(ngModel)]="checkOut" name="checkOut" aria-label=\"input\">
+          <input type="date" [(ngModel)]="checkOut" name="checkOut" >
         </div>
         <button type="submit" class="search-submit">
           <i class="feather icon-search"></i>
@@ -174,7 +174,7 @@
                 <span class="fw-bold"><i class="feather icon-sliders me-1 text-primary"></i> Budget Max:</span>
                 <span class="text-primary fw-bold">{{ maxPrice() }} TND</span>
               </label>
-              <input type="range" class="form-range" min="100" max="5000" step="50" [ngModel]="maxPrice()" (ngModelChange)="maxPrice.set($event); fetchResults()" name="maxPrice" aria-label=\"input\">
+              <input type="range" class="form-range" min="100" max="5000" step="50" [ngModel]="maxPrice()" (ngModelChange)="maxPrice.set($event); fetchResults()" name="maxPrice" >
             </div>
             
             <!-- Distance Slider -->
@@ -183,7 +183,7 @@
                 <span class="fw-bold"><i class="feather icon-map-pin me-1 text-success"></i> Distance Max:</span>
                 <span class="text-success fw-bold">{{ maxDistance() }} km</span>
               </label>
-              <input type="range" class="form-range" min="1" max="100" step="1" [ngModel]="maxDistance()" (ngModelChange)="maxDistance.set($event)" name="maxDistance" aria-label=\"input\">
+              <input type="range" class="form-range" min="1" max="100" step="1" [ngModel]="maxDistance()" (ngModelChange)="maxDistance.set($event)" name="maxDistance" >
             </div>
 
             <!-- Duration Slider -->
@@ -192,14 +192,14 @@
                 <span class="fw-bold"><i class="feather icon-clock me-1 text-info"></i> Durée Max:</span>
                 <span class="text-info fw-bold">{{ maxDuree() }} mois</span>
               </label>
-              <input type="range" class="form-range" min="1" max="12" step="1" [ngModel]="maxDuree()" (ngModelChange)="maxDuree.set($event); fetchResults()" name="maxDuree" aria-label=\"input\">
+              <input type="range" class="form-range" min="1" max="12" step="1" [ngModel]="maxDuree()" (ngModelChange)="maxDuree.set($event); fetchResults()" name="maxDuree" >
             </div>
 
             <!-- Category Selector -->
             <div class="col-md-3">
               <label class="form-label fw-bold mb-1"><i class="feather icon-home me-1 text-warning"></i> Catégorie:</label>
               <div class="d-flex gap-1">
-                <select class="form-select" [ngModel]="selectedCategorie()" (ngModelChange)="selectedCategorie.set($event); fetchResults()" name="selectedCategorie" aria-label=\"select\">
+                <select class="form-select" [ngModel]="selectedCategorie()" (ngModelChange)="selectedCategorie.set($event); fetchResults()" name="selectedCategorie" >
                   <option value="">Toutes</option>
                   <option value="ETUDIANT">Logements Étudiants</option>
                   <option value="VACANCES">Vacances</option>

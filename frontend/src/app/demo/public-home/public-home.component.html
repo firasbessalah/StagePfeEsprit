@@ -124,15 +124,15 @@
             <div class="search-expanded">
               <div class="search-field search-field--where">
                 <label>{{ 'WHERE_GOING' | translate }}</label>
-                <input type="text" [(ngModel)]="localisation" name="localisation" [placeholder]="'SEARCH_DESTINATIONS' | translate" aria-label=\"input\">
+                <input type="text" [(ngModel)]="localisation" name="localisation" [placeholder]="'SEARCH_DESTINATIONS' | translate" >
               </div>
               <div class="search-field search-field--checkin">
                 <label>{{ 'CHECK_IN' | translate }}</label>
-                <input type="date" [(ngModel)]="checkIn" name="checkIn" aria-label=\"input\">
+                <input type="date" [(ngModel)]="checkIn" name="checkIn" >
               </div>
               <div class="search-field search-field--checkout">
                 <label>{{ 'CHECK_OUT' | translate }}</label>
-                <input type="date" [(ngModel)]="checkOut" name="checkOut" aria-label=\"input\">
+                <input type="date" [(ngModel)]="checkOut" name="checkOut" >
               </div>
             </div>
             <button type="submit" class="search-submit" aria-label="{{ 'SEARCH' | translate }}">
@@ -151,7 +151,7 @@
                        name="aiQuery" 
                        class="form-control border-0 bg-transparent fs-5 text-dark w-100" 
                        placeholder="Ex: étudiant cherche chambre simple à Bizerte moins de 300 DT pour 3 mois..."
-                       style="outline: none; box-shadow: none;" aria-label=\"input\">
+                       style="outline: none; box-shadow: none;" >
               </div>
             </div>
             <button type="submit" class="search-submit search-submit--ai" aria-label="AI Search">

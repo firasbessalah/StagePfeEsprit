@@ -30,9 +30,7 @@ services:
     plan: free
     envVars:
       - key: SPRING_DATASOURCE_URL
-        fromDatabase:
-          name: pfe-db
-          property: connectionString
+        value: jdbc:postgresql://pfe-db:5432/pfe
       - key: SPRING_DATASOURCE_USERNAME
         fromDatabase:
           name: pfe-db

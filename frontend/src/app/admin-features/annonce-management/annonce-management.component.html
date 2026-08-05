@@ -113,7 +113,7 @@
             <div class="d-flex align-items-center gap-2">
               <div class="input-group">
                 <span class="input-group-text"><i class="feather icon-search"></i></span>
-                <input type="text" class="form-control" placeholder="Search annonce..." [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" / aria-label=\"input\">
+                <input type="text" class="form-control" placeholder="Search annonce..." [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" >
               </div>
             </div>
             <div>
@@ -207,15 +207,15 @@
       <div class="row g-2">
         <div class="col-md-12">
           <label class="form-label">Titre</label>
-          <input class="form-control" [(ngModel)]="m.titre" name="edTitre" / aria-label=\"input\">
+          <input class="form-control" [(ngModel)]="m.titre" name="edTitre" >
         </div>
         <div class="col-md-12">
           <label class="form-label">Description</label>
-          <textarea class="form-control" [(ngModel)]="m.description" name="edDesc" aria-label=\"textarea\"></textarea>
+          <textarea class="form-control" [(ngModel)]="m.description" name="edDesc" ></textarea>
         </div>
         <div class="col-md-6">
           <label class="form-label">Prix</label>
-          <input class="form-control" type="number" [(ngModel)]="m.prix" name="edPrix" / aria-label=\"input\">
+          <input class="form-control" type="number" [(ngModel)]="m.prix" name="edPrix" >
         </div>
         <div class="col-md-6 position-relative">
           <label class="form-label w-100 d-flex justify-content-between align-items-center">
@@ -224,7 +224,7 @@
               <i class="feather icon-map-pin"></i> Ma position
             </button>
           </label>
-          <input class="form-control" [(ngModel)]="m.localisation" name="edLoc" (ngModelChange)="onLocationInput($event)" autocomplete="off" / aria-label=\"input\">
+          <input class="form-control" [(ngModel)]="m.localisation" name="edLoc" (ngModelChange)="onLocationInput($event)" autocomplete="off" >
           @if (locationSearchResults().length > 0) {
             <div class="list-group position-absolute w-100 shadow mt-1" style="z-index: 1050; max-height: 200px; overflow-y: auto;">
               @for (loc of locationSearchResults(); track loc.place_id) {
@@ -237,7 +237,7 @@
         </div>
         <div class="col-md-12 mt-2">
           <label class="form-label">Images</label>
-          <input type="file" multiple class="form-control" accept="image/*" (change)="onImagePicked($event, m)" aria-label=\"input\">
+          <input type="file" multiple class="form-control" accept="image/*" (change)="onImagePicked($event, m)" >
           <div class="d-flex flex-wrap gap-2 mt-2">
             @for (img of m.images; track $index) {
               <div class="position-relative" style="width: 80px; height: 80px;">
@@ -339,7 +339,7 @@
       @if (isAdmin()) {
         <div class="col-md-12">
           <label class="form-label">Auteur (Utilisateur)</label>
-          <select class="form-select" [(ngModel)]="selectedUserId" aria-label=\"select\">
+          <select class="form-select" [(ngModel)]="selectedUserId" >
             @for (u of usersList(); track u.id) {
               <option [ngValue]="u.id">{{ u.prenom }} {{ u.nom }} ({{ u.email }})</option>
             }
@@ -348,15 +348,15 @@
       }
       <div class="col-md-12">
         <label class="form-label">Titre</label>
-        <input class="form-control" [(ngModel)]="addModel.titre" / aria-label=\"input\">
+        <input class="form-control" [(ngModel)]="addModel.titre" >
       </div>
       <div class="col-md-12">
         <label class="form-label">Description</label>
-        <textarea class="form-control" [(ngModel)]="addModel.description" aria-label=\"textarea\"></textarea>
+        <textarea class="form-control" [(ngModel)]="addModel.description" ></textarea>
       </div>
       <div class="col-md-6">
         <label class="form-label">Prix</label>
-        <input class="form-control" type="number" [(ngModel)]="addModel.prix" / aria-label=\"input\">
+        <input class="form-control" type="number" [(ngModel)]="addModel.prix" >
       </div>
       <div class="col-md-6 position-relative">
         <label class="form-label w-100 d-flex justify-content-between align-items-center">
@@ -365,7 +365,7 @@
             <i class="feather icon-map-pin"></i> Ma position
           </button>
         </label>
-        <input class="form-control" [(ngModel)]="addModel.localisation" (ngModelChange)="onLocationInput($event)" autocomplete="off" / aria-label=\"input\">
+        <input class="form-control" [(ngModel)]="addModel.localisation" (ngModelChange)="onLocationInput($event)" autocomplete="off" >
         @if (locationSearchResults().length > 0) {
           <div class="list-group position-absolute w-100 shadow mt-1" style="z-index: 1050; max-height: 200px; overflow-y: auto;">
             @for (loc of locationSearchResults(); track loc.place_id) {
@@ -386,7 +386,7 @@
       </div>
       <div class="col-md-12 mt-2">
         <label class="form-label">Images</label>
-        <input type="file" multiple class="form-control" accept="image/*" (change)="onImagePicked($event, addModel)" aria-label=\"input\">
+        <input type="file" multiple class="form-control" accept="image/*" (change)="onImagePicked($event, addModel)" >
         <div class="d-flex flex-wrap gap-2 mt-2">
           @for (img of addModel.images; track $index) {
             <div class="position-relative" style="width: 80px; height: 80px;">

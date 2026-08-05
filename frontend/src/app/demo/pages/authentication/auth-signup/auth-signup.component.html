@@ -44,7 +44,7 @@
                 class="form-control"
                 placeholder="{{ 'FIRST_NAME' | translate }}"
                 [field]="registerForm.prenom"
-                [class.is-invalid]="submitted() && registerForm.prenom().errors().length  aria-label=\"input\"> 0"
+                [class.is-invalid]="submitted() && registerForm.prenom().errors().length  > 0"
               />
               @if (submitted() && registerForm.prenom().errors().length > 0) {
                 <div class="invalid-feedback">
@@ -61,7 +61,7 @@
                 class="form-control"
                 placeholder="{{ 'LAST_NAME' | translate }}"
                 [field]="registerForm.nom"
-                [class.is-invalid]="submitted() && registerForm.nom().errors().length  aria-label=\"input\"> 0"
+                [class.is-invalid]="submitted() && registerForm.nom().errors().length  > 0"
               />
               @if (submitted() && registerForm.nom().errors().length > 0) {
                 <div class="invalid-feedback">
@@ -78,7 +78,7 @@
                 class="form-control"
                 placeholder="{{ 'PHONE_NUMBER' | translate }}"
                 [field]="registerForm.telephone"
-                [class.is-invalid]="submitted() && registerForm.telephone().errors().length  aria-label=\"input\"> 0"
+                [class.is-invalid]="submitted() && registerForm.telephone().errors().length  > 0"
               />
               @if (submitted() && registerForm.telephone().errors().length > 0) {
                 <div class="invalid-feedback">
@@ -96,7 +96,7 @@
                 [class.is-invalid]="submitted() && registerForm.email().invalid()"
                 placeholder="{{ 'EMAIL_ADDRESS' | translate }}"
                 [field]="registerForm.email"
-              / aria-label=\"input\">
+              >
               @if (submitted() && registerForm.email().invalid()) {
                 <div class="invalid-feedback">
                   @for (error of registerForm.email().errors(); track error.kind) {
@@ -112,7 +112,7 @@
                   id="password"
                   class="form-control"
                   [field]="registerForm.password"
-                  [class.is-invalid]="submitted() && registerForm.password().errors().length  aria-label=\"input\"> 0"
+                  [class.is-invalid]="submitted() && registerForm.password().errors().length  > 0"
                   placeholder="{{ 'PASSWORD_MIN_8' | translate }}"
                 />
               } @else {
@@ -121,7 +121,7 @@
                   id="password"
                   class="form-control"
                   [field]="registerForm.password"
-                  [class.is-invalid]="submitted() && registerForm.password().errors().length  aria-label=\"input\"> 0"
+                  [class.is-invalid]="submitted() && registerForm.password().errors().length  > 0"
                   placeholder="{{ 'PASSWORD_MIN_8' | translate }}"
                 />
               }

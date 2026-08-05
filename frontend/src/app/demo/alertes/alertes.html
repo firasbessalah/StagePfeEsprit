@@ -74,11 +74,11 @@
           <div class="row mb-4 align-items-end p-3 bg-light rounded">
             <div class="col-md-5">
               <label class="form-label">Localisation (Ville / Quartier)</label>
-              <input type="text" class="form-control" [(ngModel)]="newLocalisation" placeholder="Ex: Bizerte" aria-label=\"input\">
+              <input type="text" class="form-control" [(ngModel)]="newLocalisation" placeholder="Ex: Bizerte" >
             </div>
             <div class="col-md-5 mt-3 mt-md-0">
               <label class="form-label">Prix Maximum (TND)</label>
-              <input type="number" class="form-control" [(ngModel)]="newPrixMax" placeholder="Ex: 500" aria-label=\"input\">
+              <input type="number" class="form-control" [(ngModel)]="newPrixMax" placeholder="Ex: 500" >
             </div>
             <div class="col-md-2 mt-3 mt-md-0 text-md-end">
               <button class="btn btn-primary w-100" (click)="createAlert()" [disabled]="creating || (!newLocalisation && !newPrixMax)" tabindex="0" (keydown.enter)="null">
@@ -117,7 +117,7 @@
                   <td>{{ alerte.createdAt | date:'shortDate' }}</td>
                   <td>
                     <div class="form-check form-switch d-inline-block">
-                      <input class="form-check-input" type="checkbox" role="switch" [checked]="alerte.active" (change)="toggleAlert(alerte)" style="cursor: pointer;" aria-label=\"input\">
+                      <input class="form-check-input" type="checkbox" role="switch" [checked]="alerte.active" (change)="toggleAlert(alerte)" style="cursor: pointer;" >
                       <label class="form-check-label ms-2" [ngClass]="{'text-success': alerte.active, 'text-muted': !alerte.active}">
                         {{ alerte.active ? 'Active' : 'Inactive' }}
                       </label>

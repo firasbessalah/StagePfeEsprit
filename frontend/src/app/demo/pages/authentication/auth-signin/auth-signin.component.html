@@ -51,7 +51,7 @@
               [class.is-invalid]="submitted() && loginForm.email().invalid()"
               placeholder="{{ 'EMAIL_ADDRESS' | translate }}"
               [field]="loginForm.email"
-            / aria-label=\"input\">
+            >
             @if (submitted() && loginForm.email().invalid()) {
               <div class="invalid-feedback">
                 @for (error of loginForm.email().errors(); track error.kind) {
@@ -67,7 +67,7 @@
                 id="password"
                 class="form-control"
                 [field]="loginForm.password"
-                [class.is-invalid]="submitted() && loginForm.password().errors().length  aria-label=\"input\"> 0"
+                [class.is-invalid]="submitted() && loginForm.password().errors().length  > 0"
                 placeholder="{{ 'PASSWORD_MIN_8' | translate }}"
               />
             } @else {
@@ -76,7 +76,7 @@
                 id="password"
                 class="form-control"
                 [field]="loginForm.password"
-                [class.is-invalid]="submitted() && loginForm.password().errors().length  aria-label=\"input\"> 0"
+                [class.is-invalid]="submitted() && loginForm.password().errors().length  > 0"
                 placeholder="{{ 'PASSWORD_MIN_8' | translate }}"
               />
             }
@@ -100,7 +100,7 @@
           }
           <div class="form-group text-start">
             <div class="checkbox checkbox-fill d-inline">
-              <input type="checkbox" name="checkbox-fill-1" id="checkbox-fill-a1" checked="" / aria-label=\"input\">
+              <input type="checkbox" name="checkbox-fill-1" id="checkbox-fill-a1" checked="" >
               <label for="checkbox-fill-a1" class="cr">{{ 'SAVE_DETAILS' | translate }}</label>
             </div>
           </div>
@@ -148,7 +148,7 @@
                 placeholder="{{ 'PHONE_NUMBER' | translate }}"
                 [value]="googleTelephone()"
                 (input)="googleTelephone.set($any($event.target).value)"
-              / aria-label=\"input\">
+              >
             </div>
             <div class="mb-4 d-flex justify-content-center">
               <div id="google-signin-container"></div>

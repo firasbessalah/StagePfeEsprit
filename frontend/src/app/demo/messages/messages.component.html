@@ -209,7 +209,7 @@
                     placeholder="Type your message here..." 
                     [ngModel]="newMessageContenu()" 
                     (ngModelChange)="newMessageContenu.set($event)"
-                    (keyup.enter)="sendMessage()" / aria-label=\"input\">
+                    (keyup.enter)="sendMessage()" >
                   <button 
                     class="btn btn-primary rounded-circle btn-send d-flex align-items-center justify-content-center" 
                     (click)="sendMessage()" 
