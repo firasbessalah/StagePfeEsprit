@@ -72,30 +72,16 @@ export class AuthSignupComponent {
     }
 
     const model = this.registerModel();
-    this.loading.set(true);
-    this.auth.checkEmail(model.email).subscribe({
-      next: (res) => {
-        this.loading.set(false);
-        if (res.exists) {
-          this.error.set('Cet email est déjà utilisé.');
-        } else {
-          const payload = {
-            nom: model.nom,
-            prenom: model.prenom,
-            email: model.email,
-            telephone: model.telephone,
-            password: model.password,
-            role: this.selectedRole()
-          };
-          this.pendingSignup.stashForVerify(payload);
-          this.router.navigate(['/verify-email'], { queryParams: { email: model.email } });
-        }
-      },
-      error: (err) => {
-        this.loading.set(false);
-        this.error.set('Une erreur est survenue lors de la vérification de l\'email.');
-      }
-    });
+    const payload = {
+      nom: model.nom,
+      prenom: model.prenom,
+      email: model.email,
+      telephone: model.telephone,
+      password: model.password,
+      role: this.selectedRole()
+    };
+    this.pendingSignup.stashForVerify(payload);
+    this.router.navigate(['/verify-email'], { queryParams: { email: model.email } });
   }
 
   selectRole(role: 'LOCATAIRE' | 'BAILLEUR') {
