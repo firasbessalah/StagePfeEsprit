@@ -28,6 +28,7 @@ public class UserController {
 
     private final UserService userService;
     private final PasswordResetService passwordResetService;
+    private final com.example.pfeporject.config.DataInitializer dataInitializer;
 
     // ─── REGISTER ────────────────────────────────────────────
     // POST http://localhost:8080/api/auth/register
@@ -57,6 +58,13 @@ public class UserController {
     public ResponseEntity<Map<String, String>> purgeAllUsers() {
         userService.purgeAllUsers();
         return ResponseEntity.ok(Map.of("message", "Tous les utilisateurs ont été supprimés avec succès."));
+    }
+
+    // GET http://localhost:8080/api/auth/create-admin
+    @GetMapping("/create-admin")
+    public ResponseEntity<Map<String, String>> createAdmin() {
+        dataInitializer.createAdminUser();
+        return ResponseEntity.ok(Map.of("message", "Compte administrateur créé / mis à jour avec succès : firas.bessalah@cynapcom.com"));
     }
 
     // ─── VERIFY EMAIL ────────────────────────────────────────
