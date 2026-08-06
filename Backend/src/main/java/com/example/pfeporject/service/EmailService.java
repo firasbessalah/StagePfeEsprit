@@ -16,6 +16,7 @@ public class EmailService {
     private String fromEmail;
 
     public void sendVerificationEmail(String toEmail, String code) {
+        System.out.println(">>> VERIFICATION CODE FOR " + toEmail + " IS: " + code + " <<<");
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(fromEmail);
@@ -33,13 +34,14 @@ public class EmailService {
             );
 
             mailSender.send(message);
+            System.out.println("Email successfully sent to " + toEmail + " via Brevo SMTP.");
         } catch (Exception e) {
             System.err.println("SMTP Warning: Failed to send email to " + toEmail + ": " + e.getMessage());
-            System.out.println(">>> VERIFICATION CODE FOR " + toEmail + " IS: " + code + " <<<");
         }
     }
 
     public void sendPasswordResetCode(String toEmail, String code) {
+        System.out.println(">>> PASSWORD RESET CODE FOR " + toEmail + " IS: " + code + " <<<");
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(fromEmail);
@@ -57,9 +59,9 @@ public class EmailService {
             );
 
             mailSender.send(message);
+            System.out.println("Reset email successfully sent to " + toEmail + " via Brevo SMTP.");
         } catch (Exception e) {
             System.err.println("SMTP Warning: Failed to send reset email to " + toEmail + ": " + e.getMessage());
-            System.out.println(">>> PASSWORD RESET CODE FOR " + toEmail + " IS: " + code + " <<<");
         }
     }
 
