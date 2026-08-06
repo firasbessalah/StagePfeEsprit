@@ -59,8 +59,9 @@ class LocalFraudDetector:
             signals_list.append({"signal": "high_user_annonce_count", "weight": 15})
             
         # 4. Analyze Images
-        if request.images and HAS_AI:
-            load_ai_models()
+        if request.images:
+            if HAS_AI:
+                load_ai_models()
             img_risk = 0
             for img_str in request.images:
                 risk, cats, sigs = LocalFraudDetector._analyze_image_deep(img_str, request.prix)
@@ -68,7 +69,7 @@ class LocalFraudDetector:
                 categories.update(cats)
                 signals_list.extend(sigs)
             total_risk += img_risk
-        elif not request.images:
+        else:
             total_risk += 10
             signals_list.append({"signal": "no_images_provided", "weight": 10})
 
@@ -166,14 +167,37 @@ class LocalFraudDetector:
             img_data = base64.b64decode(b64_str)
             img = Image.open(io.BytesIO(img_data)).convert('RGB')
             
-            # 1. Duplicate Detection (ImageHash)
-            img_hash = str(imagehash.phash(img))
+            # 1. Duplicate Detection & Resolution / Solid Color Check
+            import hashlib
+            if 'imagehash' in globals() or 'imagehash' in sys.modules:
+                import imagehash
+                img_hash = str(imagehash.phash(img))
+            else:
+                img_hash = hashlib.md5(img_data).hexdigest()
+
             if img_hash in SEEN_HASHES:
                 risk += 40
                 cats.append("DUPLICATE_SPAM")
-                sigs.append({"signal": f"duplicate_image_hash:{img_hash}", "weight": 40})
+                sigs.append({"signal": f"duplicate_image_detected", "weight": 40})
             else:
                 SEEN_HASHES.add(img_hash)
+
+            # Check low resolution
+            if img.width < 150 or img.height < 150:
+                risk += 25
+                cats.append("LOW_QUALITY_IMAGE")
+                sigs.append({"signal": f"image_resolution_too_low_{img.width}x{img.height}", "weight": 25})
+
+            # Check blank / solid color image
+            try:
+                from PIL import ImageStat
+                stat = ImageStat.Stat(img)
+                if max(stat.stddev) < 12.0:
+                    risk += 35
+                    cats.append("BLANK_OR_FAKE_IMAGE")
+                    sigs.append({"signal": "blank_or_solid_color_image", "weight": 35})
+            except Exception:
+                pass
             
             # 2. AI-Generated Image Detection
             if AI_DETECTOR is not None:
