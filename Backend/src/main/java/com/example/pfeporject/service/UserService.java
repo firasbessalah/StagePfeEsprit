@@ -125,6 +125,12 @@ public class UserService {
         });
     }
 
+    @Transactional
+    public void purgeAllUsers() {
+        verificationTokenRepository.deleteAll();
+        userRepository.deleteAll();
+    }
+
     // ─── LOGIN ──────────────────────────────────────────────
     public AuthResponse login(AuthRequest request) {
 
