@@ -89,7 +89,14 @@ public class AiModerationService {
         return "NEUTRE";
     }
 
-    private final org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
+    private final org.springframework.web.client.RestTemplate restTemplate;
+
+    public AiModerationService() {
+        org.springframework.http.client.SimpleClientHttpRequestFactory factory = new org.springframework.http.client.SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(15000);
+        factory.setReadTimeout(15000);
+        this.restTemplate = new org.springframework.web.client.RestTemplate(factory);
+    }
 
     private ModerationResultDTO post(String path, Object body) {
         try {
