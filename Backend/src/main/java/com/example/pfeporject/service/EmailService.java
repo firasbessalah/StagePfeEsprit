@@ -1,6 +1,7 @@
 package com.example.pfeporject.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -11,9 +12,13 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
 
+    @Value("${spring.mail.username:firasbessalahboos@gmail.com}")
+    private String fromEmail;
+
     public void sendVerificationEmail(String toEmail, String code) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(fromEmail);
             message.setTo(toEmail);
             message.setSubject("Vérification de votre adresse email");
             message.setText(
@@ -37,6 +42,7 @@ public class EmailService {
     public void sendPasswordResetCode(String toEmail, String code) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(fromEmail);
             message.setTo(toEmail);
             message.setSubject("Réinitialisation de votre mot de passe");
             message.setText(
@@ -58,20 +64,25 @@ public class EmailService {
     }
 
     public void sendAlerteLogementEmail(com.example.pfeporject.entity.User user, com.example.pfeporject.entity.Annonce annonce) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(user.getEmail());
-        message.setSubject("Alerte Logement : Nouvelle annonce correspondante !");
-        message.setText(
-                "Bonjour " + user.getPrenom() + ",\n\n"
-                + "Une nouvelle annonce correspondant à vos critères d'alerte logement vient d'être validée sur notre plateforme.\n\n"
-                + "Titre : " + annonce.getTitre() + "\n"
-                + "Localisation : " + annonce.getLocalisation() + "\n"
-                + "Prix : " + annonce.getPrix() + " TND\n\n"
-                + "Connectez-vous pour consulter cette nouvelle annonce !\n\n"
-                + "Cordialement,\n"
-                + "L'équipe PFE"
-        );
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(fromEmail);
+            message.setTo(user.getEmail());
+            message.setSubject("Alerte Logement : Nouvelle annonce correspondante !");
+            message.setText(
+                    "Bonjour " + user.getPrenom() + ",\n\n"
+                    + "Une nouvelle annonce correspondant à vos critères d'alerte logement vient d'être validée sur notre plateforme.\n\n"
+                    + "Titre : " + annonce.getTitre() + "\n"
+                    + "Localisation : " + annonce.getLocalisation() + "\n"
+                    + "Prix : " + annonce.getPrix() + " TND\n\n"
+                    + "Connectez-vous pour consulter cette nouvelle annonce !\n\n"
+                    + "Cordialement,\n"
+                    + "L'équipe PFE"
+            );
 
-        mailSender.send(message);
+            mailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("SMTP Warning: Failed to send housing alert email: " + e.getMessage());
+        }
     }
 }
