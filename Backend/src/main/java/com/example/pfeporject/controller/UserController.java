@@ -45,6 +45,13 @@ public class UserController {
         return ResponseEntity.ok(Map.of("exists", exists));
     }
 
+    // GET http://localhost:8080/api/auth/purge-test-email?email=...
+    @GetMapping("/purge-test-email")
+    public ResponseEntity<Map<String, String>> purgeTestEmail(@RequestParam String email) {
+        userService.deleteUserByEmail(email);
+        return ResponseEntity.ok(Map.of("message", "Utilisateur supprimé avec succès."));
+    }
+
     // ─── VERIFY EMAIL ────────────────────────────────────────
     // POST http://localhost:8080/api/auth/verify  { "email": "...", "code": "123456" }
     @PostMapping("/verify")

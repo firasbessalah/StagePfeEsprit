@@ -116,6 +116,15 @@ public class UserService {
         return String.valueOf(n);
     }
 
+    // ─── UTILS ──────────────────────────────────────────────
+    @Transactional
+    public void deleteUserByEmail(String email) {
+        userRepository.findByEmail(email).ifPresent(user -> {
+            verificationTokenRepository.deleteByUserId(user.getId());
+            userRepository.delete(user);
+        });
+    }
+
     // ─── LOGIN ──────────────────────────────────────────────
     public AuthResponse login(AuthRequest request) {
 
