@@ -150,4 +150,12 @@ public class UserController {
         userService.changePassword(id, request);
         return ResponseEntity.ok().build();
     }
+
+    // ─── TOGGLE STATUS ───────────────────────────────────────
+    // PATCH http://localhost:8080/api/auth/users/1/toggle-status
+    @PatchMapping("/users/{id}/toggle-status")
+    public ResponseEntity<UserDTO> toggleUserStatus(@PathVariable Long id) {
+        UserDTO updated = userService.toggleUserStatus(id);
+        return ResponseEntity.ok(updated);
+    }
 }

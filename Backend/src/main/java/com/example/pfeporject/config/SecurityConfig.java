@@ -75,7 +75,10 @@ public class SecurityConfig {
                                 "/api/auth/purge-all-users",
                                 "/api/auth/create-admin",
                                 "/api/auth/forgot-password",
-                                "/api/auth/reset-password/**"
+                                "/api/auth/reset-password/**",
+                                // ── Monitoring endpoints (Prometheus scraping) ────
+                                "/actuator/health",
+                                "/actuator/prometheus"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/annonces", "/api/annonces/*", "/api/annonces/recherche", "/api/avis/annonce/**").permitAll()
                         .anyRequest().authenticated()

@@ -164,6 +164,16 @@ export class UserManagementComponent implements OnInit {
     });
   }
 
+  toggleStatus(u: UserDTO): void {
+    if (!u.id) return;
+    const action = u.enabled ? 'Suspendre' : 'Réactiver';
+    if (!confirm(`Voulez-vous vraiment ${action.toLowerCase()} l'utilisateur ${u.prenom} ${u.nom} ?`)) return;
+    this.userAdmin.toggleUserStatus(u.id).subscribe({
+      next: () => this.reload(),
+      error: (err) => this.error.set(this.errMsg(err))
+    });
+  }
+
   private errMsg(err: unknown): string {
     const e = err as { error?: unknown; message?: string };
     if (typeof e?.error === 'string') return e.error;

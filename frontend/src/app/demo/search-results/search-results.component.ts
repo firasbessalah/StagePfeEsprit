@@ -56,7 +56,7 @@ export class SearchResultsComponent implements OnInit {
 
   // Interactive filters
   maxPrice = signal<number>(5000);
-  maxDistance = signal<number>(100);
+  maxDistance = signal<number>(1000);
   maxDuree = signal<number>(12);
   selectedCategorie = signal<string>('');
   userLocation = signal<{ latitude: number; longitude: number } | null>(null);
@@ -73,7 +73,7 @@ export class SearchResultsComponent implements OnInit {
     // Filter by distance
     const dist = this.maxDistance();
     const loc = this.userLocation();
-    if (loc) {
+    if (loc && dist < 1000) {
       list = list.filter(a => {
         if (a.latitude === undefined || a.longitude === undefined) return true;
         const d = this.getDistance(loc.latitude, loc.longitude, a.latitude, a.longitude);

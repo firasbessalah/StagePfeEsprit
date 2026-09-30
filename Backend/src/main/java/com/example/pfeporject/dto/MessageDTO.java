@@ -11,7 +11,6 @@ public class MessageDTO {
     private boolean isModere;
     private boolean flagged;
     private String flagReason;
-    private Integer riskScore;
     private LocalDateTime createdAt;
     private Long expediteurId;
     private String expediteurNom;

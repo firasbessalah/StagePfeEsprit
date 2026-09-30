@@ -85,7 +85,7 @@
     <div class="container">
       <div class="results-summary mb-4">
         <h1>{{ 'RESERVATIONS' | translate }}</h1>
-        <p class="text-muted">Manage all your bookings and requests here.</p>
+        <p class="text-muted">{{ 'MANAGE_BOOKINGS_DESC' | translate }}</p>
       </div>
 
       <div class="card shadow-sm border-0">
@@ -105,13 +105,13 @@
             <table class="table table-hover align-middle mb-0">
               <thead class="bg-light">
                 <tr>
-                  <th class="ps-4">Property</th>
-                  <th>Applicant</th>
-                  <th>Dates</th>
-                  <th>Message</th>
-                  <th>Total Price</th>
-                  <th>Status</th>
-                  <th class="text-end pe-4">Actions</th>
+                  <th class="ps-4">{{ 'PROPERTY' | translate }}</th>
+                  <th>{{ 'APPLICANT' | translate }}</th>
+                  <th>{{ 'DATES' | translate }}</th>
+                  <th>{{ 'MESSAGE' | translate }}</th>
+                  <th>{{ 'TOTAL_PRICE' | translate }}</th>
+                  <th>{{ 'STATUS' | translate }}</th>
+                  <th class="text-end pe-4">{{ 'ACTIONS' | translate }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -123,8 +123,8 @@
                     <div class="small text-muted"><i class="feather icon-phone me-1"></i>{{ res.userTelephone || 'N/A' }}</div>
                   </td>
                   <td>
-                    <div class="small">In: {{ res.dateDebut | date:'shortDate' }}</div>
-                    <div class="small">Out: {{ res.dateFin | date:'shortDate' }}</div>
+                    <div class="small">{{ 'IN' | translate }}: {{ res.dateDebut | date:'shortDate' }}</div>
+                    <div class="small">{{ 'OUT' | translate }}: {{ res.dateFin | date:'shortDate' }}</div>
                   </td>
                   <td style="max-width: 200px;" class="text-truncate" [title]="res.message || 'No message'">
                     {{ res.message || '-' }}
@@ -138,25 +138,37 @@
                             'bg-danger': res.statut === 'ANNULEE',
                             'bg-secondary': res.statut === 'TERMINEE'
                           }">
-                      {{ res.statut }}
+                      {{ res.statut | translate }}
                     </span>
                   </td>
                   <td class="text-end pe-4">
                     <div class="btn-group btn-group-sm" *ngIf="res.statut === 'EN_ATTENTE' && user()?.role !== 'LOCATAIRE'">
-                      <button type="button" class="btn btn-success" (click)="acceptReservation(res.id!)" title="Accept" tabindex="0" (keydown.enter)="null">
+                      <button type="button" class="btn btn-success" (click)="acceptReservation(res.id!)" [title]="'ACCEPT' | translate" tabindex="0" (keydown.enter)="null">
                         <i class="feather icon-check"></i>
                       </button>
-                      <button type="button" class="btn btn-danger" (click)="refuseReservation(res.id!)" title="Refuse" tabindex="0" (keydown.enter)="null">
+                      <button type="button" class="btn btn-danger" (click)="refuseReservation(res.id!)" [title]="'REFUSE' | translate" tabindex="0" (keydown.enter)="null">
                         <i class="feather icon-x"></i>
                       </button>
                     </div>
+
+                    <button type="button" class="btn btn-sm btn-danger" 
+                            *ngIf="res.statut === 'EN_ATTENTE' && user()?.role === 'LOCATAIRE'" 
+                            (click)="cancelReservation(res.id!)" title="Cancel reservation">
+                      <i class="feather icon-x"></i> Cancel
+                    </button>
+                    
+                    <button type="button" class="btn btn-sm btn-primary" 
+                            *ngIf="(res.statut === 'TERMINEE' || res.statut === 'CONFIRMEE') && user()?.role === 'LOCATAIRE'" 
+                            (click)="openReviewModal(res, reviewModal)" title="Write a review">
+                      <i class="feather icon-star"></i> Review
+                    </button>
                   </td>
                 </tr>
                 <tr *ngIf="reservations().length === 0">
                   <td colspan="7" class="text-center py-5 text-muted">
                     <i class="feather icon-briefcase fs-1 mb-3 d-block"></i>
-                    <h5>No reservations found</h5>
-                    <p class="mb-0">You do not have any active reservations.</p>
+                    <h5>{{ 'NO_RESERVATIONS' | translate }}</h5>
+                    <p class="mb-0">{{ 'NO_ACTIVE_RESERVATIONS' | translate }}</p>
                   </td>
                 </tr>
               </tbody>
@@ -167,6 +179,38 @@
       </div>
     </div>
   </main>
+
+  <ng-template #reviewModal let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title">Write a Review</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="reviewForm">
+        <div class="mb-3">
+          <label class="form-label">Rating (1-5)</label>
+          <input type="number" class="form-control" formControlName="note" min="1" max="5">
+          <div *ngIf="reviewForm.get('note')?.invalid && reviewForm.get('note')?.touched" class="text-danger small mt-1">
+            Valid rating between 1 and 5 is required.
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Comment</label>
+          <textarea class="form-control" formControlName="commentaire" rows="4"></textarea>
+          <div *ngIf="reviewForm.get('commentaire')?.invalid && reviewForm.get('commentaire')?.touched" class="text-danger small mt-1">
+            Comment is required (min 5 characters).
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Cancel click')">Cancel</button>
+      <button type="button" class="btn btn-primary" (click)="submitReview(modal)" [disabled]="reviewForm.invalid || submittingReview()">
+        <span *ngIf="submittingReview()" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        Submit
+      </button>
+    </div>
+  </ng-template>
 
   <app-public-footer *ngIf="!isAdmin()"></app-public-footer>
 </div>

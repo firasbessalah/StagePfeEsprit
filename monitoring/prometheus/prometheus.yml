@@ -1,0 +1,28 @@
+﻿# =============================================================================
+# monitoring/prometheus/prometheus.yml
+# Prometheus scrape configuration for Lofina Bizerte
+# =============================================================================
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  scrape_timeout: 10s
+
+scrape_configs:
+
+  # -- Spring Boot Backend ----------------------------------------------------
+  - job_name: "spring-boot-backend"
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets:
+          - "backend:8080"
+        labels:
+          service: "lofina-backend"
+          environment: "local"
+
+  # -- Prometheus self-monitoring ---------------------------------------------
+  - job_name: "prometheus"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets:
+          - "localhost:9090"

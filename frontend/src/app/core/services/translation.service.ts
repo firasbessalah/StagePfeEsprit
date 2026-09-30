@@ -73,23 +73,23 @@ export class TranslationService {
     FOOTER_TERMS: { en: 'Terms of Service', fr: 'Conditions d\'utilisation', ar: 'شروط الخدمة' },
     FOOTER_PRIVACY: { en: 'Privacy Policy', fr: 'Politique de confidentialité', ar: 'سياسة الخصوصية' },
     FOOTER_CONTACT: { en: 'Contact', fr: 'Contact', ar: 'اتصل بنا' },
-    HOME_BLOCK_1_TITLE: { en: 'Find Your Perfect Stay', fr: 'Trouvez le séjour idéal', ar: 'اعثر على إقامتك المثالية' },
+    HOME_BLOCK_1_TITLE: { en: 'For landlords', fr: 'Pour les bailleurs', ar: 'للمؤجرين' },
     HOME_BLOCK_1_TEXT: {
-      en: 'Browse apartments, houses, and vacation rentals across Tunisia. Filter by location, dates, and budget to find exactly what you need.',
-      fr: 'Parcourez des appartements, des maisons et des locations de vacances en Tunisie. Filtrez par lieu, dates et budget pour trouver exactement ce qu\'il vous faut.',
-      ar: 'تصفح الشقق والمنازل وإيجارات العطلات في جميع أنحاء تونس. صفِّ حسب الموقع والتواريخ والميزانية للعثور على ما تحتاجه بالضبط.'
+      en: 'Rent your property in Bizerte easily and without intermediaries! Are you the owner of an apartment, villa, or house in Bizerte? Our platform allows you to publish your ad for free and quickly find tenants or vacationers. No need to pay commissions to an intermediary or spend weeks looking for a client. You keep control of your ads, your rates, and your availability. Visitors can easily find your property thanks to search filters and geolocation. You save time, reduce your costs, and increase the visibility of your accommodation. A simple, fast, and effective solution to rent your property in Bizerte with complete peace of mind!',
+      fr: 'Louez votre bien à Bizerte facilement et sans intermédiaire ! Vous êtes propriétaire d\'un appartement, d\'une villa ou d\'une maison à Bizerte? Notre plateforme vous permet de publier votre annonce gratuitement et de trouver rapidement des locataires ou des vacanciers. Plus besoin de verser des commissions à un intermédiaire ou de passer des semaines à chercher un client. Vous gardez le contrôle de vos annonces, de vos tarifs et de vos disponibilités. Les visiteurs trouvent facilement votre bien grâce aux filtres de recherche et à la géolocalisation. Vous gagnez du temps, réduisez vos coûts et augmentez la visibilité de votre logement. Une solution simple, rapide et efficace pour louer votre bien à Bizerte en toute sérénité !',
+      ar: 'قم بتأجير عقارك في بنزرت بسهولة وبدون وسطاء! هل تمتلك شقة أو فيلا أو منزلاً في بنزرت؟ تتيح لك منصتنا نشر إعلانك مجاناً والعثور بسرعة على مستأجرين أو مصطافين. لا حاجة لدفع عمولات لوسيط أو قضاء أسابيع في البحث عن عميل. أنت تحتفظ بالسيطرة على إعلاناتك وأسعارك وتوافرك. يجد الزوار عقارك بسهولة بفضل فلاتر البحث وتحديد الموقع الجغرافي. أنت توفر الوقت، وتقلل تكاليفك، وتزيد من رؤية مكان إقامتك. حل بسيط وسريع وفعال لتأجير عقارك في بنزرت بكل راحة بال!'
     },
-    HOME_BLOCK_2_TITLE: { en: 'Book with Confidence', fr: 'Réservez en toute confiance', ar: 'احجز بثقة' },
+    HOME_BLOCK_2_TITLE: { en: 'For vacationers', fr: 'Pour les vacanciers', ar: 'للمصطافين' },
     HOME_BLOCK_2_TEXT: {
-      en: 'Secure reservations, verified listings, and direct communication with property owners make your booking experience simple and reliable.',
-      fr: 'Des réservations sécurisées, des annonces vérifiées et une communication directe avec les propriétaires rendent votre expérience de réservation simple et fiable.',
-      ar: 'حجوزات آمنة وإعلانات موثوقة وتواصل مباشر مع أصحاب العقارات يجعل تجربة الحجز لديك بسيطة وموثوقة.'
+      en: 'Discover the beauty of Bizerte in one click! Bizerte, vacation rentals: find the perfect accommodation without wasting time. Bizerte, with its picturesque old port, its fine sandy beaches, and its unique Mediterranean charm, deserves a stay worthy of its beauty. No more time wasted comparing ten different sites to find accommodation: our platform brings together in one place all the hotels, guest houses, villas, and studios available in Bizerte. Thanks to our intelligent filters for geolocation, prices, and real-time availability, you can find the ideal accommodation near the beach, the city center, or the port, according to your budget and your desires. Each ad displays full photos and details in a single click, with no surprises on arrival. Whether you are looking for a romantic getaway, family vacation, or a weekend with friends, book with confidence and save time to fully enjoy the beauty of Bizerte. Your next stay starts here, simply and quickly.',
+      fr: 'Découvrez la beauté de Bizerte en un clic ! Bizerte, location vacances : trouvez le logement parfait sans perdre de temps. Bizerte, avec son vieux port pittoresque, ses plages de sable fin et son charme méditerranéen unique, mérite un séjour à la hauteur de sa beauté. Fini le temps perdu à comparer dix sites différents pour trouver un hébergement : notre plateforme réunit en un seul endroit tous les hôtels, maisons d\'hôtes, villas et studios disponibles à Bizerte. Grâce à nos filtres intelligents de géolocalisation, de tarifs et de disponibilité en temps réel, vous trouvez le logement idéal près de la plage, du centre-ville ou du port, selon votre budget et vos envies. Chaque annonce affiche photos et détails complets en un seul clic, sans surprise à l\'arrivée. Que vous cherchiez une escapade romantique, des vacances en famille ou un week-end entre amis, réservez en toute confiance et gagnez du temps pour profiter pleinement de la beauté de Bizerte. Votre prochain séjour commence ici, simplement et rapidement.',
+      ar: 'اكتشف جمال بنزرت بنقرة واحدة! إيجارات العطلات في بنزرت: ابحث عن السكن المثالي دون إضاعة الوقت. تستحق بنزرت، بمينائها القديم الخلاب وشواطئها ذات الرمال الناعمة وسحرها المتوسطي الفريد، إقامة تليق بجمالها. وداعاً للوقت الضائع في مقارنة عشرة مواقع مختلفة للعثور على سكن: تجمع منصتنا في مكان واحد جميع الفنادق ودور الضيافة والفيلات والاستوديوهات المتاحة في بنزرت. بفضل فلاترنا الذكية لتحديد الموقع الجغرافي والأسعار والتوافر في الوقت الفعلي، يمكنك العثور على السكن المثالي بالقرب من الشاطئ أو وسط المدينة أو الميناء، وفقاً لميزانيتك ورغباتك. يعرض كل إعلان صوراً وتفاصيل كاملة بنقرة واحدة، بدون مفاجآت عند الوصول. سواء كنت تبحث عن عطلة رومانسية، أو إجازة عائلية، أو عطلة نهاية أسبوع مع الأصدقاء، احجز بثقة ووفر الوقت للاستمتاع الكامل بجمال بنزرت. إقامتك القادمة تبدأ هنا، بكل بساطة وسرعة.'
     },
-    HOME_BLOCK_3_TITLE: { en: 'List Your Property', fr: 'Publiez votre propriété', ar: 'أضف عقارك' },
+    HOME_BLOCK_3_TITLE: { en: 'For students', fr: 'Pour les étudiants', ar: 'للطلاب' },
     HOME_BLOCK_3_TEXT: {
-      en: 'Own a property? Join Lofina and reach thousands of travelers looking for their next stay in Tunisia.',
-      fr: 'Vous possédez un bien ? Rejoignez Lofina et touchez des milliers de voyageurs à la recherche de leur prochain séjour en Tunisie.',
-      ar: 'هل تملك عقارًا؟ انضم إلى لوفينا وتواصل مع آلاف المسافرين الباحثين عن إقامتهم القادمة في تونس.'
+      en: 'Find your student accommodation in Bizerte without stress. Searching for student accommodation can be long and tiring, especially when you have to travel all over the city. Our platform helps you quickly find a studio, a room, or an apartment close to your university or school. You reduce your daily commute and avoid long hours in transport. You save time, save energy, and enjoy a better balance between studies and personal life. Bizerte finally becomes a city where studying rhymes with peace of mind. Thanks to filters by location, budget, and availability, you will easily find the accommodation that suits you. Settle down peacefully in Bizerte and focus on your success.',
+      fr: 'Trouvez votre logement étudiant à Bizerte sans stress. La recherche d\'un logement étudiant peut être longue et fatigante, surtout lorsqu\'il faut parcourir toute la ville. Notre plateforme vous aide à trouver rapidement un studio, une chambre ou un appartement proche de votre université ou de votre école. Vous réduisez vos déplacements quotidiens et évitez les longues heures dans les transports. Vous gagnez du temps, économisez de l\'énergie et profitez d\'un meilleur équilibre entre études et vie personnelle. Bizerte devient enfin une ville où étudier rime avec tranquillité d\'esprit. Grâce aux filtres par localisation, budget et disponibilité, vous trouverez facilement le logement qui vous convient. Installez-vous sereinement à Bizerte et concentrez-vous sur votre réussite.',
+      ar: 'ابحث عن سكنك الطلابي في بنزرت بدون ضغوط. قد يكون البحث عن سكن طلابي طويلاً ومتعباً، خاصة عندما تضطر إلى التجول في جميع أنحاء المدينة. تساعدك منصتنا في العثور بسرعة على استوديو أو غرفة أو شقة قريبة من جامعتك أو مدرستك. أنت تقلل من تنقلاتك اليومية وتتجنب الساعات الطويلة في وسائل النقل. أنت توفر الوقت والطاقة وتستمتع بتوازن أفضل بين الدراسة والحياة الشخصية. أصبحت بنزرت أخيراً مدينة حيث ترتبط الدراسة براحة البال. بفضل فلاتر الموقع والميزانية والتوافر، ستتمكن بسهولة من العثور على السكن الذي يناسبك. استقر بهدوء في بنزرت وركز على نجاحك.'
     },
     PRICE: { en: 'Price', fr: 'Prix', ar: 'السعر' },
     MONTH: { en: 'month', fr: 'mois', ar: 'شهر' },
@@ -208,7 +208,30 @@ export class TranslationService {
     PROFILE_PHOTO_SAVED: { en: 'Profile photo saved successfully.', fr: 'Photo de profil enregistrée avec succès.', ar: 'تم حفظ صورة الملف الشخصي بنجاح.' },
     CHOOSE_IMAGE_FILE: { en: 'Please choose an image file.', fr: 'Veuillez choisir un fichier image.', ar: 'يرجى اختيار ملف صورة.' },
     IMAGE_TOO_LARGE: { en: 'Image too large (max ~800KB).', fr: 'Image trop volumineuse (max ~800 Ko).', ar: 'الصورة كبيرة جداً (الحد الأقصى ~800 كيلوبايت).' },
-    REQUEST_FAILED: { en: 'Request failed', fr: 'La requête a échoué', ar: 'فشل الطلب' }
+    REQUEST_FAILED: { en: 'Request failed', fr: 'La requête a échoué', ar: 'فشل الطلب' },
+
+    // Reservations & Statuses
+    PROPERTY: { en: 'Property', fr: 'Propriété', ar: 'العقار' },
+    APPLICANT: { en: 'Applicant', fr: 'Demandeur', ar: 'مقدم الطلب' },
+    DATES: { en: 'Dates', fr: 'Dates', ar: 'التواريخ' },
+    MESSAGE: { en: 'Message', fr: 'Message', ar: 'الرسالة' },
+    TOTAL_PRICE: { en: 'Total Price', fr: 'Prix Total', ar: 'السعر الإجمالي' },
+    STATUS: { en: 'Status', fr: 'Statut', ar: 'الحالة' },
+    ACTIONS: { en: 'Actions', fr: 'Actions', ar: 'الإجراءات' },
+    MANAGE_BOOKINGS_DESC: { en: 'Manage all your bookings and requests here.', fr: 'Gérez toutes vos réservations et demandes ici.', ar: 'إدارة جميع حجوزاتك وطلباتك هنا.' },
+    IN: { en: 'In', fr: 'Arrivée', ar: 'الدخول' },
+    OUT: { en: 'Out', fr: 'Départ', ar: 'المغادرة' },
+    NO_RESERVATIONS: { en: 'No reservations found', fr: 'Aucune réservation trouvée', ar: 'لم يتم العثور على حجوزات' },
+    NO_ACTIVE_RESERVATIONS: { en: 'You do not have any active reservations.', fr: 'Vous n\'avez aucune réservation active.', ar: 'ليس لديك أي حجوزات نشطة.' },
+    ACCEPT: { en: 'Accept', fr: 'Accepter', ar: 'قبول' },
+    REFUSE: { en: 'Refuse', fr: 'Refuser', ar: 'رفض' },
+    EN_ATTENTE: { en: 'Pending', fr: 'En attente', ar: 'قيد الانتظار' },
+    CONFIRMEE: { en: 'Confirmed', fr: 'Confirmée', ar: 'مؤكدة' },
+    ANNULEE: { en: 'Cancelled', fr: 'Annulée', ar: 'ملغاة' },
+    TERMINEE: { en: 'Completed', fr: 'Terminée', ar: 'مكتملة' },
+    VALIDEE: { en: 'Validated', fr: 'Validée', ar: 'تم التحقق' },
+    REJETEE: { en: 'Rejected', fr: 'Rejetée', ar: 'مرفوضة' },
+    ARCHIVEE: { en: 'Archived', fr: 'Archivée', ar: 'مؤرشفة' }
   };
 
   constructor() {

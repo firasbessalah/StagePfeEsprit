@@ -28,8 +28,6 @@ Annonce {
     private String localisation;
     private Double latitude;
     private Double longitude;
-    private LocalDate disponibiliteDebut;
-    private LocalDate disponibiliteFin;
 
     @Enumerated(EnumType.STRING)
     private StatutAnnonce statut;
@@ -42,7 +40,6 @@ Annonce {
     private Integer vues = 0;
 
     private Integer riskScore = 0;
-    private Double rawScore = 0.0;
     private Boolean flagged = false;
     private String flagReason;
     @Column(columnDefinition = "TEXT")
@@ -69,9 +66,6 @@ Annonce {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
-    @OneToOne(mappedBy = "annonce", cascade = CascadeType.ALL)
-    private Logement logement;
 
     @OneToMany(mappedBy = "annonce", cascade = CascadeType.ALL)
     private List<Reservation> reservations;

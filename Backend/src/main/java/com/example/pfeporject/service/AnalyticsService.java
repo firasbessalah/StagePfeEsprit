@@ -156,8 +156,6 @@ public class AnalyticsService {
         dto.setLocalisation(a.getLocalisation());
         dto.setLatitude(a.getLatitude());
         dto.setLongitude(a.getLongitude());
-        dto.setDisponibiliteDebut(a.getDisponibiliteDebut());
-        dto.setDisponibiliteFin(a.getDisponibiliteFin());
         dto.setStatut(a.getStatut() != null ? a.getStatut().name() : null);
         dto.setCreatedAt(a.getCreatedAt());
         if (a.getUser() != null) {

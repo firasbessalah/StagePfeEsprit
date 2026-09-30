@@ -40,7 +40,6 @@ public class MessageService {
         com.example.pfeporject.dto.ModerationResultDTO modResult = aiModerationService.moderateContent(dto.getContenu(), "MESSAGE");
         if (modResult != null) {
             message.setFlagged(modResult.isFlagged());
-            message.setRiskScore(modResult.getRiskScore());
             message.setFlagReason(modResult.getExplanation());
         }
 
@@ -92,7 +91,6 @@ public class MessageService {
         dto.setDestinataireNom(m.getDestinataire().getNom());
         dto.setFlagged(m.isFlagged());
         dto.setFlagReason(m.getFlagReason());
-        dto.setRiskScore(m.getRiskScore());
         return dto;
     }
 }

@@ -7,6 +7,9 @@ import com.example.pfeporject.entity.Annonce.StatutAnnonce;
 import com.example.pfeporject.entity.User;
 import com.example.pfeporject.repository.AnnonceRepository;
 import com.example.pfeporject.repository.UserRepository;
+import com.example.pfeporject.repository.SignalementRepository;
+import com.example.pfeporject.entity.Signalement;
+import com.example.pfeporject.dto.SignalementDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +22,7 @@ public class AnnonceService {
 
     private final AnnonceRepository annonceRepository;
     private final UserRepository userRepository;
+    private final SignalementRepository signalementRepository;
     private final AlerteLogementService alerteLogementService;
     private final AiModerationService aiModerationService;
 
@@ -35,8 +39,6 @@ public class AnnonceService {
         annonce.setLocalisation(dto.getLocalisation());
         annonce.setLatitude(dto.getLatitude());
         annonce.setLongitude(dto.getLongitude());
-        annonce.setDisponibiliteDebut(dto.getDisponibiliteDebut());
-        annonce.setDisponibiliteFin(dto.getDisponibiliteFin());
         annonce.setStatut(StatutAnnonce.EN_ATTENTE);
         annonce.setUser(user);
 
@@ -67,7 +69,6 @@ public class AnnonceService {
         if (modResult != null) {
             annonce.setFlagged(modResult.isFlagged());
             annonce.setRiskScore(modResult.getRiskScore());
-            annonce.setRawScore(modResult.getRawScore());
             annonce.setFlagReason(modResult.getExplanation());
             if (modResult.getSignals() != null) {
                 try {
@@ -148,8 +149,6 @@ public class AnnonceService {
         annonce.setLocalisation(dto.getLocalisation());
         annonce.setLatitude(dto.getLatitude());
         annonce.setLongitude(dto.getLongitude());
-        annonce.setDisponibiliteDebut(dto.getDisponibiliteDebut());
-        annonce.setDisponibiliteFin(dto.getDisponibiliteFin());
 
         if (dto.getCategorie() != null) {
             try {
@@ -177,7 +176,6 @@ public class AnnonceService {
         if (modResult != null) {
             annonce.setFlagged(modResult.isFlagged());
             annonce.setRiskScore(modResult.getRiskScore());
-            annonce.setRawScore(modResult.getRawScore());
             annonce.setFlagReason(modResult.getExplanation());
             if (modResult.getSignals() != null) {
                 try {
@@ -220,6 +218,53 @@ public class AnnonceService {
         return toDTO(annonceRepository.save(annonce));
     }
 
+    // ─── SIGNALER (LOCATAIRE) ─────────────────────────────────
+    public AnnonceDTO signalerAnnonce(Long id, Long userId, String reason) {
+        Annonce annonce = annonceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Annonce introuvable !"));
+        
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Utilisateur introuvable !"));
+                
+        Signalement signalement = new Signalement();
+        signalement.setAnnonce(annonce);
+        signalement.setUser(user);
+        signalement.setReason(reason);
+        signalementRepository.save(signalement);
+        
+        annonce.setFlagged(true);
+        // We keep flagReason as the latest reason for backward compatibility / AI logic if needed
+        annonce.setFlagReason(reason);
+        return toDTO(annonceRepository.save(annonce));
+    }
+    
+    public List<SignalementDTO> getSignalements(Long id) {
+        return signalementRepository.findByAnnonceIdOrderByCreatedAtDesc(id).stream().map(sig -> {
+            return SignalementDTO.builder()
+                    .id(sig.getId())
+                    .annonceId(sig.getAnnonce().getId())
+                    .userId(sig.getUser().getId())
+                    .userNom(sig.getUser().getNom())
+                    .userPrenom(sig.getUser().getPrenom())
+                    .reason(sig.getReason())
+                    .createdAt(sig.getCreatedAt())
+                    .build();
+        }).toList();
+    }
+
+    // ─── DISMISS REPORT (ADMIN) ───────────────────────────────
+    public AnnonceDTO dismissReport(Long id) {
+        Annonce annonce = annonceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Annonce introuvable !"));
+        
+        // Delete all signalements for this annonce
+        signalementRepository.deleteByAnnonceId(id);
+        
+        annonce.setFlagged(false);
+        annonce.setFlagReason(null);
+        return toDTO(annonceRepository.save(annonce));
+    }
+
     // ─── SUPPRIMER ────────────────────────────────────────────
     public void supprimer(Long id) {
         if (!annonceRepository.existsById(id)) {
@@ -249,8 +294,6 @@ public class AnnonceService {
         dto.setLocalisation(annonce.getLocalisation());
         dto.setLatitude(annonce.getLatitude());
         dto.setLongitude(annonce.getLongitude());
-        dto.setDisponibiliteDebut(annonce.getDisponibiliteDebut());
-        dto.setDisponibiliteFin(annonce.getDisponibiliteFin());
         dto.setStatut(annonce.getStatut().name());
         dto.setCreatedAt(annonce.getCreatedAt());
         dto.setCategorie(annonce.getCategorie() != null ? annonce.getCategorie().name() : null);
@@ -261,7 +304,6 @@ public class AnnonceService {
         dto.setFlagged(annonce.getFlagged() != null ? annonce.getFlagged() : false);
         dto.setFlagReason(annonce.getFlagReason());
         dto.setRiskScore(annonce.getRiskScore() != null ? annonce.getRiskScore() : 0);
-        dto.setRawScore(annonce.getRawScore() != null ? annonce.getRawScore() : 0.0);
         dto.setSignalsJson(annonce.getSignalsJson());
         dto.setImages(annonce.getImages());
         return dto;

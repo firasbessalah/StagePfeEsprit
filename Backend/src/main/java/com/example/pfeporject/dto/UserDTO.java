@@ -13,5 +13,6 @@ public class UserDTO {
     private String telephone;
     private String photoProfil;
     private String role;
+    private Boolean enabled;
     private LocalDateTime createdAt;
 }

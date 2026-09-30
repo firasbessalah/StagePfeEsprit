@@ -42,25 +42,6 @@ export class AnnonceSearchService {
   }
 
   filterByDates(annonces: AnnonceDTO[], checkIn: string, checkOut: string): AnnonceDTO[] {
-    if (!checkIn && !checkOut) return annonces;
-
-    return annonces.filter((annonce) => {
-      if (!annonce.disponibiliteDebut || !annonce.disponibiliteFin) return true;
-
-      const availStart = new Date(annonce.disponibiliteDebut);
-      const availEnd = new Date(annonce.disponibiliteFin);
-
-      if (checkIn) {
-        const reqStart = new Date(checkIn);
-        if (availEnd < reqStart) return false;
-      }
-
-      if (checkOut) {
-        const reqEnd = new Date(checkOut);
-        if (availStart > reqEnd) return false;
-      }
-
-      return true;
-    });
+    return annonces;
   }
 }

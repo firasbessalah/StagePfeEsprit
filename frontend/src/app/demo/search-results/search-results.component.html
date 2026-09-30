@@ -174,16 +174,16 @@
                 <span class="fw-bold"><i class="feather icon-sliders me-1 text-primary"></i> Budget Max:</span>
                 <span class="text-primary fw-bold">{{ maxPrice() }} TND</span>
               </label>
-              <input type="range" class="form-range" min="100" max="5000" step="50" [ngModel]="maxPrice()" (ngModelChange)="maxPrice.set($event); fetchResults()" name="maxPrice" >
+              <input type="range" class="form-range" min="100" max="5000" step="50" [ngModel]="maxPrice()" (ngModelChange)="maxPrice.set($event)" (change)="fetchResults()" name="maxPrice" >
             </div>
             
             <!-- Distance Slider -->
             <div class="col-md-3">
               <label class="form-label d-flex justify-content-between mb-1">
                 <span class="fw-bold"><i class="feather icon-map-pin me-1 text-success"></i> Distance Max:</span>
-                <span class="text-success fw-bold">{{ maxDistance() }} km</span>
+                <span class="text-success fw-bold">{{ maxDistance() >= 1000 ? 'Illimitée' : maxDistance() + ' km' }}</span>
               </label>
-              <input type="range" class="form-range" min="1" max="100" step="1" [ngModel]="maxDistance()" (ngModelChange)="maxDistance.set($event)" name="maxDistance" >
+              <input type="range" class="form-range" min="1" max="1000" step="10" [ngModel]="maxDistance()" (ngModelChange)="maxDistance.set($event)" name="maxDistance" >
             </div>
 
             <!-- Duration Slider -->
@@ -192,7 +192,7 @@
                 <span class="fw-bold"><i class="feather icon-clock me-1 text-info"></i> Durée Max:</span>
                 <span class="text-info fw-bold">{{ maxDuree() }} mois</span>
               </label>
-              <input type="range" class="form-range" min="1" max="12" step="1" [ngModel]="maxDuree()" (ngModelChange)="maxDuree.set($event); fetchResults()" name="maxDuree" >
+              <input type="range" class="form-range" min="1" max="12" step="1" [ngModel]="maxDuree()" (ngModelChange)="maxDuree.set($event)" (change)="fetchResults()" name="maxDuree" >
             </div>
 
             <!-- Category Selector -->

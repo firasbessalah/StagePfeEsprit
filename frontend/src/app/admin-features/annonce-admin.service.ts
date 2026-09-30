@@ -3,6 +3,16 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
+export interface SignalementDTO {
+  id?: number;
+  annonceId?: number;
+  userId?: number;
+  userNom?: string;
+  userPrenom?: string;
+  reason?: string;
+  createdAt?: string;
+}
+
 export interface AnnonceDTO {
   id?: number;
   titre?: string;
@@ -11,8 +21,6 @@ export interface AnnonceDTO {
   localisation?: string;
   latitude?: number;
   longitude?: number;
-  disponibiliteDebut?: string;
-  disponibiliteFin?: string;
   statut?: string;
   createdAt?: string;
   userId?: number;
@@ -23,7 +31,6 @@ export interface AnnonceDTO {
   flagged?: boolean;
   flagReason?: string;
   riskScore?: number;
-  rawScore?: number;
   signalsJson?: string;
   images?: string[];
 }
@@ -63,6 +70,18 @@ export class AnnonceAdminService {
 
   archiverAnnonce(id: number): Observable<AnnonceDTO> {
     return this.http.put<AnnonceDTO>(`${this.baseUrl}/${id}/archiver`, {});
+  }
+
+  dismissReport(id: number): Observable<AnnonceDTO> {
+    return this.http.put<AnnonceDTO>(`${this.baseUrl}/${id}/dismiss-report`, {});
+  }
+
+  signalerAnnonce(id: number, userId: number, reason: string): Observable<AnnonceDTO> {
+    return this.http.put<AnnonceDTO>(`${this.baseUrl}/${id}/signaler`, { userId: userId.toString(), reason });
+  }
+
+  getSignalements(id: number): Observable<SignalementDTO[]> {
+    return this.http.get<SignalementDTO[]>(`${this.baseUrl}/${id}/signalements`);
   }
 
   rechercher(localisation?: string, prixMax?: number, categorie?: string, duree?: number): Observable<AnnonceDTO[]> {

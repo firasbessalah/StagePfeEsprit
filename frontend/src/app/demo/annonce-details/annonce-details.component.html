@@ -135,6 +135,9 @@
                       [title]="favoriService.isFavori(annonce()!.id!) ? 'Remove from favorites' : 'Add to favorites'" tabindex="0" (keydown.enter)="null">
                 <i [class]="favoriService.isFavori(annonce()!.id!) ? 'feather icon-heart-on' : 'feather icon-heart'"></i>
               </button>
+              <button class="btn btn-outline-danger btn-lg shadow-sm" *ngIf="user()?.role === 'LOCATAIRE'" (click)="onReport(reportModal)" title="Report this listing">
+                <i class="feather icon-flag"></i>
+              </button>
               <button class="btn btn-primary btn-lg shadow-sm" (click)="onReserve(reservationModal)" tabindex="0" (keydown.enter)="null">{{ 'RESERVE' | translate }}</button>
             </div>
           </div>
@@ -376,6 +379,39 @@
         <button type="submit" class="btn btn-primary btn-lg" [disabled]="reservationForm.invalid || isSubmitting()">
           <span *ngIf="isSubmitting()" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
           {{ isSubmitting() ? 'Sending Request...' : 'Send Reservation Request' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<!-- Report Modal -->
+<ng-template #reportModal let-modal>
+  <div class="modal-header bg-light">
+    <h4 class="modal-title fw-bold text-dark" id="modal-report-title">Report this listing</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')" tabindex="0" (keydown.enter)="null"></button>
+  </div>
+  <div class="modal-body">
+    <div *ngIf="reportSuccess()" class="alert alert-success">
+      <i class="feather icon-check-circle me-2"></i> Listing reported successfully! An admin will review it.
+    </div>
+    <div *ngIf="reportError()" class="alert alert-danger">
+      {{ reportError() }}
+    </div>
+
+    <form [formGroup]="reportForm" (ngSubmit)="submitReport(modal)" *ngIf="!reportSuccess()">
+      <div class="mb-3">
+        <label class="form-label text-muted small">Why are you reporting this listing?</label>
+        <textarea class="form-control" rows="4" formControlName="reason" placeholder="Please provide specific details about what is wrong with this listing..." required></textarea>
+        <small class="text-danger" *ngIf="reportForm.get('reason')?.invalid && reportForm.get('reason')?.touched">
+          Please provide a reason for your report.
+        </small>
+      </div>
+      
+      <div class="d-grid mt-4">
+        <button type="submit" class="btn btn-danger btn-lg" [disabled]="reportForm.invalid || isReporting()">
+          <span *ngIf="isReporting()" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          {{ isReporting() ? 'Submitting...' : 'Submit Report' }}
         </button>
       </div>
     </form>

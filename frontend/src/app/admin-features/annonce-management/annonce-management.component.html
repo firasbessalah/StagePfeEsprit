@@ -109,6 +109,19 @@
       <div class="row">
         <div class="col-12">
           <app-card cardTitle="Annonces">
+          
+          <!-- Add tabs for Admin -->
+          <ul class="nav nav-tabs mb-3" *ngIf="isAdmin()">
+            <li class="nav-item">
+              <a class="nav-link" [class.active]="currentTab() === 'ALL'" (click)="currentTab.set('ALL')" href="javascript:void(0)" style="cursor: pointer;">All Listings</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-danger fw-bold" [class.active]="currentTab() === 'REPORTED'" (click)="currentTab.set('REPORTED')" href="javascript:void(0)" style="cursor: pointer;">
+                <i class="feather icon-shield me-1"></i> Moderation Queue
+              </a>
+            </li>
+          </ul>
+
           <div class="d-flex justify-content-between align-items-center mb-3">
             <div class="d-flex align-items-center gap-2">
               <div class="input-group">
@@ -133,6 +146,9 @@
                     <th>Prix</th>
                     <th>Localisation</th>
                     <th>AI Score</th>
+                    @if (isAdmin() && currentTab() === 'REPORTED') {
+                      <th class="text-center">Signalements</th>
+                    }
                     <th>Créée le</th>
                     <th>Statut</th>
                     <th class="text-end">Actions</th>
@@ -158,9 +174,16 @@
                           </button>
                         }
                       </td>
+                      @if (isAdmin() && currentTab() === 'REPORTED') {
+                        <td class="text-center">
+                          <button class="btn btn-sm btn-outline-danger" (click)="openReportsModal(a, reportsModal)" title="Voir les rapports">
+                            <i class="feather icon-flag"></i> Voir
+                          </button>
+                        </td>
+                      }
                       <td>{{ a.createdAt | date:'shortDate' }}</td>
                       <td>
-                        <span [class]="getStatusBadgeClass(a.statut)">{{ a.statut }}</span>
+                        <span [class]="getStatusBadgeClass(a.statut)">{{ a.statut | translate }}</span>
                       </td>
                       <td class="text-end">
                         <button type="button" class="btn btn-icon btn-sm btn-outline-info me-1" (click)="openShow(a, showTpl)" title="Show Info" tabindex="0" (keydown.enter)="null"><i class="feather icon-eye"></i></button>
@@ -176,6 +199,10 @@
                           
                           @if (a.statut === 'VALIDEE' || a.statut === 'REJETEE' || a.statut === 'SUSPENDUE') {
                             <button type="button" class="btn btn-icon btn-sm btn-outline-secondary me-1" (click)="archiverAnnonce(a)" title="Archive" tabindex="0" (keydown.enter)="null"><i class="feather icon-archive"></i></button>
+                          }
+                          
+                          @if (a.flagged) {
+                            <button type="button" class="btn btn-icon btn-sm btn-outline-info me-1" (click)="approveReport(a)" title="Dismiss Report / Approve" tabindex="0" (keydown.enter)="null"><i class="feather icon-check-circle"></i></button>
                           }
                         }
 
@@ -426,5 +453,49 @@
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" (click)="modal.dismiss()" tabindex="0" (keydown.enter)="null">Fermer</button>
+  </div>
+</ng-template>
+
+<!-- Reports Modal -->
+<ng-template #reportsModal let-modal>
+  <div class="modal-header bg-danger text-white">
+    <h5 class="modal-title text-white">
+      <i class="feather icon-flag me-2"></i>Signalements: {{ selectedAnnonce?.titre }}
+    </h5>
+    <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body p-4">
+    @if (loadingReports()) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-danger" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2 text-muted">Chargement des signalements...</p>
+      </div>
+    } @else if (reportsList().length === 0) {
+      <div class="alert alert-info">
+        Aucun signalement trouvé pour cette annonce.
+      </div>
+    } @else {
+      <div class="list-group list-group-flush">
+        @for (report of reportsList(); track report.id) {
+          <div class="list-group-item list-group-item-action d-flex flex-column align-items-start py-3">
+            <div class="d-flex w-100 justify-content-between mb-2">
+              <h6 class="mb-0 fw-bold">
+                <i class="feather icon-user me-1 text-muted"></i> 
+                {{ report.userPrenom }} {{ report.userNom }}
+              </h6>
+              <small class="text-muted">{{ report.createdAt | date:'medium' }}</small>
+            </div>
+            <p class="mb-1 text-danger bg-light-danger p-2 rounded w-100" style="white-space: pre-wrap;">
+              {{ report.reason }}
+            </p>
+          </div>
+        }
+      </div>
+    }
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Fermer</button>
   </div>
 </ng-template>

@@ -7,7 +7,7 @@ import { NgbModal, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
-import { AnnonceAdminService, AnnonceDTO } from '../annonce-admin.service';
+import { AnnonceAdminService, AnnonceDTO, SignalementDTO } from '../annonce-admin.service';
 import { UserAdminService } from '../user-admin.service';
 import { UserDTO } from 'src/app/core/auth/auth.models';
 import { AuthService } from 'src/app/core/auth/auth.service';
@@ -79,10 +79,17 @@ export class AnnonceManagementComponent implements OnInit {
 
   annonces = signal<AnnonceDTO[]>([]);
   searchTerm = signal('');
+  currentTab = signal<'ALL' | 'REPORTED'>('ALL');
+
   filteredAnnonces = computed(() => {
+    let list = this.annonces();
+    if (this.isAdmin() && this.currentTab() === 'REPORTED') {
+      list = list.filter(a => a.flagged);
+    }
+
     const term = this.searchTerm().toLowerCase().trim();
-    if (!term) return this.annonces();
-    return this.annonces().filter(a =>
+    if (!term) return list;
+    return list.filter(a =>
       (a.titre?.toLowerCase().includes(term)) ||
       (a.localisation?.toLowerCase().includes(term)) ||
       (a.statut?.toLowerCase().includes(term)) ||
@@ -98,6 +105,9 @@ export class AnnonceManagementComponent implements OnInit {
   showModel: AnnonceDTO | null = null;
   selectedAnnonce: AnnonceDTO | null = null;
   selectedUserId: number | null = null;
+
+  reportsList = signal<SignalementDTO[]>([]);
+  loadingReports = signal(false);
   
   private map: L.Map | undefined;
   private marker: L.Marker | undefined;
@@ -285,6 +295,25 @@ export class AnnonceManagementComponent implements OnInit {
     this.modal.open(content, { size: 'md', centered: true });
   }
 
+  openReportsModal(annonce: AnnonceDTO, content: TemplateRef<unknown>): void {
+    if (!annonce.id) return;
+    this.selectedAnnonce = annonce;
+    this.reportsList.set([]);
+    this.loadingReports.set(true);
+    
+    this.modal.open(content, { size: 'lg', centered: true });
+    
+    this.annonceAdmin.getSignalements(annonce.id).subscribe({
+      next: (data) => {
+        this.reportsList.set(data);
+        this.loadingReports.set(false);
+      },
+      error: () => {
+        this.loadingReports.set(false);
+      }
+    });
+  }
+
   submitEdit(): void {
     const m = this.editModel;
     if (!m?.id) return;
@@ -361,6 +390,15 @@ export class AnnonceManagementComponent implements OnInit {
     if (!a.id) return;
     if (!confirm(`Delete annonce ${a.titre}?`)) return;
     this.annonceAdmin.deleteAnnonce(a.id).subscribe({
+      next: () => this.reload(),
+      error: (err) => this.error.set(this.errMsg(err))
+    });
+  }
+
+  approveReport(a: AnnonceDTO): void {
+    if (!a.id) return;
+    if (!confirm(`Dismiss report for ${a.titre}?`)) return;
+    this.annonceAdmin.dismissReport(a.id).subscribe({
       next: () => this.reload(),
       error: (err) => this.error.set(this.errMsg(err))
     });

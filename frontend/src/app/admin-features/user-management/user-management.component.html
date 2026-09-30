@@ -48,6 +48,7 @@
                     <th>Email</th>
                     <th>Role</th>
                     <th>Phone</th>
+                    <th>Status</th>
                     <th>Created At</th>
                     <th class="text-end">Actions</th>
                   </tr>
@@ -67,8 +68,20 @@
                       <td>{{ u.email }}</td>
                       <td>{{ u.role }}</td>
                       <td>{{ u.telephone || '—' }}</td>
+                      <td>
+                        @if (u.enabled) {
+                          <span class="badge bg-light-success text-success">Actif</span>
+                        } @else {
+                          <span class="badge bg-light-danger text-danger">Suspendu</span>
+                        }
+                      </td>
                       <td>{{ u.createdAt | date:'shortDate' }}</td>
                       <td class="text-end">
+                        @if (u.enabled) {
+                          <button type="button" class="btn btn-icon btn-sm btn-outline-warning me-1" (click)="toggleStatus(u)" title="Suspendre" tabindex="0" (keydown.enter)="null"><i class="feather icon-slash"></i></button>
+                        } @else {
+                          <button type="button" class="btn btn-icon btn-sm btn-outline-success me-1" (click)="toggleStatus(u)" title="Réactiver" tabindex="0" (keydown.enter)="null"><i class="feather icon-check-circle"></i></button>
+                        }
                         <button type="button" class="btn btn-icon btn-sm btn-outline-info me-1" (click)="openShow(u, showTpl)" title="Show Info" tabindex="0" (keydown.enter)="null"><i class="feather icon-eye"></i></button>
                         <button type="button" class="btn btn-icon btn-sm btn-outline-primary me-1" (click)="openEdit(u, editTpl)" title="Edit" tabindex="0" (keydown.enter)="null"><i class="feather icon-edit"></i></button>
                         <button type="button" class="btn btn-icon btn-sm btn-outline-danger" (click)="deleteUser(u)" title="Delete" tabindex="0" (keydown.enter)="null"><i class="feather icon-trash-2"></i></button>
@@ -207,6 +220,16 @@
         <div class="col-sm-6">
           <p class="mb-1 text-muted">Created At</p>
           <h6 class="mb-0">{{ s.createdAt | date:'medium' || '—' }}</h6>
+        </div>
+        <div class="col-sm-6">
+          <p class="mb-1 text-muted">Status</p>
+          <h6 class="mb-0">
+            @if (s.enabled) {
+              <span class="badge bg-light-success text-success">Actif</span>
+            } @else {
+              <span class="badge bg-light-danger text-danger">Suspendu</span>
+            }
+          </h6>
         </div>
       </div>
     </div>

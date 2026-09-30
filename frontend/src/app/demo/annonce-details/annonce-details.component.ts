@@ -4,7 +4,7 @@ import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/core/auth/auth.service';
-import { AnnonceDTO } from 'src/app/admin-features/annonce-admin.service';
+import { AnnonceDTO, AnnonceAdminService } from 'src/app/admin-features/annonce-admin.service';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -31,6 +31,7 @@ export class AnnonceDetailsComponent implements OnInit {
   private avisService = inject(AvisService);
   private translationService = inject(TranslationService);
   public favoriService = inject(FavoriService);
+  private annonceAdminService = inject(AnnonceAdminService);
 
   user = computed(() => this.auth.user());
   isAuthenticated = computed(() => this.auth.isAuthenticated());
@@ -54,6 +55,11 @@ export class AnnonceDetailsComponent implements OnInit {
   reservationError = signal('');
   isSubmitting = signal(false);
 
+  reportForm!: FormGroup;
+  isReporting = signal(false);
+  reportSuccess = signal(false);
+  reportError = signal('');
+
   // Avis/Reviews state
   avisList = signal<AvisDTO[]>([]);
   averageRating = signal<number>(0);
@@ -68,6 +74,10 @@ export class AnnonceDetailsComponent implements OnInit {
       dateDebut: ['', Validators.required],
       dateFin: ['', Validators.required],
       message: ['']
+    });
+
+    this.reportForm = this.fb.group({
+      reason: ['', Validators.required]
     });
 
     this.route.paramMap.subscribe(params => {
@@ -217,6 +227,43 @@ export class AnnonceDetailsComponent implements OnInit {
       error: (err) => {
         this.isSubmitting.set(false);
         this.reservationError.set(err.error?.message || 'Error occurred while booking. Please check your dates.');
+      }
+    });
+  }
+
+
+
+  // --- REPORT LISTING ---
+  onReport(content: any) {
+    if (!this.isAuthenticated()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    this.reportSuccess.set(false);
+    this.reportError.set('');
+    this.reportForm.reset();
+    this.modalService.open(content, { centered: true });
+  }
+
+  submitReport(modal: any) {
+    if (this.reportForm.invalid) return;
+
+    const u = this.user();
+    const a = this.annonce();
+    if (!a || !a.id || !u || !u.id) return;
+
+    this.isReporting.set(true);
+    const reason = this.reportForm.value.reason;
+
+    this.annonceAdminService.signalerAnnonce(a.id, u.id, reason).subscribe({
+      next: () => {
+        this.isReporting.set(false);
+        this.reportSuccess.set(true);
+        setTimeout(() => modal.close(), 2000);
+      },
+      error: (err) => {
+        this.isReporting.set(false);
+        this.reportError.set(err.error?.message || 'Error reporting listing.');
       }
     });
   }

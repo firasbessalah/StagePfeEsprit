@@ -1,0 +1,18 @@
+﻿# =============================================================================
+# monitoring/grafana/provisioning/dashboards/dashboard.yml
+# Tells Grafana where to load dashboard JSON files from
+# =============================================================================
+
+apiVersion: 1
+
+providers:
+  - name: "Lofina Dashboards"
+    orgId: 1
+    folder: "Lofina Bizerte"
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/provisioning/dashboards
+      foldersFromFilesStructure: false

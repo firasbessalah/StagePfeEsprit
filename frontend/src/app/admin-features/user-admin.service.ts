@@ -41,4 +41,8 @@ export class UserAdminService {
   changePassword(id: number, request: any): Observable<void> {
     return this.http.put<void>(`${this.base}/users/${id}/password`, request);
   }
+
+  toggleUserStatus(id: number): Observable<UserDTO> {
+    return this.http.patch<UserDTO>(`${this.base}/users/${id}/toggle-status`, {});
+  }
 }

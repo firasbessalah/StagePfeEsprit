@@ -22,8 +22,6 @@ public class AnnonceDTO {
     private String localisation;
     private Double latitude;
     private Double longitude;
-    private LocalDate disponibiliteDebut;
-    private LocalDate disponibiliteFin;
     private String statut;
     private LocalDateTime createdAt;
     private Long userId;
@@ -33,7 +31,6 @@ public class AnnonceDTO {
     private Integer duree;
     private Integer vues;
     private Integer riskScore;
-    private Double rawScore;
     private Boolean flagged;
     private String flagReason;
     private String signalsJson;

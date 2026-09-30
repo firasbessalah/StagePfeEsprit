@@ -94,6 +94,26 @@ public class AnnonceController {
         return ResponseEntity.ok(annonceService.archiver(id));
     }
 
+    // PUT /api/annonces/1/signaler
+    @PutMapping("/{id:\\d+}/signaler")
+    public ResponseEntity<AnnonceDTO> signaler(@PathVariable Long id, @RequestBody java.util.Map<String, String> payload) {
+        String reason = payload.get("reason");
+        Long userId = Long.valueOf(payload.get("userId"));
+        return ResponseEntity.ok(annonceService.signalerAnnonce(id, userId, reason));
+    }
+
+    // GET /api/annonces/1/signalements
+    @GetMapping("/{id:\\d+}/signalements")
+    public ResponseEntity<List<com.example.pfeporject.dto.SignalementDTO>> getSignalements(@PathVariable Long id) {
+        return ResponseEntity.ok(annonceService.getSignalements(id));
+    }
+
+    // PUT /api/annonces/1/dismiss-report
+    @PutMapping("/{id:\\d+}/dismiss-report")
+    public ResponseEntity<AnnonceDTO> dismissReport(@PathVariable Long id) {
+        return ResponseEntity.ok(annonceService.dismissReport(id));
+    }
+
     // DELETE /api/annonces/1
     @DeleteMapping("/{id:\\d+}")
     public ResponseEntity<Void> supprimer(@PathVariable Long id) {

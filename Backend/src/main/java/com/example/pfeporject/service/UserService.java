@@ -143,9 +143,14 @@ public class UserService {
             throw new RuntimeException("Mot de passe incorrect !");
         }
 
-        // 3. Check if account is verified
+        // 3. Check if account is verified or suspended
         if (!user.getEnabled()) {
-            throw new AccountNotVerifiedException("Votre compte n'est pas encore vérifié. Veuillez vérifier votre email.");
+            boolean hasVerificationToken = verificationTokenRepository.findByUserId(user.getId()).isPresent();
+            if (hasVerificationToken) {
+                throw new AccountNotVerifiedException("Votre compte n'est pas encore vérifié. Veuillez vérifier votre email.");
+            } else {
+                throw new AccountNotVerifiedException("Votre compte a été suspendu par l'administrateur.");
+            }
         }
 
         // 4. Générer le token JWT
@@ -216,8 +221,16 @@ public class UserService {
         }
 
         if (!user.getEnabled()) {
-            user.setEnabled(true);
-            userRepository.save(user);
+            boolean hasVerificationToken = verificationTokenRepository.findByUserId(user.getId()).isPresent();
+            if (hasVerificationToken) {
+                // The user signed up manually but didn't verify. Google login verifies them.
+                user.setEnabled(true);
+                userRepository.save(user);
+                verificationTokenRepository.deleteByUserId(user.getId());
+            } else {
+                // No token + not enabled = Suspended!
+                throw new AccountNotVerifiedException("Votre compte a été suspendu par l'administrateur.");
+            }
         }
 
         String token = jwtService.generateToken(user.getEmail());
@@ -256,6 +269,7 @@ public class UserService {
         dto.setTelephone(user.getTelephone());
         dto.setPhotoProfil(user.getPhotoProfil());
         dto.setRole(user.getRole().name());
+        dto.setEnabled(user.getEnabled());
         dto.setCreatedAt(user.getCreatedAt());
         return dto;
     }
@@ -300,6 +314,16 @@ public class UserService {
         
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
+    }
+
+    // ─── TOGGLE STATUS ───────────────────────────────────────
+    public UserDTO toggleUserStatus(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Utilisateur introuvable !"));
+        
+        user.setEnabled(!user.getEnabled());
+        User updated = userRepository.save(user);
+        return toDTO(updated);
     }
 
 }

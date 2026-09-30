@@ -35,10 +35,9 @@ USER spring
 
 EXPOSE 8080
 
-# HEALTHCHECK: spring-boot-starter-actuator is NOT in pom.xml,
-# so we probe /api/auth/register (always returns 4xx, never 404) as a liveness check.
+# HEALTHCHECK: spring-boot-starter-actuator is now in pom.xml,
+# so we probe /actuator/health for a clean liveness check.
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-  CMD curl -sf -o /dev/null -w "%{http_code}" http://localhost:8080/api/auth/register \
-      | grep -qE "^(200|400|401|403|405|422)$" || exit 1
+  CMD curl -sf http://localhost:8080/actuator/health | grep -q '"status":"UP"' || exit 1
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
