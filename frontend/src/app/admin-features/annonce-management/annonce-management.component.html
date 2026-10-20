@@ -145,7 +145,9 @@
                     <th>Titre</th>
                     <th>Prix</th>
                     <th>Localisation</th>
-                    <th>AI Score</th>
+                    @if (isAdmin()) {
+                      <th>AI Score</th>
+                    }
                     @if (isAdmin() && currentTab() === 'REPORTED') {
                       <th class="text-center">Signalements</th>
                     }
@@ -160,20 +162,22 @@
                       <td>{{ a.titre }} <br><small class="text-muted">par {{ a.userPrenom }} {{ a.userNom }}</small></td>
                       <td>{{ a.prix }}</td>
                       <td>{{ a.localisation }}</td>
-                      <td>
-                        @if ((a.riskScore ?? 0) >= 60) {
-                          <span class="badge bg-danger" [title]="a.flagReason">Risque {{a.riskScore}}%</span>
-                        } @else if ((a.riskScore ?? 0) >= 20) {
-                          <span class="badge bg-warning text-dark" [title]="a.flagReason || 'Quelques éléments suspects'">Risque {{a.riskScore}}%</span>
-                        } @else {
-                          <span class="badge bg-success" [title]="a.flagReason || 'Sûr'">Sûr {{a.riskScore}}%</span>
-                        }
-                        @if (a.signalsJson && parseSignals(a.signalsJson).length > 0) {
-                          <button class="btn btn-sm btn-link p-0 ms-2 text-info" (click)="openSignalsModal(a, signalsContent)" title="Voir les détails IA" tabindex="0" (keydown.enter)="null">
-                            <i class="feather icon-info" style="font-size: 1.1em;"></i>
-                          </button>
-                        }
-                      </td>
+                      @if (isAdmin()) {
+                        <td>
+                          @if ((a.riskScore ?? 0) >= 60) {
+                            <span class="badge bg-danger" [title]="a.flagReason">Risque {{a.riskScore}}%</span>
+                          } @else if ((a.riskScore ?? 0) >= 20) {
+                            <span class="badge bg-warning text-dark" [title]="a.flagReason || 'Quelques éléments suspects'">Risque {{a.riskScore}}%</span>
+                          } @else {
+                            <span class="badge bg-success" [title]="a.flagReason || 'Sûr'">Sûr {{a.riskScore}}%</span>
+                          }
+                          @if (a.signalsJson && parseSignals(a.signalsJson).length > 0) {
+                            <button class="btn btn-sm btn-link p-0 ms-2 text-info" (click)="openSignalsModal(a, signalsContent)" title="Voir les détails IA" tabindex="0" (keydown.enter)="null">
+                              <i class="feather icon-info" style="font-size: 1.1em;"></i>
+                            </button>
+                          }
+                        </td>
+                      }
                       @if (isAdmin() && currentTab() === 'REPORTED') {
                         <td class="text-center">
                           <button class="btn btn-sm btn-outline-danger" (click)="openReportsModal(a, reportsModal)" title="Voir les rapports">
@@ -312,28 +316,30 @@
           <p class="mb-1 text-muted">Créée le</p>
           <h6 class="mb-0">{{ s.createdAt | date:'medium' || '—' }}</h6>
         </div>
-        <div class="col-sm-12 mt-3">
-          <div class="p-3 rounded border" [class.border-danger]="s.flagged" [class.bg-light]="!s.flagged" [style.background]="s.flagged ? '#fff5f5' : '#f4f9f4'">
-             <h6 class="mb-1 text-dark"><i class="feather icon-shield"></i> Modération IA</h6>
-             <p class="mb-0 text-dark"><strong>Score de risque:</strong> {{s.riskScore}}% 
-               @if (s.flagged) { <span class="badge bg-danger ms-2">Signalé</span> }
-               @else { <span class="badge bg-success ms-2">Sûr</span> }
-             </p>
-             @if (s.flagReason) {
-               <p class="mb-0 mt-1 text-muted"><small>Raison: {{ s.flagReason }}</small></p>
-             }
-             @if (s.signalsJson) {
-               <div class="mt-2" *ngIf="parseSignals(s.signalsJson).length > 0">
-                 <strong>Détails :</strong>
-                 <ul class="mb-0">
-                   <li *ngFor="let sig of parseSignals(s.signalsJson)">
-                     <small>{{ sig.signal }} (Poids: +{{ sig.weight }})</small>
-                   </li>
-                 </ul>
-               </div>
-             }
+        @if (isAdmin()) {
+          <div class="col-sm-12 mt-3">
+            <div class="p-3 rounded border" [class.border-danger]="s.flagged" [class.bg-light]="!s.flagged" [style.background]="s.flagged ? '#fff5f5' : '#f4f9f4'">
+               <h6 class="mb-1 text-dark"><i class="feather icon-shield"></i> Modération IA</h6>
+               <p class="mb-0 text-dark"><strong>Score de risque:</strong> {{s.riskScore}}% 
+                 @if (s.flagged) { <span class="badge bg-danger ms-2">Signalé</span> }
+                 @else { <span class="badge bg-success ms-2">Sûr</span> }
+               </p>
+               @if (s.flagReason) {
+                 <p class="mb-0 mt-1 text-muted"><small>Raison: {{ s.flagReason }}</small></p>
+               }
+               @if (s.signalsJson) {
+                 <div class="mt-2" *ngIf="parseSignals(s.signalsJson).length > 0">
+                   <strong>Détails :</strong>
+                   <ul class="mb-0">
+                     <li *ngFor="let sig of parseSignals(s.signalsJson)">
+                       <small>{{ sig.signal }} (Poids: +{{ sig.weight }})</small>
+                     </li>
+                   </ul>
+                 </div>
+               }
+            </div>
           </div>
-        </div>
+        }
         <div class="col-sm-12 mt-3">
           <p class="mb-1 text-muted">Emplacement sur la carte</p>
           <div id="showMap" style="height: 250px; width: 100%; border-radius: 8px; z-index: 1;"></div>

@@ -225,13 +225,10 @@ export class AuthSigninComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private handleCaptchaError(): void {
+    console.error('[reCAPTCHA] Error occurred loading widget with sitekey:', environment.recaptchaSiteKey);
     this.captchaToken = '';
     this.captchaResolved.set(true);
     this.captchaInvalid.set(false);
-    const container = document.getElementById('recaptcha-container');
-    if (container) {
-      container.style.display = 'none';
-    }
     this.cd.detectChanges();
   }
 

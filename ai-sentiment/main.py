@@ -128,7 +128,7 @@ Review comment: "{text}"
 Return ONLY the raw JSON object:"""
 
         response = client.models.generate_content(
-            model='gemini-2.5-flash',
+            model='gemini-3.8-flash',
             contents=prompt,
         )
         raw = response.text.strip()
@@ -164,11 +164,21 @@ Return ONLY the raw JSON object:"""
 
 def _local_fallback_sentiment(text: str) -> SentimentResponse:
     """
-    Simple keyword-based fallback when Gemini is unavailable.
-    Works well for French and English comments.
+    Keyword-based fallback when Gemini is unavailable.
+    Handles negations, phrases, and multilingual keywords (French, English).
     """
     import re
     text_lower = text.lower()
+
+    # Explicit strong negative phrases (including negations of positive words)
+    strong_negative_phrases = [
+        "not recommend", "do not recommend", "don't recommend", "would not recommend",
+        "never recommend", "ne recommande pas", "pas recommandé",
+        "not clean", "nothing was cleaned", "wasn't clean", "was not clean", "pas propre",
+        "no hot water", "not working", "ne marche pas", "ne fonctionne pas",
+        "waste of money", "perte d'argent", "never again", "plus jamais",
+        "unbearable", "inadmissible", "déplorable", "scam", "arnaque", "filthy"
+    ]
 
     positive_keywords = [
         "bien", "super", "excellent", "top", "parfait", "propre", "calme",
@@ -180,14 +190,21 @@ def _local_fallback_sentiment(text: str) -> SentimentResponse:
 
     negative_keywords = [
         "mauvais", "mauvaise", "sale", "nul", "horrible", "décevant", "problème", "déçu",
-        "bad", "dirty", "awful", "terrible", "broken", "noisy", "bruyant", "bruit",
+        "bad", "dirty", "awful", "terrible", "broken", "noisy", "bruyant", "bruit", "noise",
         "insatisfait", "dommage", "triste", "froid", "humide", "pire", "catastrophe",
-        "worst", "hate", "hated", "disgusting", "poor", "unacceptable", "ugly"
+        "worst", "hate", "hated", "disgusting", "poor", "unacceptable", "ugly", "rude",
+        "unresponsive"
     ]
 
-    # Do not use strict \b boundaries so we can catch plurals and derivations (e.g., problèmes, catastrophique)
-    pos_score = sum(1 for word in positive_keywords if word in text_lower)
-    neg_score = sum(1 for word in negative_keywords if word in text_lower)
+    neg_phrase_count = sum(2 for phrase in strong_negative_phrases if phrase in text_lower)
+
+    # Scrub negative phrases before checking positive keywords to avoid "not clean" counting as positive "clean"
+    scrubbed_text = text_lower
+    for phrase in strong_negative_phrases:
+        scrubbed_text = scrubbed_text.replace(phrase, " ")
+
+    pos_score = sum(1 for word in positive_keywords if word in scrubbed_text)
+    neg_score = sum(1 for word in negative_keywords if word in scrubbed_text) + neg_phrase_count
 
     if pos_score > neg_score:
         return SentimentResponse(
@@ -250,7 +267,7 @@ Content to analyze:
 
 Return ONLY the raw JSON:"""
         response = client.models.generate_content(
-            model='gemini-2.5-flash',
+            model='gemini-3.8-flash',
             contents=prompt,
         )
         return _parse_moderation_response(response.text.strip())
