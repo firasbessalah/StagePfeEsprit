@@ -60,7 +60,7 @@ services:
       - key: MAIL_FROM
         value: firasbessalahboos@gmail.com
       - key: GOOGLE_CLIENT_ID
-        sync: false
+        value: 157705461336-rfp316ppj82jf6d6aonila5bbfm0sivj.apps.googleusercontent.com
 
   # ── 3. Angular Frontend (Nginx) ───────────────────────────────────────────
   - type: web
@@ -69,3 +69,9 @@ services:
     dockerfilePath: ./frontend/Dockerfile
     dockerContext: ./frontend
     plan: free
+    envVars:
+      - key: BACKEND_HOSTPORT
+        fromService:
+          type: web
+          name: pfe-backend
+          property: hostport
