@@ -30,6 +30,8 @@ COPY nginx.conf /etc/nginx/templates/default.conf.template
 
 # Backend target (host:port). docker-compose default; override on Render.
 ENV BACKEND_HOSTPORT=backend:8080
+# Enable entrypoint local resolver extraction for runtime dynamic resolution
+ENV NGINX_ENTRYPOINT_LOCAL_RESOLVERS=1
 
 # Copy the compiled Angular application.
 # angular.json: "outputPath": "dist"  →  files land in /app/dist/ (flat, no sub-folder)
