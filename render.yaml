@@ -28,6 +28,7 @@ services:
     dockerfilePath: ./Backend/Dockerfile
     dockerContext: ./Backend
     plan: free
+    healthCheckPath: /actuator/health
     envVars:
       - key: DB_HOST
         fromDatabase:
@@ -41,6 +42,8 @@ services:
         fromDatabase:
           name: pfe-db
           property: database
+      - key: DB_JDBC_PARAMS
+        value: "?sslmode=require"
       - key: SPRING_DATASOURCE_USERNAME
         fromDatabase:
           name: pfe-db

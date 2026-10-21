@@ -28,10 +28,12 @@ RUN rm /etc/nginx/conf.d/default.conf
 # /etc/nginx/conf.d/default.conf at container start.
 COPY nginx.conf /etc/nginx/templates/default.conf.template
 
-# Backend target (host:port). docker-compose default; override on Render.
+# Backend target (host:port). docker-compose default; Render sets this via Blueprint fromService hostport.
 ENV BACKEND_HOSTPORT=backend:8080
-# Enable entrypoint local resolver extraction for runtime dynamic resolution
-ENV NGINX_ENTRYPOINT_LOCAL_RESOLVERS=1
+
+# Fail fast on Render if the API upstream was not wired (avoids silent 502 on login).
+COPY render-check-backend.sh /docker-entrypoint.d/40-render-check-backend.sh
+RUN chmod +x /docker-entrypoint.d/40-render-check-backend.sh
 
 # Copy the compiled Angular application.
 # angular.json: "outputPath": "dist"  →  files land in /app/dist/ (flat, no sub-folder)
