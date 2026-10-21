@@ -33,11 +33,6 @@ COPY --from=builder /build/target/*.jar app.jar
 RUN chown -R spring:spring /app
 USER spring
 
-EXPOSE 8080
-
-# HEALTHCHECK: spring-boot-starter-actuator is now in pom.xml,
-# so we probe /actuator/health for a clean liveness check.
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-  CMD curl -sf http://localhost:8080/actuator/health | grep -q '"status":"UP"' || exit 1
+EXPOSE 8080 10000
 
 ENTRYPOINT ["java", "-XX:MaxRAMPercentage=70", "-XX:+UseSerialGC", "-Xss512k", "-XX:TieredStopAtLevel=1", "-jar", "app.jar"]
