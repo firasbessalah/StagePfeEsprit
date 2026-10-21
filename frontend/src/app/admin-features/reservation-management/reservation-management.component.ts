@@ -92,16 +92,16 @@ export class ReservationManagementComponent implements OnInit {
     if (confirm('Are you sure you want to approve this reservation?')) {
       this.reservationService.confirmerReservation(id).subscribe({
         next: () => this.loadReservations(),
-        error: (err) => alert('Error accepting reservation.')
+        error: (err) => alert(err?.error?.message || 'Error accepting reservation.')
       });
     }
   }
 
   refuseReservation(id: number) {
     if (confirm('Are you sure you want to refuse this reservation?')) {
-      this.reservationService.annulerReservation(id).subscribe({
+      this.reservationService.refuserReservation(id).subscribe({
         next: () => this.loadReservations(),
-        error: (err) => alert('Error refusing reservation.')
+        error: (err) => alert(err?.error?.message || 'Error refusing reservation.')
       });
     }
   }
@@ -110,7 +110,7 @@ export class ReservationManagementComponent implements OnInit {
     if (confirm('Are you sure you want to cancel this reservation?')) {
       this.reservationService.annulerReservation(id).subscribe({
         next: () => this.loadReservations(),
-        error: (err) => alert('Error canceling reservation.')
+        error: (err) => alert(err?.error?.message || 'Error canceling reservation.')
       });
     }
   }

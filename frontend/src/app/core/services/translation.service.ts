@@ -228,6 +228,7 @@ export class TranslationService {
     EN_ATTENTE: { en: 'Pending', fr: 'En attente', ar: 'قيد الانتظار' },
     CONFIRMEE: { en: 'Confirmed', fr: 'Confirmée', ar: 'مؤكدة' },
     ANNULEE: { en: 'Cancelled', fr: 'Annulée', ar: 'ملغاة' },
+    REFUSEE: { en: 'Refused', fr: 'Refusée', ar: 'مرفوضة' },
     TERMINEE: { en: 'Completed', fr: 'Terminée', ar: 'مكتملة' },
     VALIDEE: { en: 'Validated', fr: 'Validée', ar: 'تم التحقق' },
     REJETEE: { en: 'Rejected', fr: 'Rejetée', ar: 'مرفوضة' },

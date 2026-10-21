@@ -57,6 +57,10 @@ export class ReservationService {
     return this.http.put<ReservationDTO>(`${this.apiUrl}/${id}/annuler`, {});
   }
 
+  refuserReservation(id: number): Observable<ReservationDTO> {
+    return this.http.put<ReservationDTO>(`${this.apiUrl}/${id}/refuser`, {});
+  }
+
   terminerReservation(id: number): Observable<ReservationDTO> {
     return this.http.put<ReservationDTO>(`${this.apiUrl}/${id}/terminer`, {});
   }

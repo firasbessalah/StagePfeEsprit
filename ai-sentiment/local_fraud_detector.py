@@ -199,43 +199,49 @@ class LocalFraudDetector:
             except Exception:
                 pass
             
-            # 2. AI-Generated Image Detection
+            # 2. AI-Generated Image Detection (isolated: a model error must not hide the checks above)
             if AI_DETECTOR is not None:
-                res = AI_DETECTOR(img)
-                # Usually returns [{'label': 'artificial', 'score': 0.9}, ...]
-                top_label = res[0]['label'].lower()
-                top_score = res[0]['score']
-                if 'artificial' in top_label or 'ai' in top_label or 'fake' in top_label:
-                    if top_score > 0.7:
-                        risk += 50
-                        cats.append("FAKE_IMAGE")
-                        sigs.append({"signal": f"ai_generated_image:{top_score:.2f}", "weight": 50})
+                try:
+                    res = AI_DETECTOR(img)
+                    # Usually returns [{'label': 'artificial', 'score': 0.9}, ...]
+                    top_label = res[0]['label'].lower()
+                    top_score = res[0]['score']
+                    if 'artificial' in top_label or 'ai' in top_label or 'fake' in top_label:
+                        if top_score > 0.7:
+                            risk += 50
+                            cats.append("FAKE_IMAGE")
+                            sigs.append({"signal": f"ai_generated_image:{top_score:.2f}", "weight": 50})
+                except Exception as e:
+                    print(f"[Local Fraud Detector Deep] AI-image detector failed: {e}")
 
-            # 3. CLIP Luxury vs Price Check
+            # 3. CLIP Luxury vs Price Check (isolated)
             if CLIP_MODEL is not None and CLIP_PROCESSOR is not None:
-                labels = ["a luxurious expensive mansion", "a standard house", "a cheap rundown apartment", "not a house"]
-                inputs = CLIP_PROCESSOR(text=labels, images=img, return_tensors="pt", padding=True)
-                outputs = CLIP_MODEL(**inputs)
-                logits_per_image = outputs.logits_per_image
-                probs = logits_per_image.softmax(dim=1).detach().numpy()[0]
-                
-                # Probs index matches labels index
-                # 0: luxurious, 1: standard, 2: cheap, 3: not a house
-                
-                # Check if it's completely irrelevant
-                if probs[3] > 0.6:
-                    risk += 30
-                    cats.append("IRRELEVANT_IMAGE")
-                    sigs.append({"signal": f"irrelevant_image_not_a_house:{probs[3]:.2f}", "weight": 30})
-                
-                # Check for scam mismatch: Looks like a luxury mansion but extremely cheap
-                elif probs[0] > max(probs[1], probs[2]) and prix < 200:
-                    risk += 60
-                    cats.append("SCAM")
-                    cats.append("PRICE_MISMATCH")
-                    sigs.append({"signal": f"luxury_image_low_price_scam", "weight": 60})
+                try:
+                    labels = ["a luxurious expensive mansion", "a standard house", "a cheap rundown apartment", "not a house"]
+                    inputs = CLIP_PROCESSOR(text=labels, images=img, return_tensors="pt", padding=True)
+                    outputs = CLIP_MODEL(**inputs)
+                    logits_per_image = outputs.logits_per_image
+                    probs = logits_per_image.softmax(dim=1).detach().numpy()[0]
+
+                    # Probs index matches labels index
+                    # 0: luxurious, 1: standard, 2: cheap, 3: not a house
+
+                    # Check if it's completely irrelevant
+                    if probs[3] > 0.6:
+                        risk += 30
+                        cats.append("IRRELEVANT_IMAGE")
+                        sigs.append({"signal": f"irrelevant_image_not_a_house:{probs[3]:.2f}", "weight": 30})
+
+                    # Check for scam mismatch: Looks like a luxury mansion but extremely cheap
+                    elif probs[0] > max(probs[1], probs[2]) and prix < 200:
+                        risk += 60
+                        cats.append("SCAM")
+                        cats.append("PRICE_MISMATCH")
+                        sigs.append({"signal": f"luxury_image_low_price_scam", "weight": 60})
+                except Exception as e:
+                    print(f"[Local Fraud Detector Deep] CLIP check failed: {e}")
 
             return risk, cats, sigs
         except Exception as e:
             print(f"[Local Fraud Detector Deep] Error parsing image: {e}")
-            return 0, [], []
+            return risk, cats, sigs

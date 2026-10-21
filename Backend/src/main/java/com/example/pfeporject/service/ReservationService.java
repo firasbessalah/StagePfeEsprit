@@ -8,7 +8,11 @@ import com.example.pfeporject.entity.User;
 import com.example.pfeporject.repository.AnnonceRepository;
 import com.example.pfeporject.repository.ReservationRepository;
 import com.example.pfeporject.repository.UserRepository;
+import com.example.pfeporject.entity.Notification.TypeNotification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.temporal.ChronoUnit;
@@ -21,6 +25,7 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
     private final AnnonceRepository annonceRepository;
+    private final NotificationService notificationService;
 
     // ─── CRÉER UNE RÉSERVATION ───────────────────────────────
     public ReservationDTO confirmer(ReservationDTO dto, Long userId, Long annonceId) {
@@ -49,7 +54,16 @@ public class ReservationService {
         reservation.setUser(user);
         reservation.setAnnonce(annonce);
 
-        return toDTO(reservationRepository.save(reservation));
+        Reservation saved = reservationRepository.save(reservation);
+
+        // Notify the bailleur that a new request is waiting for his decision
+        notifySafely(annonce.getUser().getId(),
+                "Nouvelle demande de réservation",
+                user.getPrenom() + " " + user.getNom() + " souhaite réserver « " + annonce.getTitre()
+                        + " » du " + dto.getDateDebut() + " au " + dto.getDateFin() + ".",
+                saved.getId());
+
+        return toDTO(saved);
     }
 
     // ─── MES RÉSERVATIONS ────────────────────────────────────
@@ -70,34 +84,137 @@ public class ReservationService {
 
     // ─── RÉSERVATIONS POUR UN BAILLEUR (Toutes ses annonces) ─
     public List<ReservationDTO> getReservationsByBailleur(Long bailleurId) {
-        return reservationRepository.findAll().stream()
-                .filter(r -> r.getAnnonce() != null && r.getAnnonce().getUser() != null && r.getAnnonce().getUser().getId().equals(bailleurId))
+        return reservationRepository.findByAnnonceUserId(bailleurId).stream()
                 .map(this::toDTO)
                 .toList();
     }
 
-    // ─── CONFIRMER ───────────────────────────────────────────
+    // ─── ACCEPTER (Propriétaire de l'annonce) ────────────────
     public ReservationDTO confirmer(Long id) {
-        Reservation reservation = reservationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Réservation introuvable !"));
+        Reservation reservation = findReservation(id);
+        requireOwnerOrAdmin(reservation);
+
+        if (reservation.getStatut() != StatutReservation.EN_ATTENTE) {
+            throw new RuntimeException("Seule une réservation en attente peut être acceptée !");
+        }
+
+        // Do not accept two bookings for the same dates
+        boolean overlap = reservationRepository
+                .findByAnnonceIdAndStatut(reservation.getAnnonce().getId(), StatutReservation.CONFIRMEE)
+                .stream()
+                .anyMatch(other -> !other.getId().equals(reservation.getId())
+                        && reservation.getDateDebut().isBefore(other.getDateFin())
+                        && reservation.getDateFin().isAfter(other.getDateDebut()));
+        if (overlap) {
+            throw new RuntimeException("Ces dates chevauchent une réservation déjà confirmée !");
+        }
+
         reservation.setStatut(StatutReservation.CONFIRMEE);
-        return toDTO(reservationRepository.save(reservation));
+        Reservation saved = reservationRepository.save(reservation);
+
+        notifySafely(reservation.getUser().getId(),
+                "Réservation acceptée",
+                "Votre réservation pour « " + reservation.getAnnonce().getTitre() + " » a été acceptée.",
+                saved.getId());
+        return toDTO(saved);
     }
 
-    // ─── ANNULER ─────────────────────────────────────────────
+    // ─── REFUSER (Propriétaire de l'annonce) ─────────────────
+    public ReservationDTO refuser(Long id) {
+        Reservation reservation = findReservation(id);
+        requireOwnerOrAdmin(reservation);
+
+        if (reservation.getStatut() != StatutReservation.EN_ATTENTE) {
+            throw new RuntimeException("Seule une réservation en attente peut être refusée !");
+        }
+
+        reservation.setStatut(StatutReservation.REFUSEE);
+        Reservation saved = reservationRepository.save(reservation);
+
+        notifySafely(reservation.getUser().getId(),
+                "Réservation refusée",
+                "Votre réservation pour « " + reservation.getAnnonce().getTitre() + " » a été refusée.",
+                saved.getId());
+        return toDTO(saved);
+    }
+
+    // ─── ANNULER (Locataire, propriétaire ou admin) ──────────
     public ReservationDTO annuler(Long id) {
-        Reservation reservation = reservationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Réservation introuvable !"));
+        Reservation reservation = findReservation(id);
+        User caller = currentUser();
+        boolean isTenant = reservation.getUser() != null && reservation.getUser().getId().equals(caller.getId());
+        if (!isTenant && !isOwnerOrAdmin(reservation, caller)) {
+            throw new AccessDeniedException("Vous n'êtes pas autorisé à annuler cette réservation !");
+        }
+
+        if (reservation.getStatut() == StatutReservation.ANNULEE
+                || reservation.getStatut() == StatutReservation.REFUSEE
+                || reservation.getStatut() == StatutReservation.TERMINEE) {
+            throw new RuntimeException("Cette réservation ne peut plus être annulée !");
+        }
+
         reservation.setStatut(StatutReservation.ANNULEE);
-        return toDTO(reservationRepository.save(reservation));
+        Reservation saved = reservationRepository.save(reservation);
+
+        // Tell the other party
+        if (isTenant) {
+            notifySafely(reservation.getAnnonce().getUser().getId(),
+                    "Réservation annulée",
+                    caller.getPrenom() + " " + caller.getNom() + " a annulé sa réservation pour « "
+                            + reservation.getAnnonce().getTitre() + " ».",
+                    saved.getId());
+        } else {
+            notifySafely(reservation.getUser().getId(),
+                    "Réservation annulée",
+                    "Votre réservation pour « " + reservation.getAnnonce().getTitre() + " » a été annulée.",
+                    saved.getId());
+        }
+        return toDTO(saved);
     }
 
-    // ─── TERMINER ────────────────────────────────────────────
+    // ─── TERMINER (Propriétaire de l'annonce) ────────────────
     public ReservationDTO terminer(Long id) {
-        Reservation reservation = reservationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Réservation introuvable !"));
+        Reservation reservation = findReservation(id);
+        requireOwnerOrAdmin(reservation);
         reservation.setStatut(StatutReservation.TERMINEE);
         return toDTO(reservationRepository.save(reservation));
+    }
+
+    // ─── helpers ─────────────────────────────────────────────
+    private Reservation findReservation(Long id) {
+        return reservationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Réservation introuvable !"));
+    }
+
+    private User currentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || auth.getName() == null) {
+            throw new AccessDeniedException("Authentification requise !");
+        }
+        return userRepository.findByEmailIgnoreCase(auth.getName())
+                .orElseThrow(() -> new AccessDeniedException("Utilisateur introuvable !"));
+    }
+
+    private boolean isOwnerOrAdmin(Reservation reservation, User caller) {
+        if (caller.getRole() == User.Role.ADMIN) return true;
+        return reservation.getAnnonce() != null
+                && reservation.getAnnonce().getUser() != null
+                && reservation.getAnnonce().getUser().getId().equals(caller.getId());
+    }
+
+    private void requireOwnerOrAdmin(Reservation reservation) {
+        if (!isOwnerOrAdmin(reservation, currentUser())) {
+            throw new AccessDeniedException("Seul le propriétaire de l'annonce peut traiter cette réservation !");
+        }
+    }
+
+    /** A notification problem must never block the reservation workflow. */
+    private void notifySafely(Long userId, String titre, String message, Long reservationId) {
+        try {
+            notificationService.envoyer(userId, titre, message, TypeNotification.RESERVATION, reservationId);
+        } catch (Exception e) {
+            // ignore
+        }
     }
 
     // ─── TOUTES LES RÉSERVATIONS ─────────────────────────────

@@ -135,7 +135,7 @@
                           [ngClass]="{
                             'bg-warning text-dark': res.statut === 'EN_ATTENTE',
                             'bg-success': res.statut === 'CONFIRMEE',
-                            'bg-danger': res.statut === 'ANNULEE',
+                            'bg-danger': res.statut === 'ANNULEE' || res.statut === 'REFUSEE',
                             'bg-secondary': res.statut === 'TERMINEE'
                           }">
                       {{ res.statut | translate }}

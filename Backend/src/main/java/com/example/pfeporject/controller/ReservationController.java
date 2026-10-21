@@ -57,6 +57,13 @@ public class ReservationController {
         return ResponseEntity.ok(reservationService.confirmer(id));
     }
 
+    // ─── REFUSER UNE RÉSERVATION (Propriétaire) ────────────────────
+    // PUT /api/reservations/10/refuser
+    @PutMapping("/{id}/refuser")
+    public ResponseEntity<ReservationDTO> refuser(@PathVariable Long id) {
+        return ResponseEntity.ok(reservationService.refuser(id));
+    }
+
     // ─── ANNULER UNE RÉSERVATION ─────────────────────────────
     // PUT /api/reservations/10/annuler
     @PutMapping("/{id}/annuler")
